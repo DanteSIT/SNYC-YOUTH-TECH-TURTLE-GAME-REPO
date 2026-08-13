@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://d382rgq8vuh85"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_aijn1"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_83c6q"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_aijn1"]
+size = Vector3(1, 2.0074463, 1)
+
+[node name="Walls" type="Node3D" unique_id=1755717422]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1749699413]
+mesh = SubResource("CylinderMesh_aijn1")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D" unique_id=978823328]
+physics_material_override = SubResource("PhysicsMaterial_83c6q")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/StaticBody3D" unique_id=618837769]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.1035156e-05, 0)
+shape = SubResource("BoxShape3D_aijn1")

@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://d0uoga1xihf2h"]
+
+[ext_resource type="Shader" uid="uid://dlllbpw418ahw" path="res://shaders/water_particles.gdshader" id="1_2gy3d"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_v6bla"]
+emission_shape_scale = Vector3(-0.31, -1.725, 0.34)
+emission_shape = 6
+emission_ring_axis = Vector3(0, 90, 1)
+emission_ring_height = 0.0
+emission_ring_radius = 1.0
+emission_ring_inner_radius = 0.0
+emission_ring_cone_angle = 90.0
+gravity = Vector3(0, 0.455, 0)
+scale_min = 0.5
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0gcng"]
+render_priority = 0
+shader = ExtResource("1_2gy3d")
+shader_parameter/bubble_color = Color(0.6, 0.9, 1, 0.3)
+shader_parameter/fresnel_strength = 2.0
+shader_parameter/fresnel_power = 3.0
+shader_parameter/specular_sharpness = 0.9
+shader_parameter/opacity = 0.25
+shader_parameter/iridescence = 0.4
+
+[sub_resource type="SphereMesh" id="SphereMesh_ggr1p"]
+material = SubResource("ShaderMaterial_0gcng")
+radius = 0.4
+height = 0.8
+
+[node name="Bubbles" type="Node3D" unique_id=266305648]
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="." unique_id=861547400]
+transform = Transform3D(0.41, 0, 0, 0, 0.41, 0, 0, 0, 0.41, 0, 0, 0)
+amount = 3
+lifetime = 5.21
+randomness = 0.4
+visibility_aabb = AABB(-4, -3.405, -4, 8, 8, 8)
+process_material = SubResource("ParticleProcessMaterial_v6bla")
+draw_pass_1 = SubResource("SphereMesh_ggr1p")

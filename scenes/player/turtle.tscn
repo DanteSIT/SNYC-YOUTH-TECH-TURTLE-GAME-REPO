@@ -1,0 +1,101 @@
+[gd_scene format=3 uid="uid://diskomtmtv4m1"]
+
+[ext_resource type="PackedScene" uid="uid://comg4l2imucbx" path="res://scenes/player/odysse.tscn" id="2_2ssyi"]
+[ext_resource type="Script" uid="uid://bvml08l20naxl" path="res://scripts/character_body_3d.gd" id="2_w1etq"]
+[ext_resource type="Shader" uid="uid://dlllbpw418ahw" path="res://shaders/water_particles.gdshader" id="3_w1etq"]
+[ext_resource type="Script" uid="uid://gy3cb74bmthj" path="res://scripts/hud.gd" id="4_hud"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2ssyi"]
+size = Vector3(0.883728, 0.28460693, 0.9614258)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_oyuhy"]
+emission_shape_scale = Vector3(-0.32, 0.795, 0.17)
+emission_shape = 2
+emission_sphere_radius = 1.0
+gravity = Vector3(0, 0.14, 0)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ghgcf"]
+render_priority = 0
+shader = ExtResource("3_w1etq")
+shader_parameter/bubble_color = Color(0.6, 0.9, 1, 0.3)
+shader_parameter/fresnel_strength = 2.0
+shader_parameter/fresnel_power = 3.0
+shader_parameter/specular_sharpness = 0.9
+shader_parameter/opacity = 0.25
+shader_parameter/iridescence = 0.4
+
+[sub_resource type="SphereMesh" id="SphereMesh_2ssyi"]
+material = SubResource("ShaderMaterial_ghgcf")
+radius = 0.02
+height = 0.04
+
+[sub_resource type="LabelSettings" id="LabelSettings_w1etq"]
+font_size = 23
+
+[sub_resource type="LabelSettings" id="LabelSettings_ghgcf"]
+font_size = 23
+
+[node name="Turtle" type="Node3D" unique_id=236318347]
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="." unique_id=501371078 groups=["player"]]
+script = ExtResource("2_w1etq")
+
+[node name="Odysse" parent="CharacterBody3D" unique_id=1359690606 instance=ExtResource("2_2ssyi")]
+transform = Transform3D(-0.2, 0, -3.019916e-08, 0, 0.2, 0, 3.019916e-08, 0, -0.2, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D" unique_id=90651277]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.004486084, 0.009513855, 0.022705078)
+shape = SubResource("BoxShape3D_2ssyi")
+
+[node name="Camera3D" type="Camera3D" parent="CharacterBody3D" unique_id=686105306]
+transform = Transform3D(-4.295942e-08, -0.18468873, 0.9827971, -8.073001e-09, 0.9827971, 0.18468873, -1, -8.881784e-16, -4.3711385e-08, 3.576098, 0.48021394, 0)
+keep_aspect = 0
+fov = 76.3
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="CharacterBody3D" unique_id=1628688111]
+transform = Transform3D(0.46421647, 0, 0, 0, 0.19714934, 0, 0, 0, 0.83792895, 0, 0.1039415, -0.4258427)
+amount = 15
+amount_ratio = 0.3552
+process_material = SubResource("ParticleProcessMaterial_oyuhy")
+draw_pass_1 = SubResource("SphereMesh_2ssyi")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1734717893]
+script = ExtResource("4_hud")
+
+[node name="Panel" type="ColorRect" parent="CanvasLayer" unique_id=748885858]
+offset_left = 10.0
+offset_top = 5.0
+offset_right = 300.0
+offset_bottom = 125.0
+color = Color(0.19, 0.19, 0.19, 0.75)
+
+[node name="HealthLabel" type="Label" parent="CanvasLayer" unique_id=1017698932]
+offset_left = 20.0
+offset_top = 10.0
+offset_right = 280.0
+offset_bottom = 35.0
+text = "Health : 100 / 100"
+label_settings = SubResource("LabelSettings_w1etq")
+
+[node name="HealthBar" type="ColorRect" parent="CanvasLayer" unique_id=1942321913]
+offset_left = 20.0
+offset_top = 38.0
+offset_right = 286.0
+offset_bottom = 48.0
+color = Color(0.48229402, 0.74840146, 0.13054177, 1)
+
+[node name="JellyfishLabel" type="Label" parent="CanvasLayer" unique_id=142156672]
+offset_left = 20.0
+offset_top = 52.0
+offset_right = 280.0
+offset_bottom = 84.0
+text = "Jellyfish : 0"
+label_settings = SubResource("LabelSettings_w1etq")
+
+[node name="ScoreLabel" type="Label" parent="CanvasLayer" unique_id=1417418797]
+offset_left = 18.0
+offset_top = 86.0
+offset_right = 278.0
+offset_bottom = 118.0
+text = "Score : 0"
+label_settings = SubResource("LabelSettings_ghgcf")

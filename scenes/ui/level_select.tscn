@@ -1,0 +1,180 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/level_select.gd" id="1_sel"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+font_size = 48
+font_color = Color(0.72, 0.95, 1, 1)
+shadow_size = 5
+shadow_color = Color(0, 0.1, 0.22, 0.8)
+
+[sub_resource type="StyleBoxFlat" id="btn_normal"]
+bg_color = Color(0.04, 0.32, 0.45, 0.85)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.45, 0.85, 0.95, 0.45)
+shadow_color = Color(0, 0, 0, 0.35)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="btn_hover"]
+bg_color = Color(0.1, 0.48, 0.62, 0.95)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6, 0.95, 1, 0.8)
+shadow_color = Color(0, 0, 0, 0.4)
+shadow_size = 5
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="btn_pressed"]
+bg_color = Color(0.03, 0.2, 0.32, 0.95)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.45, 0.85, 0.95, 0.8)
+shadow_size = 1
+shadow_offset = Vector2(0, 1)
+
+[sub_resource type="StyleBoxFlat" id="btn_disabled"]
+bg_color = Color(0.04, 0.1, 0.16, 0.55)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.45, 0.55, 0.35)
+
+[sub_resource type="StyleBoxFlat" id="btn_focus"]
+bg_color = Color(0.1, 0.48, 0.62, 0.6)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.75, 0.98, 1, 0.9)
+
+[sub_resource type="Theme" id="ocean_theme"]
+Button/colors/font_color = Color(0.9, 0.98, 1, 1)
+Button/colors/font_disabled_color = Color(0.5, 0.62, 0.72, 0.7)
+Button/colors/font_focus_color = Color(0.9, 0.98, 1, 1)
+Button/colors/font_hover_color = Color(1, 1, 1, 1)
+Button/colors/font_pressed_color = Color(0.8, 0.95, 1, 1)
+Button/font_sizes/font_size = 22
+Button/styles/disabled = SubResource("btn_disabled")
+Button/styles/focus = SubResource("btn_focus")
+Button/styles/hover = SubResource("btn_hover")
+Button/styles/normal = SubResource("btn_normal")
+Button/styles/pressed = SubResource("btn_pressed")
+
+[node name="LevelSelect" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("ocean_theme")
+script = ExtResource("1_sel")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.11, 0.2, 1)
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 40.0
+offset_bottom = 110.0
+text = "Select Level"
+horizontal_alignment = 1
+vertical_alignment = 1
+label_settings = SubResource("LabelSettings_title")
+
+[node name="Grid" type="GridContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -160.0
+offset_right = 320.0
+offset_bottom = 160.0
+grow_horizontal = 2
+grow_vertical = 2
+columns = 4
+
+[node name="Level1" type="Button" parent="Grid"]
+custom_minimum_size = Vector2(150, 60)
+text = "Tutorial"
+
+[node name="Level2" type="Button" parent="Grid"]
+custom_minimum_size = Vector2(150, 60)
+text = "Level 1"
+
+[node name="Level3" type="Button" parent="Grid"]
+custom_minimum_size = Vector2(150, 60)
+text = "Level 2"
+
+[node name="Level4" type="Button" parent="Grid"]
+custom_minimum_size = Vector2(150, 60)
+text = "Level 3"
+
+[node name="Level5" type="Button" parent="Grid"]
+custom_minimum_size = Vector2(150, 60)
+text = "Level 4"
+
+[node name="Level6" type="Button" parent="Grid"]
+custom_minimum_size = Vector2(150, 60)
+text = "Level 5"
+
+[node name="Level7" type="Button" parent="Grid"]
+custom_minimum_size = Vector2(150, 60)
+text = "Level 6"
+
+[node name="Level8" type="Button" parent="Grid"]
+custom_minimum_size = Vector2(150, 60)
+text = "Level 7"
+
+[node name="BackButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -70.0
+offset_right = 220.0
+offset_bottom = -30.0
+grow_vertical = 0
+text = "Back to Menu"
+theme_override_font_sizes/font_size = 20

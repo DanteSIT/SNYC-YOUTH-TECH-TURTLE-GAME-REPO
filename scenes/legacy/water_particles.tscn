@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://bd66jb43aw3c5"]
+
+[ext_resource type="Shader" uid="uid://dlllbpw418ahw" path="res://shaders/water_particles.gdshader" id="1_2jdtv"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_55h2j"]
+emission_shape_offset = Vector3(0.04, 0, 0)
+emission_shape_scale = Vector3(4.585, 4.82, 3.8)
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+gravity = Vector3(0, 1.06, 0)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ns77n"]
+render_priority = 0
+shader = ExtResource("1_2jdtv")
+shader_parameter/bubble_color = Color(0.6, 0.9, 1, 0.3)
+shader_parameter/fresnel_strength = 2.0
+shader_parameter/fresnel_power = 3.0
+shader_parameter/specular_sharpness = 0.9
+shader_parameter/opacity = 0.25
+shader_parameter/iridescence = 0.4
+
+[sub_resource type="SphereMesh" id="SphereMesh_3lksd"]
+material = SubResource("ShaderMaterial_ns77n")
+
+[node name="BG_Objects" type="Node3D" unique_id=1956350198]
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="." unique_id=1147069732]
+transform = Transform3D(5.896659, 0, 0, 0, 2.5983486, 0, 0, 0, 4.149269, 0, 0, 0)
+amount = 19
+process_material = SubResource("ParticleProcessMaterial_55h2j")
+draw_pass_1 = SubResource("SphereMesh_3lksd")

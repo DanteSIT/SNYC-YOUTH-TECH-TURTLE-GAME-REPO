@@ -1,0 +1,302 @@
+[gd_scene format=3 uid="uid://bcvwqcw15s182"]
+
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_miasx"]
+sky_horizon_color = Color(0.6031693, 0.6725665, 0.6891552, 1)
+ground_bottom_color = Color(0, 0.20858857, 0.17894372, 1)
+ground_horizon_color = Color(0.6031693, 0.6725665, 0.6891552, 1)
+energy_multiplier = 1.2
+
+[sub_resource type="Sky" id="Sky_aqk2v"]
+sky_material = SubResource("ProceduralSkyMaterial_miasx")
+
+[sub_resource type="Environment" id="Environment_5po1b"]
+background_mode = 2
+sky = SubResource("Sky_aqk2v")
+ambient_light_source = 3
+ambient_light_color = Color(0.6292333, 0.7934502, 0.8565206, 1)
+ambient_light_energy = 4.44
+tonemap_mode = 4
+tonemap_white = 3.26
+tonemap_agx_contrast = 1.43
+ssr_enabled = true
+ssr_fade_in = 0.31057945
+ssr_fade_out = 1.1095693
+ssao_enabled = true
+ssil_enabled = false
+sdfgi_enabled = true
+sdfgi_use_occlusion = true
+glow_enabled = true
+glow_normalized = true
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.01
+volumetric_fog_albedo = Color(0, 1, 1, 1)
+volumetric_fog_emission_energy = 117.23
+volumetric_fog_gi_inject = 1.12
+volumetric_fog_temporal_reprojection_amount = 0.99
+adjustment_enabled = true
+adjustment_brightness = 1.01
+adjustment_contrast = 0.945
+adjustment_saturation = 1.16
+
+[sub_resource type="BoxMesh" id="BoxMesh_m85yq"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+font_size = 64
+font_color = Color(0.72, 0.95, 1, 1)
+shadow_size = 6
+shadow_color = Color(0, 0.1, 0.22, 0.8)
+
+[sub_resource type="LabelSettings" id="LabelSettings_subtitle"]
+font_size = 22
+font_color = Color(0.82, 0.92, 0.96, 0.9)
+shadow_size = 3
+shadow_color = Color(0, 0.08, 0.18, 0.6)
+
+[sub_resource type="StyleBoxFlat" id="btn_normal"]
+bg_color = Color(0.04, 0.32, 0.45, 0.78)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.45, 0.85, 0.95, 0.45)
+shadow_color = Color(0, 0, 0, 0.35)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="btn_hover"]
+bg_color = Color(0.1, 0.48, 0.62, 0.92)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6, 0.95, 1, 0.8)
+shadow_color = Color(0, 0, 0, 0.4)
+shadow_size = 5
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="btn_pressed"]
+bg_color = Color(0.03, 0.2, 0.32, 0.95)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.45, 0.85, 0.95, 0.8)
+shadow_size = 1
+shadow_offset = Vector2(0, 1)
+
+[sub_resource type="StyleBoxFlat" id="btn_focus"]
+bg_color = Color(0.1, 0.48, 0.62, 0.6)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.75, 0.98, 1, 0.9)
+
+[node name="Menu" type="Node" unique_id=1089762998]
+
+
+[node name="Scene" type="Node3D" parent="." unique_id=1900411963]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Scene" unique_id=41995162]
+transform = Transform3D(0.8127426, -0.19419566, 0.5493065, 0.010641564, 0.94760704, 0.3192613, -0.58252585, -0.25363174, 0.77222705, 2.0921092, 1.6496612, -1.5890855)
+light_color = Color(1, 0.9258832, 0.91893476, 1)
+light_indirect_energy = 2.941
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Scene" unique_id=474784085]
+environment = SubResource("Environment_5po1b")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Scene" unique_id=256084738]
+transform = Transform3D(17.616142, 0, 0, 0, 0.7564868, 0, 0, 0, 7.8704524, 0, -0.27888024, -2.2702127)
+mesh = SubResource("BoxMesh_m85yq")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Scene" unique_id=641757286]
+transform = Transform3D(17.616142, 0, 0, 0, -3.306709e-08, -15.951137, 0, 0.7564868, -6.9724626e-07, 0, 6.94022, -6.162761)
+mesh = SubResource("BoxMesh_m85yq")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="Scene" unique_id=2087964610]
+transform = Transform3D(-4.7326495e-07, -0.7564868, 0, -4.7326495e-07, 1.4454083e-15, -13.096376, 10.82704, -3.306709e-08, -5.724608e-07, 8.7808895, 6.1283255, -3.9377828)
+mesh = SubResource("BoxMesh_m85yq")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="Scene" unique_id=258841896]
+transform = Transform3D(-4.7326495e-07, -0.7564868, 0, -4.7326495e-07, 1.4454083e-15, -13.096376, 10.82704, -3.306709e-08, -5.724608e-07, -8.529322, 6.1283255, -3.8395152)
+mesh = SubResource("BoxMesh_m85yq")
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="Scene" unique_id=1781183144]
+transform = Transform3D(1, 4.300606e-09, 2.9490398e-08, 2.4849829e-09, 0.9740551, -0.2263113, -2.9698542e-08, 0.2263113, 0.9740551, -1.0675687, 1.6805775, 1.440573)
+
+[node name="Camera3D" type="Camera3D" parent="Scene" unique_id=1872075493]
+transform = Transform3D(1, 4.3006056e-09, 2.9490396e-08, 0, 0.98953336, -0.14430436, -2.9802326e-08, 0.14430436, 0.98953336, -0.6233684, 0.7080362, 2.3307362)
+
+[node name="Menu" type="Control" parent="." unique_id=1183776761]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Overlay" type="ColorRect" parent="Menu" unique_id=1904382611]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.01, 0.09, 0.18, 0.6)
+
+[node name="Title" type="Label" parent="Menu" unique_id=949712780]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 101.0
+offset_bottom = 184.0
+grow_horizontal = 2
+text = "Turtle Game"
+label_settings = SubResource("LabelSettings_title")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Subtitle" type="Label" parent="Menu" unique_id=573970076]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 188.0
+offset_bottom = 228.0
+grow_horizontal = 2
+text = "A small underwater adventure"
+label_settings = SubResource("LabelSettings_subtitle")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PlayButton" type="Button" parent="Menu" unique_id=1541606332]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -130.0
+offset_top = -64.0
+offset_right = 130.0
+offset_bottom = -9.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "PLAY"
+theme_override_styles/normal = SubResource("btn_normal")
+theme_override_styles/hover = SubResource("btn_hover")
+theme_override_styles/pressed = SubResource("btn_pressed")
+theme_override_styles/focus = SubResource("btn_focus")
+theme_override_colors/font_color = Color(0.9, 0.98, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.8, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 24
+
+[node name="LevelsButton" type="Button" parent="Menu" unique_id=967921517]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -130.0
+offset_top = 6.0
+offset_right = 130.0
+offset_bottom = 61.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "LEVELS"
+theme_override_styles/normal = SubResource("btn_normal")
+theme_override_styles/hover = SubResource("btn_hover")
+theme_override_styles/pressed = SubResource("btn_pressed")
+theme_override_styles/focus = SubResource("btn_focus")
+theme_override_colors/font_color = Color(0.9, 0.98, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.8, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 24
+
+[node name="ControlsButton" type="Button" parent="Menu" unique_id=967921518]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -130.0
+offset_top = 76.0
+offset_right = 130.0
+offset_bottom = 131.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "CONTROLES"
+theme_override_styles/normal = SubResource("btn_normal")
+theme_override_styles/hover = SubResource("btn_hover")
+theme_override_styles/pressed = SubResource("btn_pressed")
+theme_override_styles/focus = SubResource("btn_focus")
+theme_override_colors/font_color = Color(0.9, 0.98, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.8, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 24
+
+[node name="SettingsButton" type="Button" parent="Menu" unique_id=967921519]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -130.0
+offset_top = 146.0
+offset_right = 130.0
+offset_bottom = 201.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "SETTINGS"
+theme_override_styles/normal = SubResource("btn_normal")
+theme_override_styles/hover = SubResource("btn_hover")
+theme_override_styles/pressed = SubResource("btn_pressed")
+theme_override_styles/focus = SubResource("btn_focus")
+theme_override_colors/font_color = Color(0.9, 0.98, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.8, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 24
+
+[node name="QuitButton" type="Button" parent="Menu" unique_id=1355824825]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -130.0
+offset_top = 216.0
+offset_right = 130.0
+offset_bottom = 271.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "QUIT"
+theme_override_styles/normal = SubResource("btn_normal")
+theme_override_styles/hover = SubResource("btn_hover")
+theme_override_styles/pressed = SubResource("btn_pressed")
+theme_override_styles/focus = SubResource("btn_focus")
+theme_override_colors/font_color = Color(0.9, 0.98, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.8, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 24

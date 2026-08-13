@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://b4tcsjk4jtr6g"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_dwbse"]
+friction = 0.1
+bounce = 1.0
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_oyuhy"]
+
+[sub_resource type="Gradient" id="Gradient_xykfd"]
+interpolation_mode = 2
+offsets = PackedFloat32Array(0.09053498, 0.3621399, 0.6419753, 0.8600823)
+colors = PackedColorArray(2.0214916e-06, 0.73734903, 0.6274513, 1, 0.7866123, 0.60501796, 0.027929889, 1, 0.99763864, 0.39010537, 0.5791186, 1, 0, 0.7372549, 0.627451, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_af24q"]
+gradient = SubResource("Gradient_xykfd")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xykfd"]
+transparency = 1
+blend_mode = 1
+vertex_color_use_as_albedo = true
+albedo_texture = SubResource("GradientTexture1D_af24q")
+metallic = 0.26
+metallic_specular = 0.05
+roughness = 0.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_oyuhy"]
+material = SubResource("StandardMaterial3D_xykfd")
+
+[node name="Ball" type="Node3D" unique_id=141397417]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
+
+[node name="RigidBody3D" type="RigidBody3D" parent="." unique_id=766460168]
+mass = 0.402
+physics_material_override = SubResource("PhysicsMaterial_dwbse")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D" unique_id=2004111166]
+shape = SubResource("SphereShape3D_oyuhy")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBody3D" unique_id=1893034063]
+mesh = SubResource("SphereMesh_oyuhy")

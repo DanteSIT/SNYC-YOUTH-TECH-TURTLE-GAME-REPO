@@ -1,0 +1,62 @@
+[gd_scene format=3 uid="uid://dixu1l6wjeaq8"]
+
+[ext_resource type="Script" uid="uid://btwv3s62jkhm" path="res://scripts/world.gd" id="1_aqk2v"]
+[ext_resource type="PackedScene" uid="uid://diskomtmtv4m1" path="res://scenes/player/turtle.tscn" id="1_f3sb7"]
+[ext_resource type="PackedScene" uid="uid://dqwejsfrxlp4c" path="res://scenes/legacy/platform.tscn" id="2_fj7yv"]
+[ext_resource type="PackedScene" uid="uid://bd66jb43aw3c5" path="res://scenes/legacy/water_particles.tscn" id="3_tlwt5"]
+[ext_resource type="Script" uid="uid://bjjsjunl6wtcf" path="res://scripts/exit.gd" id="5_036b0"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_tlwt5"]
+sky_horizon_color = Color(0.6031693, 0.6725665, 0.6891552, 1)
+ground_bottom_color = Color(0, 0.20858857, 0.17894372, 1)
+ground_horizon_color = Color(0.6031693, 0.6725665, 0.6891552, 1)
+energy_multiplier = 1.2
+
+[sub_resource type="Sky" id="Sky_aqk2v"]
+sky_material = SubResource("ProceduralSkyMaterial_tlwt5")
+
+[sub_resource type="Environment" id="Environment_036b0"]
+background_mode = 2
+sky = SubResource("Sky_aqk2v")
+reflected_light_source = 2
+tonemap_mode = 3
+tonemap_exposure = 0.83
+tonemap_white = 3.44
+ssr_enabled = true
+ssao_enabled = true
+ssil_enabled = true
+volumetric_fog_enabled = true
+
+[node name="World" type="Node" unique_id=650439067]
+script = ExtResource("1_aqk2v")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=636263154]
+environment = SubResource("Environment_036b0")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=306362722]
+transform = Transform3D(-0.9704294, -0.06041102, 0.23370345, 0.054571275, 0.888204, 0.4561973, -0.23513567, 0.45546085, -0.8586426, 0, 1.6496612, 0)
+light_color = Color(0.7529412, 1, 1, 1)
+light_indirect_energy = 2.0
+light_specular = 0.366
+shadow_enabled = true
+
+[node name="Turtle" parent="." unique_id=236318347 instance=ExtResource("1_f3sb7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4.246706)
+
+[node name="Platform" parent="." unique_id=1103885490 instance=ExtResource("2_fj7yv")]
+transform = Transform3D(0.7488493, 0, 0, 0, 0.7488493, 0, 0, 0, 0.7488493, -0.08228648, -0.469094, -0.04624839)
+
+[node name="BG_Objects" parent="." unique_id=1956350198 instance=ExtResource("3_tlwt5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.17066002, 0.21289063, 9.2836854e-07)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=74938813]
+
+[node name="Button" type="Button" parent="CanvasLayer" unique_id=1296098652]
+offset_left = 1191.0
+offset_top = 4.0
+offset_right = 1228.0
+offset_bottom = 35.0
+text = "Exit"
+script = ExtResource("5_036b0")
+
+[connection signal="pressed" from="CanvasLayer/Button" to="CanvasLayer/Button" method="_on_pressed"]

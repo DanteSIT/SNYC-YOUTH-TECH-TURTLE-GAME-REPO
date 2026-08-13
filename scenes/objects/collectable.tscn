@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://n20iy84uuaod"]
+
+[ext_resource type="Script" uid="uid://dvrt26j43uyhg" path="res://scripts/collectable.gd" id="1_x"]
+[ext_resource type="PackedScene" uid="uid://d3suoaio6cpry" path="res://blender/jeLLyfiSH.blend" id="2_3cqwa"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_un20x"]
+radius = 0.25
+
+[node name="Collectable" type="Area3D" unique_id=852566709 groups=["collectable"]]
+script = ExtResource("1_x")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=482629990]
+shape = SubResource("SphereShape3D_un20x")
+
+[node name="jeLLyfiSH" parent="." unique_id=2079094441 instance=ExtResource("2_3cqwa")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)

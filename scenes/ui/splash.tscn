@@ -1,0 +1,83 @@
+[gd_scene format=3 uid="uid://d4nfs4j783uut"]
+
+[ext_resource type="Script" uid="uid://dglpvbn4lwoii" path="res://scripts/splash.gd" id="1_spl"]
+[ext_resource type="Texture2D" uid="uid://ctycoedkvuh84" path="res://Assets/Screenshot 2025-05-30 111609.png" id="2_sykqw"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+font_size = 56
+
+[sub_resource type="LabelSettings" id="LabelSettings_hint"]
+font_size = 18
+
+[node name="Splash" type="Control" unique_id=1588975091]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_spl")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1485293763]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.01, 0.08, 0.16, 1)
+
+[node name="Icon" type="TextureRect" parent="." unique_id=1454670232]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -120.0
+offset_top = -248.0
+offset_right = 120.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_sykqw")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="." unique_id=724730833]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 360.0
+offset_bottom = 440.0
+grow_horizontal = 2
+text = "Turtle Game"
+label_settings = SubResource("LabelSettings_title")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Bar" type="ProgressBar" parent="." unique_id=1518698906]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = 120.0
+offset_right = 200.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Hint" type="Label" parent="." unique_id=945026250]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 448.0
+offset_bottom = 483.0
+grow_horizontal = 2
+text = "Loading..."
+label_settings = SubResource("LabelSettings_hint")
+horizontal_alignment = 1
+vertical_alignment = 1

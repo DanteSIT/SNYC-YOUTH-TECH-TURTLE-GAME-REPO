@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://comg4l2imucbx"]
+
+[ext_resource type="PackedScene" uid="uid://dybxey3ewpydl" path="res://Odysse.fbx" id="1_nx6mx"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7vv6w"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_stwb4"]
+albedo_color = Color(0.18668109, 0.14245045, 0, 1)
+roughness = 0.15
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1wlvv"]
+diffuse_mode = 1
+disable_ambient_light = true
+albedo_color = Color(0.37148726, 0.18102285, 0.09378203, 1)
+roughness = 0.55
+grow_amount = -2.909
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3kuas"]
+albedo_color = Color(0.30945098, 0.5047053, 0.18714526, 1)
+roughness = 0.15
+
+[node name="Odysse" unique_id=1359690606 instance=ExtResource("1_nx6mx")]
+
+[node name="Skeleton3D" parent="Armature_002" parent_id_path=PackedInt32Array(1863037307) index="0" unique_id=1496177040]
+modifier_callback_mode_process = 0
+
+[node name="Eye_brown_L" parent="Armature_002/Skeleton3D" index="0" unique_id=285765147]
+transform = Transform3D(0.9999976, -0.0021352263, -0.0006517684, -0.0021557685, -0.99944174, -0.033336386, -0.0005802241, 0.033337712, -0.999444, 0.0020363436, -0.02029068, 0.0016930588)
+bone_idx = 4
+
+[node name="Eye_brown_L" parent="Armature_002/Skeleton3D/Eye_brown_L" index="0" unique_id=450745261]
+surface_material_override/0 = SubResource("StandardMaterial3D_7vv6w")
+
+[node name="Eye_brown_R" parent="Armature_002/Skeleton3D" index="1" unique_id=1126054]
+transform = Transform3D(0.99999535, 0.0029112468, 0.00080290576, 0.0029363956, -0.9994397, -0.03333559, 0.00070540805, 0.033337805, -0.99944377, -0.0020363433, -0.02029068, 0.0016930585)
+bone_idx = 5
+
+[node name="Turtle_LowPoly_Scales" parent="Armature_002/Skeleton3D" index="2" unique_id=1554835025]
+surface_material_override/0 = SubResource("StandardMaterial3D_stwb4")
+
+[node name="Turtle_LowPoly_Shell" parent="Armature_002/Skeleton3D" index="3" unique_id=1087316192]
+surface_material_override/0 = SubResource("StandardMaterial3D_1wlvv")
+
+[node name="Turtle_LowPoly_Skin" parent="Armature_002/Skeleton3D" index="4" unique_id=1559608252]
+surface_material_override/0 = SubResource("StandardMaterial3D_3kuas")

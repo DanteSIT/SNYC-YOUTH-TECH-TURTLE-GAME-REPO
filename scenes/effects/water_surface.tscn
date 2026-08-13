@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Shader" path="res://shaders/water_surface.gdshader" id="1_ws"]
+
+[sub_resource type="ShaderMaterial" id="ws_mat"]
+render_priority = 0
+shader = ExtResource("1_ws")
+shader_parameter/surface_color = Color(0.4, 0.74, 0.84, 1)
+shader_parameter/crest_color = Color(0.85, 0.97, 1, 1)
+shader_parameter/wave_speed = 1.1
+shader_parameter/wave_scale = 1.6
+shader_parameter/wave_strength = 0.5
+shader_parameter/opacity = 0.6
+shader_parameter/sparkle = 1.5
+
+[sub_resource type="PlaneMesh" id="ws_mesh"]
+material = SubResource("ws_mat")
+size = Vector2(1, 1)
+
+[node name="WaterSurface" type="MeshInstance3D"]
+mesh = SubResource("ws_mesh")
