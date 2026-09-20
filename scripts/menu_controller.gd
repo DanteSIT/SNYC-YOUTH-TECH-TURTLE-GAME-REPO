@@ -1,6 +1,6 @@
 extends Node
 
-const MENU_SCRIPT := "res://scripts/menu.gd"
+const MENU_SCRIPT := "res://scripts/ui/menu.gd"
 const MENU_SCENE_PATH := "res://scenes/ui/menu.tscn"
 
 func _ready() -> void:

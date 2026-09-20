@@ -1,9 +1,13 @@
 [gd_scene format=3 uid="uid://diskomtmtv4m1"]
 
 [ext_resource type="PackedScene" uid="uid://comg4l2imucbx" path="res://scenes/player/odysse.tscn" id="2_2ssyi"]
-[ext_resource type="Script" uid="uid://bvml08l20naxl" path="res://scripts/character_body_3d.gd" id="2_w1etq"]
+[ext_resource type="Script" uid="uid://bvml08l20naxl" path="res://scripts/player/player_controller.gd" id="2_w1etq"]
 [ext_resource type="Shader" uid="uid://dlllbpw418ahw" path="res://shaders/water_particles.gdshader" id="3_w1etq"]
-[ext_resource type="Script" uid="uid://gy3cb74bmthj" path="res://scripts/hud.gd" id="4_hud"]
+[ext_resource type="Script" uid="uid://gy3cb74bmthj" path="res://scripts/ui/hud.gd" id="4_hud"]
+
+
+[ext_resource type="Script" uid="uid://dq32os6om1vfo" path="res://scripts/player/player_animator.gd" id="5_anim"]
+[ext_resource type="Script" uid="uid://ddorrb01meavi" path="res://scripts/player/player_visuals.gd" id="6_vis"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_2ssyi"]
 size = Vector3(0.883728, 0.28460693, 0.9614258)
@@ -42,6 +46,14 @@ script = ExtResource("2_w1etq")
 
 [node name="Odysse" parent="CharacterBody3D" unique_id=1359690606 instance=ExtResource("2_2ssyi")]
 transform = Transform3D(-0.2, 0, -3.019916e-08, 0, 0.2, 0, 3.019916e-08, 0, -0.2, 0, 0, 0)
+
+[node name="PlayerAnimator" type="Node3D" parent="CharacterBody3D"]
+script = ExtResource("5_anim")
+
+[node name="PlayerVisuals" type="Node3D" parent="CharacterBody3D"]
+script = ExtResource("6_vis")
+
+[node name="SwimSound" type="AudioStreamPlayer" parent="CharacterBody3D"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D" unique_id=90651277]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.004486084, 0.009513855, 0.022705078)

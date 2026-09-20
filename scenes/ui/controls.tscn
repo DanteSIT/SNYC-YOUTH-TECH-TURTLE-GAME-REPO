@@ -1,7 +1,7 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/controls_screen.gd" id="1_cs"]
-[ext_resource type="Script" path="res://scripts/controls.gd" id="2_cu"]
+[ext_resource type="Script" path="res://scripts/ui/controls_screen.gd" id="1_cs"]
+[ext_resource type="Script" path="res://scripts/ui/controls.gd" id="2_cu"]
 
 [node name="Controls" type="Control"]
 layout_mode = 3

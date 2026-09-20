@@ -1,0 +1,24 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Material" path="res://materials/sand.tres" id="1_sand"]
+[ext_resource type="PackedScene" path="res://scenes/effects/caustics_overlay.tscn" id="2_caustics"]
+
+[sub_resource type="BoxMesh" id="bed_mesh"]
+material = ExtResource("1_sand")
+size = Vector3(1, 1, 1)
+
+[sub_resource type="BoxShape3D" id="bed_shape"]
+size = Vector3(1, 1, 1)
+
+[node name="Seabed" type="Node3D"]
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+mesh = SubResource("bed_mesh")
+
+[node name="Body" type="StaticBody3D" parent="."]
+
+[node name="Col" type="CollisionShape3D" parent="Body"]
+shape = SubResource("bed_shape")
+
+[node name="Caustics" parent="." instance=ExtResource("2_caustics")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.502, 0)

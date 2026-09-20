@@ -1,0 +1,19 @@
+[gd_resource type="Animation" format=3]
+
+[resource]
+resource_name = "EAT"
+length = 0.6
+tracks/0/type = "rotation_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Armature_002/Skeleton3D:Jaw")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0.113789, 0, 0, 0.993505, 0.1, 1, -0.21823, 0, 0, 0.9759, 0.22, 1, 0.13456, 0, 0, 0.99091, 0.32, 1, 0.10977, 0, 0, 0.993956, 0.44, 1, -0.117247, 0, 0, 0.993103, 0.6, 1, -0.117247, 0, 0, 0.993103)
+tracks/1/type = "rotation_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Armature_002/Skeleton3D:Head")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, -0.046503, 0, 0, 0.998918, 0.1, 1, 0.029995, 0, 0, 0.99955, 0.22, 1, -0.04499, 0, 0, 0.998988, 0.32, 1, -0.029995, 0, 0, 0.99955, 0.6, 1, -0.046503, 0, 0, 0.998918)

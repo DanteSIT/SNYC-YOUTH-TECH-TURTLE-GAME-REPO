@@ -1,0 +1,19 @@
+[gd_resource type="Animation" format=3]
+
+[resource]
+resource_name = "HURT"
+length = 0.5
+tracks/0/type = "rotation_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Armature_002/Skeleton3D:Jaw")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, -0.117247, 0, 0, 0.993103, 0.08, 1, -0.21823, 0, 0, 0.9759, 0.2, 1, -0.049979, 0, 0, 0.99875, 0.34, 1, -0.089878, 0, 0, 0.995953, 0.5, 1, -0.117247, 0, 0, 0.993103)
+tracks/1/type = "rotation_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Armature_002/Skeleton3D:Head")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, -0.046503, 0, 0, 0.998918, 0.08, 1, 0.079914, 0, 0, 0.996803, 0.2, 1, -0.049979, 0, 0, 0.99875, 0.34, 1, 0.024997, 0, 0, 0.999688, 0.5, 1, -0.046503, 0, 0, 0.998918)

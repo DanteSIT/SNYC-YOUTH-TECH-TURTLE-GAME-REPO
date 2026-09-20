@@ -1,0 +1,21 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/generated/uw_backdrop_far.png" id="1_tex"]
+
+[ext_resource type="Shader" path="res://shaders/backdrop.gdshader" id="1_sh"]
+
+[sub_resource type="ShaderMaterial" id="bd_mat"]
+shader = ExtResource("1_sh")
+shader_parameter/texture_albedo = ExtResource("1_tex")
+shader_parameter/offset_x = 0.0
+shader_parameter/offset_y = 0.0
+
+[sub_resource type="QuadMesh" id="bd_mesh"]
+material = SubResource("bd_mat")
+size = Vector2(1, 1)
+
+[node name="BackdropFar" type="Node3D"]
+
+[node name="Plane" type="MeshInstance3D" parent="."]
+mesh = SubResource("bd_mesh")
+cast_shadow = 0

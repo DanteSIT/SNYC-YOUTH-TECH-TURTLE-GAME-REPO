@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Shader" path="res://shaders/underwater.gdshader" id="1_sh"]
+
+[sub_resource type="ShaderMaterial" id="uw_mat"]
+shader = ExtResource("1_sh")
+shader_parameter/tint_strength = 0.34
+shader_parameter/depth = 0.35
+shader_parameter/wobble_amount = 0.0032
+shader_parameter/caustic_strength = 0.16
+shader_parameter/vignette_strength = 0.72
+shader_parameter/brightness = 1.03
+
+[node name="UnderwaterOverlay" type="CanvasLayer"]
+layer = 0
+
+[node name="Grade" type="ColorRect" parent="."]
+material = SubResource("uw_mat")
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 1)

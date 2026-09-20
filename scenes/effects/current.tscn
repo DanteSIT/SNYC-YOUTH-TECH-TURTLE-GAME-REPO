@@ -1,0 +1,51 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/world/current.gd" id="1_cg"]
+
+[sub_resource type="ParticleProcessMaterial" id="PPM_cur"]
+emission_shape = 3
+emission_box_extents = Vector3(2.0, 1.5, 6.0)
+direction = Vector3(0, 0, -1)
+spread = 8.0
+gravity = Vector3(0, 0, 0)
+initial_velocity_min = 1.1
+initial_velocity_max = 2.0
+scale_min = 0.9
+scale_max = 1.4
+color = Color(0.7, 0.9, 1, 0.4)
+damping_min = 0.4
+damping_max = 0.8
+
+[sub_resource type="StandardMaterial3D" id="Mat_cur"]
+shading_mode = 0
+transparency = 1
+albedo_color = Color(0.75, 0.92, 1, 0.5)
+roughness = 0.3
+emission_enabled = true
+emission = Color(0.7, 0.9, 1, 1)
+emission_energy_multiplier = 0.8
+
+[sub_resource type="BoxMesh" id="Mesh_cur"]
+material = SubResource("Mat_cur")
+size = Vector3(0.02, 0.02, 0.5)
+
+[sub_resource type="BoxShape3D" id="Shape_cur"]
+size = Vector3(2.2, 1.8, 6.0)
+
+[node name="Current" type="Node3D" groups=["current"]]
+
+[node name="Streaks" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+amount = 14
+lifetime = 5.0
+randomness = 0.25
+visibility_aabb = AABB(-2.4, -2.4, -3.4, 4.8, 4.8, 6.8)
+process_material = SubResource("PPM_cur")
+draw_pass_1 = SubResource("Mesh_cur")
+
+[node name="Push" type="Area3D" parent="."]
+script = ExtResource("1_cg")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Push"]
+shape = SubResource("Shape_cur")

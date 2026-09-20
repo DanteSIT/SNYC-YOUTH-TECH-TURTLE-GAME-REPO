@@ -17,12 +17,16 @@ config/icon="uid://ctycoedkvuh84"
 
 [autoload]
 
-InputSettings="*res://scripts/input_settings.gd"
-PauseManager="*res://scripts/pause_manager.gd"
-GameManager="*res://scripts/game_manager.gd"
-DebugStats="*res://scripts/debug_stats.gd"
-Graphics="*res://scripts/graphics_settings.gd"
-MenuController="*res://scripts/menu_controller.gd"
+InputSettings="*res://scripts/core/input_settings.gd"
+PauseManager="*res://scripts/core/pause_manager.gd"
+GameManager="*res://scripts/core/game_manager.gd"
+GameFlow="*res://scripts/core/game_flow.gd"
+DebugStats="*res://scripts/core/debug_stats.gd"
+Graphics="*res://scripts/core/graphics_settings.gd"
+NavCleanup="*res://scripts/core/nav_cleanup.gd"
+Audio="*res://scripts/core/audio_manager.gd"
+SceneryBaker="*res://scripts/core/scenery_baker.gd"
+
 
 [display]
 

@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/chaser.gd" id="1_ch"]
+[ext_resource type="PackedScene" path="res://assets/models/kenney/survival/fish-large.glb" id="2_fish"]
+
+[sub_resource type="SphereShape3D" id="hit_shape"]
+radius = 0.75
+
+[node name="Chaser" type="Area3D" groups=["enemy"]]
+script = ExtResource("1_ch")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("hit_shape")
+
+[node name="Body" type="Node3D" parent="."]
+
+[node name="Model" parent="Body" instance=ExtResource("2_fish")]
+transform = Transform3D(0, 0, 6, 0, 6, 0, -6, 0, 0, 0, 0, 0)

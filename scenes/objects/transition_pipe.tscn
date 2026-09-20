@@ -1,0 +1,53 @@
+[gd_scene format=3 uid="uid://dg3d0t1x8p4y3"]
+
+[ext_resource type="PackedScene" uid="uid://prn4vmhisdgs" path="res://assets/models/blender/transition_pipe.blend" id="1_model"]
+[ext_resource type="Shape3D" path="res://scenes/objects/pipe_collision.tres" id="2_col"]
+
+[sub_resource type="StandardMaterial3D" id="bub_mat"]
+transparency = 1
+cull_mode = 2
+shading_mode = 0
+albedo_color = Color(0.7, 0.92, 1, 0.4)
+
+[sub_resource type="SphereMesh" id="bub_mesh"]
+radius = 0.05
+height = 0.1
+
+[sub_resource type="Gradient" id="bub_grad"]
+colors = PackedColorArray(0.7, 0.92, 1, 0.4, 0.7, 0.92, 1, 0)
+
+[node name="TransitionPipe" type="Node3D" unique_id=1430416835]
+
+[node name="PipeModel" parent="." unique_id=191045914 instance=ExtResource("1_model")]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=66172686]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=1020389925]
+shape = ExtResource("2_col")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="." unique_id=2079180071]
+light_color = Color(0.85, 0.98, 1, 1)
+light_energy = 1.2
+light_specular = 0.4
+omni_range = 8.0
+omni_attenuation = 1.2
+shadow_enabled = true
+
+[node name="Bubbles" type="CPUParticles3D" parent="." unique_id=514833932]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6157895, 3.6979854)
+material_override = SubResource("bub_mat")
+amount = 10
+lifetime = 54.62
+speed_scale = 5.44
+local_coords = true
+mesh = SubResource("bub_mesh")
+direction = Vector3(0, 1, 0)
+spread = 18.0
+gravity = Vector3(0, 0, 0)
+initial_velocity_min = 0.04
+initial_velocity_max = 0.11
+scale_amount_max = 9.0
+color = Color(0.7, 0.92, 1, 0.4)
+color_ramp = SubResource("bub_grad")
