@@ -62,7 +62,7 @@ func _process(_delta: float) -> void:
 	var fname := sc.scene_file_path.get_file()
 	if not (fname.begins_with("level_") or fname == "tutorial.tscn"):
 		return
-	await _bake(sc as Node3D)
+	_bake(sc as Node3D)
 	if is_instance_valid(sc) and sc is Node3D:
 		_last_scene_id = sc.get_instance_id()
 

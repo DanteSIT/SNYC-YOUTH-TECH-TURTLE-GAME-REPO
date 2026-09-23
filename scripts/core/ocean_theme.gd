@@ -50,6 +50,6 @@ static func _stylebox(bg: Color, border: Color, shadow_size: float, shadow_offse
 	sb.border_color = border
 	sb.set_corner_radius_all(12)
 	sb.shadow_color = Color(0, 0, 0, 0.35)
-	sb.shadow_size = shadow_size
+	sb.shadow_size = int(shadow_size)
 	sb.shadow_offset = shadow_offset
 	return sb

@@ -71,7 +71,7 @@ func _idle(delta: float) -> void:
 	global_position.y += sin(_t * 2.0) * 0.01 * delta * 60.0
 
 
-func _animate(delta: float) -> void:
+func _animate(_delta: float) -> void:
 	$Body.rotation.x = sin(_t * 2.2) * 0.05
 	$Body.rotation.y = sin(_t * 3.0) * 0.12
 	$Body.rotation.z = sin(_t * 1.7) * 0.10

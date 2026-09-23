@@ -1,6 +1,5 @@
 [gd_scene format=3 uid="uid://bcvwqcw15s182"]
 
-
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_miasx"]
 sky_horizon_color = Color(0.6031693, 0.6725665, 0.6891552, 1)
 ground_bottom_color = Color(0, 0.20858857, 0.17894372, 1)
@@ -38,8 +37,6 @@ adjustment_enabled = true
 adjustment_brightness = 1.01
 adjustment_contrast = 0.945
 adjustment_saturation = 1.16
-
-[sub_resource type="BoxMesh" id="BoxMesh_m85yq"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_title"]
 font_size = 64
@@ -111,7 +108,6 @@ border_color = Color(0.75, 0.98, 1, 0.9)
 
 [node name="Menu" type="Node" unique_id=1089762998]
 
-
 [node name="Scene" type="Node3D" parent="." unique_id=1900411963]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Scene" unique_id=41995162]
@@ -122,22 +118,6 @@ shadow_enabled = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Scene" unique_id=474784085]
 environment = SubResource("Environment_5po1b")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Scene" unique_id=256084738]
-transform = Transform3D(17.616142, 0, 0, 0, 0.7564868, 0, 0, 0, 7.8704524, 0, -0.27888024, -2.2702127)
-mesh = SubResource("BoxMesh_m85yq")
-
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="Scene" unique_id=641757286]
-transform = Transform3D(17.616142, 0, 0, 0, -3.306709e-08, -15.951137, 0, 0.7564868, -6.9724626e-07, 0, 6.94022, -6.162761)
-mesh = SubResource("BoxMesh_m85yq")
-
-[node name="MeshInstance3D3" type="MeshInstance3D" parent="Scene" unique_id=2087964610]
-transform = Transform3D(-4.7326495e-07, -0.7564868, 0, -4.7326495e-07, 1.4454083e-15, -13.096376, 10.82704, -3.306709e-08, -5.724608e-07, 8.7808895, 6.1283255, -3.9377828)
-mesh = SubResource("BoxMesh_m85yq")
-
-[node name="MeshInstance3D4" type="MeshInstance3D" parent="Scene" unique_id=258841896]
-transform = Transform3D(-4.7326495e-07, -0.7564868, 0, -4.7326495e-07, 1.4454083e-15, -13.096376, 10.82704, -3.306709e-08, -5.724608e-07, -8.529322, 6.1283255, -3.8395152)
-mesh = SubResource("BoxMesh_m85yq")
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="Scene" unique_id=1781183144]
 transform = Transform3D(1, 4.300606e-09, 2.9490398e-08, 2.4849829e-09, 0.9740551, -0.2263113, -2.9698542e-08, 0.2263113, 0.9740551, -1.0675687, 1.6805775, 1.440573)

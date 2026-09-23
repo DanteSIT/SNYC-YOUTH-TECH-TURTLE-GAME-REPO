@@ -9,6 +9,7 @@ extends Area3D
 const DOME_COLOR := Color(0.78, 0.42, 0.9, 0.55)
 const DOME_GLOW := Color(1.0, 0.75, 1.0)
 const TENTACLE_COLOR := Color(0.9, 0.62, 0.96, 0.75)
+const CRUNCH_SOUND := preload("res://assets/audio/jellyfish-plastic-crunch.mp3")
 
 var _base_y := 0.0
 var _mats: Array[StandardMaterial3D] = []
@@ -48,12 +49,12 @@ func _apply_jelly_materials() -> void:
 		var mesh: Mesh = mesh_instance.mesh
 		if mesh == null:
 			continue
-		for surface in mesh.get_surface_count():
+		for surface_index in range(mesh.get_surface_count()):
 			var mat := tentacle_mat
 			var bbox := mesh.get_aabb()
 			if bbox.size.y > bbox.size.x and bbox.size.y > bbox.size.z:
 				mat = dome_mat
-			mesh_instance.set_surface_override_material(surface, mat)
+			mesh_instance.set_surface_override_material(surface_index, mat)
 
 
 func _make_mat(color: Color, emission_power: float) -> StandardMaterial3D:
@@ -74,10 +75,10 @@ func _on_body_entered(body: Node3D) -> void:
 		var animator: Node = body.get_node_or_null("PlayerAnimator")
 		if animator != null and animator.has_method("play_eat"):
 			animator.play_eat()
-		var crunch: AudioStreamPlayer = $Crunch
+		var crunch := AudioStreamPlayer.new()
+		crunch.stream = CRUNCH_SOUND
 		crunch.bus = "SFX"
-		remove_child(crunch)
 		get_tree().current_scene.add_child(crunch)
+		crunch.finished.connect(func(): crunch.queue_free())
 		crunch.play()
-		crunch.finished.connect(crunch.queue_free)
 		queue_free()

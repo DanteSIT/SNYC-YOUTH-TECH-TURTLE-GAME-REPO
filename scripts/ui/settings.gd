@@ -122,11 +122,11 @@ func _build_graphics_section(vbox: VBoxContainer) -> void:
 	aa.item_selected.connect(_on_aa_selected)
 	_aa_option = aa
 
-	var scale := _add_option_row(vbox, "Resolution Scale")
+	var scale_row := _add_option_row(vbox, "Resolution Scale")
 	for s in Graphics.get_scales():
-		scale.add_item("%d%%" % int(round(s * 100.0)))
-	scale.item_selected.connect(_on_scale_selected)
-	_scale_option = scale
+		scale_row.add_item("%d%%" % int(round(s * 100.0)))
+	scale_row.item_selected.connect(_on_scale_selected)
+	_scale_option = scale_row
 
 	var sharpen_row := _add_row(vbox, "Sharpen")
 	var sharpen := HSlider.new()

@@ -52,6 +52,6 @@ func _apply_binding(action: String, keycode: int, physical: int) -> void:
 	for ev in keep:
 		InputMap.action_add_event(action, ev)
 	var key := InputEventKey.new()
-	key.keycode = keycode
-	key.physical_keycode = physical
+	key.keycode = keycode as Key
+	key.physical_keycode = physical as Key
 	InputMap.action_add_event(action, key)

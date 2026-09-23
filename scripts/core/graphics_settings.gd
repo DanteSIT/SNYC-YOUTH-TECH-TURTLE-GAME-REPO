@@ -174,8 +174,8 @@ func apply() -> void:
 	ProjectSettings.set_setting("rendering/anti_aliasing/quality/use_taa", aa.taa)
 
 	var vp: Viewport = get_tree().root
-	vp.msaa_3d = int(aa.msaa)
-	vp.screen_space_aa = int(aa.ssaa)
+	vp.msaa_3d = (aa.msaa as Viewport.MSAA)
+	vp.screen_space_aa = (aa.ssaa as Viewport.ScreenSpaceAA)
 	vp.use_taa = bool(aa.taa)
 
 	var scale := SCALES[scale_index]

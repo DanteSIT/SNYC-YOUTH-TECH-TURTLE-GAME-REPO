@@ -18,7 +18,7 @@ var _shown := true
 var _fps_cap_index := 4
 var _vsync_enabled := false
 
-var _fps_min := 1.0e9
+var _fps_min: float = 1.0e9
 var _fps_sum := 0.0
 var _fps_samples := 0
 

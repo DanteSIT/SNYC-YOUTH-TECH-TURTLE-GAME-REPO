@@ -11,7 +11,7 @@ const BASE_SPEED_SCALE := 1.0
 const BOOST_SPEED_SCALE := 1.5
 
 @onready var _odysse: Node3D = get_node("../Odysse")
-@onready var _anim: AnimationPlayer = _odysse.get_node("AnimationPlayer")
+@onready var _anim: AnimationPlayer = _odysse.get_node_or_null("AnimationPlayer")
 
 const EAT_ANIM: Animation = preload("res://scenes/player/animations/eat.tres")
 const HURT_ANIM: Animation = preload("res://scenes/player/animations/hurt.tres")
@@ -21,6 +21,8 @@ var _override_timer := -1.0
 
 
 func _ready() -> void:
+	if _anim == null:
+		return
 	for anim_name in [ANIM_IDLE, ANIM_SWIM]:
 		if _anim.has_animation(anim_name):
 			_anim.get_animation(anim_name).loop = true
@@ -28,19 +30,16 @@ func _ready() -> void:
 	if library == null:
 		library = AnimationLibrary.new()
 		_anim.add_animation_library("", library)
-	var player := _anim.get_node_or_null("AnimationPlayer") as AnimationPlayer
-	if player:
-		var library := player.get_animation_library("") if player.has_animation_library("") else null
-		if library:
-			if not library.has_animation(ANIM_EAT):
-				library.add_animation(ANIM_EAT, EAT_ANIM)
-			if not library.has_animation(ANIM_HURT):
-				library.add_animation(ANIM_HURT, HURT_ANIM)
-			player.play(ANIM_IDLE)
+	if not library.has_animation(ANIM_EAT):
+		library.add_animation(ANIM_EAT, EAT_ANIM)
+	if not library.has_animation(ANIM_HURT):
+		library.add_animation(ANIM_HURT, HURT_ANIM)
+	_anim.play(ANIM_IDLE)
 
 
 func update_movement(direction: float, swimming: bool, boosting: bool, vertical_velocity: float, delta: float) -> void:
-	_odysse.rotation.y = (1.0 + direction) * PI / 2.0
+	if direction != 0.0:
+		_odysse.rotation.y = (1.0 + direction) * PI / 2.0
 
 	var target_tilt := 0.0
 	if vertical_velocity > 0.0:
@@ -59,6 +58,8 @@ func update_movement(direction: float, swimming: bool, boosting: bool, vertical_
 		anim_name = ANIM_SWIM
 		speed_scale = BOOST_SPEED_SCALE if boosting else BASE_SPEED_SCALE
 
+	if _anim == null:
+		return
 	if _anim.current_animation != anim_name and _anim.has_animation(anim_name):
 		_anim.play(anim_name)
 	_anim.speed_scale = speed_scale
@@ -73,7 +74,7 @@ func play_hurt() -> void:
 
 
 func play_override(anim_name: String, duration := -1.0) -> void:
-	if not _anim.has_animation(anim_name):
+	if _anim == null or not _anim.has_animation(anim_name):
 		return
 	_override = anim_name
 	_override_timer = duration
@@ -86,5 +87,5 @@ func _tick_override(delta: float) -> void:
 		_override_timer -= delta
 		if _override_timer <= 0.0:
 			_override = ""
-	elif _anim.current_animation != _override:
+	elif _anim and _anim.current_animation != _override:
 		_override = ""

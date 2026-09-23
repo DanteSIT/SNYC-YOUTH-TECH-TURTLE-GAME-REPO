@@ -1,5 +1,5 @@
 shader_type spatial;
-render_mode blend_mix, depth_draw_opaque, cull_disabled, specular_schlick_ggx;
+render_mode blend_mix, depth_draw_never, cull_disabled, specular_schlick_ggx;
 
 uniform vec3 surface_color : source_color = vec3(0.4, 0.74, 0.84);
 uniform vec3 crest_color : source_color = vec3(0.85, 0.97, 1.0);
@@ -39,4 +39,10 @@ void fragment() {
 	ALPHA = opacity * (0.35 + 0.65 * facing);
 	float crest = pow(clamp(w * 0.5 + 0.5, 0.0, 1.0), 3.0);
 	EMISSION = crest_color * crest * sparkle * 0.25;
+
+	// caustic light pattern
+	float caustic = sin(p.x * 8.0 + TIME * 1.5) * sin(p.y * 8.0 + TIME * 0.8) * 0.5 + 0.5;
+	caustic = pow(caustic, 3.0);
+	ALPHA = clamp(ALPHA + caustic * 0.1, 0.0, 1.0);
+	EMISSION += vec3(0.4, 0.8, 1.0) * caustic * sparkle * 0.15;
 }

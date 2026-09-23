@@ -62,7 +62,6 @@ var _swim_time := 0.0
 var _boost_time := 0.0
 var _vertical_presses := 0
 var _jelly_seen := 0
-var _flash := 0.0
 
 
 func _ready() -> void:

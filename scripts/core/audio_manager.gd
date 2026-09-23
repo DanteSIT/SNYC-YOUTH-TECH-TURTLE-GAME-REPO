@@ -88,10 +88,10 @@ func _save_and_apply() -> void:
 
 
 func _ensure_buses() -> void:
-	for name in [BUS_MUSIC, BUS_AMBIENCE, BUS_SFX]:
-		if AudioServer.get_bus_index(name) == -1:
+	for bus_name in [BUS_MUSIC, BUS_AMBIENCE, BUS_SFX]:
+		if AudioServer.get_bus_index(bus_name) == -1:
 			AudioServer.add_bus()
-			AudioServer.set_bus_name(AudioServer.bus_count - 1, name)
+			AudioServer.set_bus_name(AudioServer.bus_count - 1, bus_name)
 
 
 func _on_node_added(node: Node) -> void:
