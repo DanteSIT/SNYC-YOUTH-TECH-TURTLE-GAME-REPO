@@ -1,13 +1,28 @@
 [gd_scene format=3 uid="uid://dg3d0t1x8p4y3"]
 
 [ext_resource type="PackedScene" uid="uid://prn4vmhisdgs" path="res://assets/models/blender/transition_pipe.blend" id="1_model"]
-[ext_resource type="Shape3D" path="res://scenes/objects/pipe_collision.tres" id="2_col"]
 
 [sub_resource type="StandardMaterial3D" id="bub_mat"]
 transparency = 1
 cull_mode = 2
 shading_mode = 0
 albedo_color = Color(0.7, 0.92, 1, 0.4)
+
+; The collision for this pipe is a ring of 16 convex boxes, not the
+; ConcavePolygonShape3D that used to live in pipe_collision.tres. That trimesh
+; was baked from the .blend and could not be trusted: probing it reported
+; contacts in the middle of a bore that ray casts proved empty (it is a clean
+; 1.50 m cylinder), and a turtle whose box ended up low in the tube was frozen
+; solid -- 6 s with no forward progress and 0.00 m of response to the swim key,
+; because move_and_slide cannot depenetrate a body out of a concave surface.
+;
+; Convex pieces fix both halves of that. The bore is now exactly defined by these
+; numbers rather than by whatever triangles the bake produced, and every piece
+; can push a body back out, so the worst case is a nudge instead of a dead stop.
+; tools/probe_pipe_clearance.gd checks the bore and drives the real controller
+; through the pipe.
+[sub_resource type="BoxShape3D" id="tube_seg"]
+size = Vector3(0.5, 7.62, 0.7169)
 
 [sub_resource type="SphereMesh" id="bub_mesh"]
 radius = 0.05
@@ -24,8 +39,69 @@ transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
 [node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=66172686]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=1020389925]
-shape = ExtResource("2_col")
+[node name="Seg0" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1.000000, 0, 0.000000, 0, 1, 0, -0.000000, 0, 1.000000, 1.700000, 0, 0.000000)
+shape = SubResource("tube_seg")
+
+[node name="Seg1" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(0.923880, 0, 0.382683, 0, 1, 0, -0.382683, 0, 0.923880, 1.570595, 0, 0.650562)
+shape = SubResource("tube_seg")
+
+[node name="Seg2" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 1.202082, 0, 1.202082)
+shape = SubResource("tube_seg")
+
+[node name="Seg3" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(0.382683, 0, 0.923880, 0, 1, 0, -0.923880, 0, 0.382683, 0.650562, 0, 1.570595)
+shape = SubResource("tube_seg")
+
+[node name="Seg4" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(0.000000, 0, 1.000000, 0, 1, 0, -1.000000, 0, 0.000000, 0.000000, 0, 1.700000)
+shape = SubResource("tube_seg")
+
+[node name="Seg5" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(-0.382683, 0, 0.923880, 0, 1, 0, -0.923880, 0, -0.382683, -0.650562, 0, 1.570595)
+shape = SubResource("tube_seg")
+
+[node name="Seg6" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(-0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, -0.707107, -1.202082, 0, 1.202082)
+shape = SubResource("tube_seg")
+
+[node name="Seg7" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(-0.923880, 0, 0.382683, 0, 1, 0, -0.382683, 0, -0.923880, -1.570595, 0, 0.650562)
+shape = SubResource("tube_seg")
+
+[node name="Seg8" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(-1.000000, 0, 0.000000, 0, 1, 0, -0.000000, 0, -1.000000, -1.700000, 0, 0.000000)
+shape = SubResource("tube_seg")
+
+[node name="Seg9" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(-0.923880, 0, -0.382683, 0, 1, 0, 0.382683, 0, -0.923880, -1.570595, 0, -0.650562)
+shape = SubResource("tube_seg")
+
+[node name="Seg10" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(-0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, -0.707107, -1.202082, 0, -1.202082)
+shape = SubResource("tube_seg")
+
+[node name="Seg11" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(-0.382683, 0, -0.923880, 0, 1, 0, 0.923880, 0, -0.382683, -0.650562, 0, -1.570595)
+shape = SubResource("tube_seg")
+
+[node name="Seg12" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(-0.000000, 0, -1.000000, 0, 1, 0, 1.000000, 0, -0.000000, -0.000000, 0, -1.700000)
+shape = SubResource("tube_seg")
+
+[node name="Seg13" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(0.382683, 0, -0.923880, 0, 1, 0, 0.923880, 0, 0.382683, 0.650562, 0, -1.570595)
+shape = SubResource("tube_seg")
+
+[node name="Seg14" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, 1.202082, 0, -1.202082)
+shape = SubResource("tube_seg")
+
+[node name="Seg15" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(0.923880, 0, -0.382683, 0, 1, 0, 0.382683, 0, 0.923880, 1.570595, 0, -0.650562)
+shape = SubResource("tube_seg")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="." unique_id=2079180071]
 light_color = Color(0.85, 0.98, 1, 1)
