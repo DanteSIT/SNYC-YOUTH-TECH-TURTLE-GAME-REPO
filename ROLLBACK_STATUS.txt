@@ -334,3 +334,143 @@
 #  or, to keep the levels and drop only the tool changes:
 #      git checkout BASELINE-pre-seabed -- tools/
 #
+
+# ---------------------------------------------------------------------------
+# 2026-09-27  SHARK FACING + PIPE STUCK LOCK          commits 00761f6, a1d3aca
+# ---------------------------------------------------------------------------
+#
+#  REPORTED: "the shark boss swam backwards" / "and he has no textures", and
+#  "when comming into contact wiht the pipe the player would get stuck".
+#
+#  -----------------------------------------------------------------------
+#  1. SHARK SWAM BACKWARDS                        commit 00761f6
+#  -----------------------------------------------------------------------
+#  Two causes, and fixing only the obvious one would have looked like a fix
+#  while silently undoing itself on the next physics frame.
+#
+#    * shark_boss.gd assigns $Body.rotation.y = sin(...) * 0.15 every physics
+#      frame. That overwrites any yaw authored in the scene OUTRIGHT, so the
+#      180 degree turn in shark_boss.tscn never applied. Both rotation
+#      assignments in the script now omit the + PI, and the baked 180 was
+#      removed from the scene (Body -> Transform3D(0.9,0,0, 0,0.9,0, 0,0,0.9,
+#      0,0.6,0); CollisionShape3D basis -> identity, translation kept).
+#      Result 4.8 degrees.
+#
+#    * zshark.glb faces +Z, NOT the -Z the glTF convention implies. Measured:
+#      the caudal fin is a tall laterally thin plate (X 0.088, Y 1.153) at
+#      local z = -3.90, aspect 13.1 against 5.3 for the runner-up, and the
+#      head is at the +Z end. The original diag_shark_facing.gd used "deepest
+#      slab is the head" -- that slab is the PECTORAL FINS -- and passed both
+#      the right model and a backwards one, so it was deleted rather than
+#      trusted. That heuristic now lives in probe_boss_facing.gd, and the
+#      probe reports INCONCLUSIVE instead of guessing when no clear tail fin
+#      exists. Restoring + PI gives 174.5 degrees and is correctly rejected.
+#
+#  TO REVERT JUST THIS:
+#      git revert 00761f6
+#
+#  -----------------------------------------------------------------------
+#  2. PLAYER STUCK IN THE TRANSITION PIPE         commit a1d3aca
+#  -----------------------------------------------------------------------
+#  This was a HARD LOCK, not a bump. Measured: the turtle sat at
+#  (z 37.57, y 0.13) for 6 s with the forward key held, and the swim key moved
+#  it 0.00 m. Four separate things had to be found to explain it, and every
+#  one of them was wrong on the first guess.
+#
+#    a) The player SPAWNS INSIDE the pipe. In every level the Turtle is
+#       authored at the same z as the StartPipe (level_1: both at 40.6), in
+#       the middle of the tube, ~0.6 m below its axis.
+#
+#    b) VERTICAL INPUT WAS INVERTED. player_controller read
+#       Input.get_axis("ui_up", "ui_down"). Godot's signature is
+#       get_axis(NEGATIVE, POSITIVE) -- the FIRST action returns -1 -- so
+#       ui_up produced -1 and velocity.y = swim * SWIM_VELOCITY turned the up
+#       key into a downward push. project.godot binds ui_up to W and the up
+#       arrow, so holding W dove: MEASURED, ui_up moved the turtle -1.000 m
+#       in y over a third of a second. Inside a pipe, where the only way out
+#       is upward, the obvious key drove the turtle into the wall. This alone
+#       is enough to explain the report. Fixed, and the axis is now written in
+#       the order that means what it says.
+#
+#    c) Gravity dropped the turtle into the bore wall in 0.22 s, because the
+#       level's own spawn leaves only ~0.24 m of floor under the box.
+#
+#    d) THE COLLIDER COULD NOT LET GO. It was a 2624-face
+#       ConcavePolygonShape3D baked from the .blend. move_and_slide cannot
+#       depenetrate a body out of a concave surface -- once inside there is no
+#       interior to be pushed out of. It was also untrustworthy: cast_motion
+#       reported contacts at offsets where ray casts proved the bore empty,
+#       and at its own reported contact poses intersect_shape found nothing
+#       overlapping at all. The bore measured 1.70 m out of round.
+#
+#  CHANGED:
+#    * scenes/objects/transition_pipe.tscn: the single trimesh collision is
+#      replaced by a RING OF 16 CONVEX BOXES (bore 1.45, outer 1.95, 7.62
+#      long, all sharing one BoxShape3D sub-resource). Convex pieces can push
+#      a body back out, so the worst case is a nudge instead of a dead stop,
+#      and the bore is defined by numbers rather than by whatever triangles
+#      the bake produced. Radial measurement reads 1.40 to 1.56 depending on
+#      direction, which is a healthy 16-gon ring.
+#    * scenes/objects/pipe_collision.tres: kept but NO LONGER REFERENCED, with
+#      a comment in the file saying so and why. Deliberately not deleted, so
+#      the original bake is still available for comparison.
+#    * scripts/player/player_controller.gd: only the get_axis order changed.
+#      Gravity is untouched.
+#
+#  A MECHANISM THAT WAS TRIED AND THEN REMOVED, because measurement said so:
+#  neutral buoyancy inside the bore. The theory was that the bore's curved wall
+#  was too steep to stand on. With the convex collider the turtle slides along
+#  the bottom of the tube perfectly well, so the buoyancy was unnecessary --
+#  and actively harmful. The turtle hovered at spawn height with is_on_floor()
+#  false, which broke probe_floor on all 16 levels, and it crawled for up to
+#  2.03 s against a gate in level_2 that it passes cleanly without it.
+#  Traversal went from 30/32 to 32/32 when the buoyancy came out. The comment
+#  at the gravity line in player_controller.gd records this so it does not get
+#  "fixed" again.
+#
+#  NEW REGRESSION TEST: tools/probe_pipe_clearance.gd
+#    * sweeps the turtle's own box along the tube's axis at a ladder of
+#      heights, and names whatever stops it;
+#    * checks the ring is round in all 12 directions at 4 stations;
+#    * checks nothing else is inside the tube;
+#    * measures whether ui_up actually swims up and ui_down actually sinks;
+#    * drives the REAL controller through the pipe from the level's own spawn
+#      pose, both with no vertical input and starting wedged against the bore
+#      floor, holding the forward key and measuring the longest stall.
+#  Run:  godot --headless --path . --script res://tools/probe_pipe_clearance.gd
+#         -- res://scenes/levels/level_9.tscn
+#  Reads "PIPE OK" or "PIPE FAIL n" on the last line.
+#
+#  VALIDATED.
+#    * 32/32 traversals pass across all 16 levels (both required variants
+#      each). No hard locks, no stalls.
+#    * 16/16 probe_floor OK, 16/16 probe_seabed OK, unchanged.
+#    * THE PROBE CAN STILL FAIL. Restoring the old trimesh and re-inverting the
+#      axis makes it report the bore 1.70 m out of round, ui_up inverted, and
+#      the wedged case locked for 7.00 s. A check that cannot fail is worse
+#      than no check.
+#    * Three of the probe's own checks were wrong before the data was right and
+#      were corrected against measurement, not taste: it counted hitting the
+#      pipe's outer rim as a bore failure (10 false alarms); it began its sweep
+#      4 m outside the tube, so on the StartPipe side the box started inside
+#      the level's own start wall; and it called the seabed an "intruder" in
+#      the bore on all 16 levels when the seabed is SUPPOSED to meet the pipe's
+#      floor -- both sit at y = 0.00.
+#
+#  KNOWN, NOT FIXED, AND NOT THE PIPE:
+#    7 levels still report PIPE FAIL, all from named static findings that are
+#    level content: collectable gates and platforms sitting inside the bores
+#    (level_2 Gate1, level_7 Platform1/6, level_8 Gate2/8, level_11 Platform1,
+#    level_14 Platform8, level_15 Gate3/11) and seabed relief poking into the
+#    bore on levels 13 and 15. A "Gate" is an obstacle.tscn instance: a solid
+#    1x1x1 BoxShape3D scaled by its node transform, so level_2's Gate1 is a
+#    4.2 x 1.16 x 0.7 m solid box 1.6 m inside the StartPipe, which is where
+#    the player spawns. No NOT ROUND and no polarity failures anywhere.
+#
+#  TO REVERT JUST THIS:
+#      git revert a1d3aca
+#  or, to keep the pipe collider but restore the old vertical axis:
+#      git checkout 00761f6 -- scripts/player/player_controller.gd
+#
+#  NOT PUSHED. There is no remote and there never was.
+# ---------------------------------------------------------------------------
