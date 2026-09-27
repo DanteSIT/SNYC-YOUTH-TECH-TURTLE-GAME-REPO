@@ -51,6 +51,11 @@ SAND_ID = "m_sand"
 # re-tested from a render rather than taken on trust.
 REVERSE = True
 
+# Commit to read the original bed box transforms from, set by --beds-from. Once
+# a level has been converted the boxes are gone from the working tree, so a
+# re-run has nothing to reconstruct the profile from unless it is told where.
+BEDS_REF = None
+
 
 def quad(idx, a, b, c, d):
     """Two triangles for quad a-b-c-d (a,b on one row; c,d on the next)."""
@@ -68,12 +73,23 @@ OLD_BED = re.compile(
     r'transform = Transform3D\([^\n]*\)\n\n?', re.M)
 
 OLD_GEN_SUB = re.compile(
-    r'^\[sub_resource type="(?:ArrayMesh|ConcavePolygonShape3D)" id="seabed_(?:mesh|shape)"\][\s\S]*?'
+    # HeightMapShape3D has to be in here too. The collider was a
+    # ConcavePolygonShape3D first and is a HeightMapShape3D now, and a regex
+    # listing only the old type silently stops matching -- so re-running the tool
+    # leaves the previous collider in place and appends another one, and the
+    # scene quietly grows a fresh duplicate on every invocation.
+    r'^\[sub_resource type="(?:ArrayMesh|ConcavePolygonShape3D|HeightMapShape3D)"'
+    r' id="seabed_(?:mesh|shape)"\][\s\S]*?'
     r'(?=^\[)', re.M)
 
 OLD_GEN_NODES = re.compile(
     r'^\[node name="SeabedBody" type="StaticBody3D" parent="Terrain"\]\n\n'
     r'\[node name="Seabed" type="MeshInstance3D" parent="Terrain/SeabedBody"\][\s\S]*?'
+    r'(?=^\[node name="Col" type="CollisionShape3D" parent="Terrain/SeabedBody"\])'
+    # The collider has to be consumed as well. The lazy match above stops at the
+    # Col header, so without this the old Col survives while a fresh one is
+    # emitted below it, and every re-run appends another copy.
+    r'\[node name="Col" type="CollisionShape3D" parent="Terrain/SeabedBody"\][\s\S]*?'
     r'(?=^\[)', re.M)
 
 
@@ -202,7 +218,18 @@ def build_rows(prof, x_half):
 
 
 def flat(vals, nd=4):
-    return ", ".join(f"{c:.{nd}f}" for v in vals for c in v)
+    """Flatten nested per-vertex tuples into a plain list of floats.
+
+    This is what goes into the JSON dump read by tools/mesh_from_arrays.gd, so it
+    has to be a real list. An earlier version returned a pre-joined ", ".join()
+    string for direct splicing into the .tscn; that arrives in GDScript as a
+    String, and assigning a String where a PackedVector3Array is expected yields
+    an empty vertex array with no error of its own.
+    """
+    out = []
+    for v in vals:
+        out.extend(round(float(c), nd) for c in v)
+    return out
 
 
 def build_heightmap(prof, z_lo, z_hi):
@@ -230,10 +257,37 @@ def build_heightmap(prof, z_lo, z_hi):
     return w, d, origin, heights
 
 
-def process(path, write=True):
+def git_show(ref_path):
+    import subprocess
+    proc = subprocess.run(["git", "show", ref_path], capture_output=True, text=True)
+    if proc.returncode != 0:
+        raise SystemExit(f"git show {ref_path} failed: {proc.stderr.strip()}")
+    return proc.stdout
+
+
+def existing_vertex_count(text):
+    """Vertex count of a previously emitted seabed_mesh, or None.
+
+    Only understands the old, broken `_data` layout. Its arrays are still a
+    faithful record of the geometry that was computed, which makes it a usable
+    cross-check: if the profile is being re-read from a different source (a git
+    ref, say) the regenerated mesh must still come out the same size.
+    """
+    m = re.search(r'id="seabed_mesh"\][\s\S]*?"vertex_data": PackedVector3Array\(([^)]*)\)',
+                  text)
+    if not m or not m.group(1).strip():
+        return None
+    return m.group(1).count(",") // 3 + 1
+
+
+def process(path, write=True, surfaces_text=None):
     with open(path) as fh:
         text = fh.read()
-    beds = read_beds(text)
+    # The bed boxes are consumed by the first run, so re-running against a tree
+    # that has already been converted finds nothing to read. --beds-from points
+    # the geometry at the pre-conversion commit instead, while the surgery below
+    # still applies to the working file.
+    beds = read_beds(git_show(BEDS_REF + ":" + path) if BEDS_REF else text)
     if not beds:
         return None
 
@@ -241,11 +295,16 @@ def process(path, write=True):
     z_hi = max(b["z1"] for b in beds)
     prof = smooth_walk(beds, z_lo, z_hi)
     verts, normals, uvs, r_idx, c_idx = build_rows(prof, BED_HALF_W)
+    stem = os.path.splitext(os.path.basename(path))[0]
+    geo = {"vertex": flat(verts), "normal": flat(normals), "uv": flat(uvs),
+           "index": r_idx}
 
-    v_flat = flat(verts)
-    n_flat = flat(normals)
-    uv_flat = flat(uvs)
-    r_flat = ", ".join(str(k) for k in r_idx)
+    was = existing_vertex_count(text)
+    if was is not None and was != len(verts):
+        raise SystemExit(
+            f"{stem}: regenerated mesh has {len(verts)} vertices but the scene "
+            f"already holds a {was}-vertex seabed; the bed profile source and the "
+            f"scene have diverged, refusing to overwrite")
 
     # Collision is a HeightMapShape3D rather than a trimesh of the same surface.
     # The seabed is a heightfield to begin with, so the engine's own heightfield
@@ -276,12 +335,23 @@ def process(path, write=True):
                       text, count=1, flags=re.M)
 
     # 3. emit the mesh + collider sub_resources before the first [node
+    #
+    # The ArrayMesh body is NOT written here. ArrayMesh serialises as a
+    # `_surfaces` array of dictionaries holding interleaved PackedByteArray
+    # attribute buffers, a `format` bitmask and a `primitive` enum, and that
+    # layout is undocumented: the plausible-looking `_data` form with
+    # PackedVector3Arrays parses with no error and no warning, and yields a mesh
+    # whose surface_count is 0. Such a mesh draws nothing at all while the scene
+    # still loads and still collides, because collision is a separate
+    # CollisionShape3D -- so the whole seabed can disappear while every load
+    # check and every floor probe still passes. The body therefore comes from
+    # tools/mesh_from_arrays.gd, which builds the surface through the documented
+    # API and lets ResourceSaver write the file.
+    if surfaces_text is None:
+        raise SystemExit(f"no generated mesh text for {path}; run via main()")
     subs = (
         '[sub_resource type="ArrayMesh" id="seabed_mesh"]\n'
-        f'_data = {{"vertex_data": PackedVector3Array({v_flat}), '
-        f'"normal_data": PackedVector3Array({n_flat}), '
-        f'"uv_data": PackedVector2Array({uv_flat}), '
-        f'"index_data": PackedInt32Array({r_flat})}}\n\n'
+        f'{surfaces_text}\n'
         '[sub_resource type="HeightMapShape3D" id="seabed_shape"]\n'
         f'map_width = {hm_w}\n'
         f'map_depth = {hm_d}\n'
@@ -318,6 +388,14 @@ def process(path, write=True):
         m2 = re.search(r'^\[node name="Terrain"[^\]]*\]\n', text, re.M)
         text = text[:m2.end()] + "\n" + nodes + text[m2.end():]
 
+    # The emitted block ends with a blank line and removing the old Bed nodes
+    # leaves another one behind it, so without this a stack of blank lines grows
+    # by one on every run -- which makes the tool look non-idempotent even though
+    # the output is correct. Only this seam is squeezed: engine-written scenes
+    # do legitimately contain runs of blank lines elsewhere, so collapsing them
+    # globally would churn files this tool has no business touching.
+    text = re.sub(r'(shape = SubResource\("seabed_shape"\)\n)\n{2,}', r"\1\n", text)
+
     if write:
         with open(path, "w") as fh:
             fh.write(text)
@@ -328,13 +406,71 @@ def process(path, write=True):
         "name": os.path.basename(path), "n": len(beds), "z_lo": z_lo, "z_hi": z_hi,
         "old": (min(old_ys), max(old_ys)), "new": (min(new_ys), max(new_ys)),
         "rows": len(prof), "tris": len(r_idx) // 3, "ctris": len(c_idx) // 3,
+        "stem": stem, "geo": geo, "verts": len(verts), "indices": len(r_idx),
     }
 
 
+GODOT = "/home/dante-pc/Godot/Engine/Godot_v4.7.2-stable_linux.x86_64"
+TMP_OUT = "res://.tmp_seabed"
+DUMP = os.path.join("tools", ".seabed_dump.json")
+
+
+def build_meshes(reports):
+    """Have Godot turn each level's surface arrays into a serialised ArrayMesh.
+
+    Returns {stem: sub_resource body}. Raises SystemExit if the engine cannot be
+    run, or hands back a mesh with no surfaces -- the silent-invisibility case
+    this whole indirection exists to prevent.
+    """
+    import json
+    import shutil
+    import subprocess
+    import tempfile
+
+    if not os.path.exists(GODOT):
+        raise SystemExit(f"Godot binary not found at {GODOT}")
+    with open(DUMP, "w") as fh:
+        json.dump({"levels": {r["stem"]: r["geo"] for r in reports}}, fh)
+    try:
+        proc = subprocess.run(
+            [GODOT, "--headless", "--path", ".", "--script",
+             "res://tools/mesh_from_arrays.gd", "--", DUMP],
+            capture_output=True, text=True, timeout=600)
+    finally:
+        if os.path.exists(DUMP):
+            os.remove(DUMP)
+    if proc.returncode != 0:
+        print(proc.stdout[-3000:])
+        print(proc.stderr[-3000:], file=sys.stderr)
+        raise SystemExit("mesh_from_arrays.gd failed")
+    for line in proc.stdout.splitlines():
+        if line.startswith("MESHOK"):
+            print(f"  {line}")
+
+    out = {}
+    for r in reports:
+        path = os.path.join(".tmp_seabed", r["stem"] + ".tres")
+        if not os.path.exists(path):
+            raise SystemExit(f"engine wrote no mesh for {r['stem']}")
+        with open(path) as fh:
+            text = fh.read()
+        if "_surfaces" not in text:
+            raise SystemExit(f"{r['stem']}: serialised mesh has no _surfaces")
+        body = text.split("[resource]", 1)[1].strip("\n")
+        out[r["stem"]] = body
+    shutil.rmtree(".tmp_seabed", ignore_errors=True)
+    return out
+
+
 def main():
-    global REVERSE, LEVELS
+    global REVERSE, LEVELS, BEDS_REF
     if "--unflip" in sys.argv:
         REVERSE = False
+    BEDS_REF = None
+    if "--beds-from" in sys.argv:
+        BEDS_REF = sys.argv[sys.argv.index("--beds-from") + 1]
+        print(f"reading bed transforms from {BEDS_REF} (working tree is already "
+              f"converted; scenes will only have the seabed re-emitted)\n")
     only = None
     if "--only" in sys.argv:
         only = sys.argv[sys.argv.index("--only") + 1]
@@ -349,17 +485,33 @@ def main():
     total = 0
     print(f"{'level':16s} {'boxes':>5s} -> {'rows':>4s} tris   z range          "
           f"top before -> after{'   (UNFLIPPED winding)' if not REVERSE else ''}")
+
+    # Pass 1: compute the geometry for every level, writing nothing. Pass 2 has
+    # to build the meshes for all of them in a single Godot run, so the geometry
+    # is gathered before any scene file is touched.
+    reports = []
     for path in LEVELS:
-        r = process(path, write=write)
+        r = process(path, write=False, surfaces_text="")
         if r is None:
             print(f"{os.path.basename(path):16s} no seabed boxes, skipped")
             continue
+        reports.append(r)
         total += r["n"]
         print(f"{r['name']:16s} {r['n']:5d} -> {r['rows']:4d} {r['tris']:4d}   "
               f"{r['z_lo']:7.1f}..{r['z_hi']:7.1f}   "
               f"{r['old'][0]:5.2f}..{r['old'][1]:5.2f} -> "
               f"{r['new'][0]:5.2f}..{r['new'][1]:5.2f}")
-    print(f"\n{total} interpenetrating sand boxes -> 16 continuous surfaces"
+
+    if write and reports:
+        print("\nbuilding meshes via tools/mesh_from_arrays.gd ...")
+        meshes = build_meshes(reports)
+        # Pass 2: only now rewrite the scenes.
+        for r, path in zip(reports, [p for p in LEVELS
+                                     if os.path.splitext(os.path.basename(p))[0]
+                                     in meshes]):
+            process(path, write=True, surfaces_text=meshes[r["stem"]])
+
+    print(f"\n{total} interpenetrating sand boxes -> {len(reports)} continuous surfaces"
           f"{'  (DRY RUN, nothing written)' if not write else ''}")
 
 

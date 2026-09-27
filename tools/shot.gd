@@ -20,6 +20,8 @@ extends SceneTree
 ##   hud=off            hide the in-game HUD canvas
 ##   ortho=on           use an orthographic camera
 ##   ortho_size=n       orthographic half-height in world units (default 4)
+##   freecam=on         honour cam=/look= even when the scene has a player
+##                      camera, which is otherwise always preferred
 
 func _initialize() -> void:
 	_run.call_deferred()
@@ -59,13 +61,20 @@ func _run() -> void:
 			turtle.global_position = target
 		if spec.has("yaw"):
 			turtle.rotate_y(deg_to_rad(float(spec["yaw"])))
-		# The player body is pulled down by gravity every physics frame, so by the
-		# time the settle frames are done it has long since left the requested spot.
-		if spec.get("hold", "off") == "on":
-			_freeze(turtle)
+	# The player body is pulled down by gravity every physics frame, so by the
+	# time the settle frames are done it has long since left the requested spot --
+	# and the camera follows it down, so every capture lands somewhere different
+	# and nothing can be compared against a previous one. hold=on therefore has
+	# to work even without turtle=, which it previously did not: the freeze sat
+	# inside the `if spec.has("turtle")` branch above and was silently skipped.
+	if spec.get("hold", "off") == "on":
+		_freeze(turtle)
 	var cam: Camera3D = _find_player_camera(turtle)
 	var owned := false
-	if cam == null:
+	if cam == null or spec.get("freecam", "off") == "on":
+		if cam != null:
+			# A player camera would keep fighting the free camera for `current`.
+			cam.queue_free()
 		cam = Camera3D.new()
 		world.add_child(cam)
 		owned = true
