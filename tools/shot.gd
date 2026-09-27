@@ -119,6 +119,11 @@ func _find_player_camera(turtle: Node3D) -> Camera3D:
 func _find(from: Node, path: String) -> Node:
 	if path.is_empty():
 		return null
+	# "/root/..." addresses the scene tree itself. This is the only way to reach an
+	# autoload: DebugStats hangs off /root rather than off the level, so a path
+	# relative to the scene root can never find it and it lands in every capture.
+	if path.begins_with("/root/"):
+		return get_root().get_node_or_null(NodePath(path))
 	return from.get_node_or_null(NodePath(path))
 
 
@@ -126,9 +131,15 @@ func _hide(from: Node, path: String) -> void:
 	var node: Node = _find(from, path)
 	# A CanvasLayer is neither CanvasItem nor Node3D, so the obvious isinstance
 	# chain silently skipped the underwater grade. Duck-type on `visible` instead.
+	var hid := false
 	for target: Node in [node, _first_child_with(node, "visible")]:
 		if target != null and _has_property(target, "visible"):
 			target.set("visible", false)
+			hid = true
+	# A path that matches nothing is otherwise indistinguishable from one that
+	# worked, which is how a hide quietly stops having any effect.
+	if not hid:
+		printerr("SHOT: hide path matched nothing: ", path)
 
 
 func _has_property(obj: Object, prop: String) -> bool:

@@ -49,7 +49,15 @@ SAND_ID = "m_sand"
 # top, +X for the skirt. A trimesh wound the other way is invisible under
 # cull_back and cannot be stood on, and --unflip exists so the orientation can be
 # re-tested from a render rather than taken on trust.
-REVERSE = True
+# Winding. Godot's front faces are CLOCKWISE, so a triangle is front-facing iff
+# its right-hand-rule normal points AWAY from the viewer -- the opposite of the
+# OpenGL assumption, where front means counter-clockwise and the normal points at
+# the camera. Getting this backwards produces a bed that is visible from
+# underneath and invisible from above, and reports nothing at all while doing it.
+# The default below is the winding that puts the top surface's right-hand normal
+# at -Y and the skirt's at -X, i.e. both facing the camera. Flip it only to
+# reproduce the broken build.
+INVERT_WINDING = False
 
 # Commit to read the original bed box transforms from, set by --beds-from. Once
 # a level has been converted the boxes are gone from the working tree, so a
@@ -58,8 +66,15 @@ BEDS_REF = None
 
 
 def quad(idx, a, b, c, d):
-    """Two triangles for quad a-b-c-d (a,b on one row; c,d on the next)."""
-    if REVERSE:
+    """Two triangles for quad a-b-c-d (a,b on one row; c,d in the next).
+
+    Winding has been got backwards twice here, so the rule is spelled out. With
+    the default order below, the top surface's right-hand normal comes out -Y
+    and the skirt's -X. Both are then front-facing for a camera above the bed at
+    +X, which is the real one. See INVERT_WINDING above, and probe_winding.gd,
+    which pins the engine's convention down by measurement instead of assuming it.
+    """
+    if INVERT_WINDING:
         idx += [a, c, b, b, c, d]
     else:
         idx += [a, b, c, b, d, c]
@@ -164,14 +179,20 @@ def profile_at(prof, z):
 
 
 def build_rows(prof, x_half):
-    """Build the seabed surface, plus a skirt so the near edge is not see-through.
+    """Build the seabed surface, plus a skirt so the visible edge is not see-through.
 
     The old boxes were 6 m tall solids, so they hid everything below the sand.
-    A bare heightfield would leave the bottom of the frame looking through the
-    floor's near edge into whatever is behind it, so one continuous skirt is
-    hung off the +X (camera-facing) edge all the way down. It is a single wall
-    for the whole corridor, so it reintroduces none of the per-seam sand walls
-    that made the old seabed look broken.
+    A bare heightfield is a zero-thickness sheet, so past the edge the player can
+    actually see, the view continues underneath the bed and into empty space.
+
+    That edge is the -X one, NOT the +X one. The bed spans x = -8..+5, the player
+    camera sits at x = +3.576 and looks along -X, so x = +5 is 1.4 m BEHIND the
+    camera and can never appear on screen, while x = -8 is 11.6 m ahead and is
+    exactly where the sheet ends in view. The skirt therefore hangs off x = -8,
+    which is also where the old boxes' visible far face was, so this reproduces
+    the old silhouette. It is a single wall for the whole corridor, so it
+    reintroduces none of the per-seam sand walls that made the old seabed look
+    broken.
 
     Returns (verts, normals, uvs, render_idx, collide_idx). Collision only needs
     the top surface: the player is confined to the x=0 plane, so it can never
@@ -200,14 +221,14 @@ def build_rows(prof, x_half):
         quad(collide, a, a + 1, a + 2, a + 3)
     r_idx += collide
 
-    # --- near-edge skirt: vertical wall from the surface down to SKIRT_BOTTOM
+    # --- far-edge (-X) skirt: continuous vertical wall down to SKIRT_BOTTOM
     base = len(verts)
     for i, (z, y) in enumerate(prof):
         v = i / max(1, n - 1)
-        verts.append((BED_X + x_half, y, z))
+        verts.append((BED_X - x_half, y, z))
         normals.append((1.0, 0.0, 0.0))
         uvs.append((v, 0.0))
-        verts.append((BED_X + x_half, SKIRT_BOTTOM, z))
+        verts.append((BED_X - x_half, SKIRT_BOTTOM, z))
         normals.append((1.0, 0.0, 0.0))
         uvs.append((v, 1.0))
     for i in range(n - 1):
@@ -463,9 +484,9 @@ def build_meshes(reports):
 
 
 def main():
-    global REVERSE, LEVELS, BEDS_REF
-    if "--unflip" in sys.argv:
-        REVERSE = False
+    global INVERT_WINDING, LEVELS, BEDS_REF
+    if "--invert-winding" in sys.argv:
+        INVERT_WINDING = True
     BEDS_REF = None
     if "--beds-from" in sys.argv:
         BEDS_REF = sys.argv[sys.argv.index("--beds-from") + 1]
@@ -484,7 +505,7 @@ def main():
     write = "--dry" not in sys.argv
     total = 0
     print(f"{'level':16s} {'boxes':>5s} -> {'rows':>4s} tris   z range          "
-          f"top before -> after{'   (UNFLIPPED winding)' if not REVERSE else ''}")
+          f"top before -> after{'   (INVERTED winding, reproduces the bug)' if INVERT_WINDING else ''}")
 
     # Pass 1: compute the geometry for every level, writing nothing. Pass 2 has
     # to build the meshes for all of them in a single Godot run, so the geometry

@@ -82,8 +82,18 @@ func _probe(path: String, label: String) -> bool:
 
 ## Counts the triangles by orientation. The bed is a horizontal surface plus one
 ## vertical skirt, so a correct mesh has plenty of up-facing tris AND plenty of
-## +X-facing ones. A mesh wound the other way round has neither, and would be
-## silently culled by the cull_back in shaders/sand.gdshader.
+## +X-facing ones.
+##
+## The sign convention below is not the OpenGL one and getting it wrong is
+## invisible: Godot's front faces are CLOCKWISE, so a triangle is front-facing
+## iff its right-hand-rule normal points AWAY from the viewer. An earlier version
+## of this check required n.y > 0.5, i.e. the OpenGL assumption, and therefore
+## passed a bed that could only be seen from underneath while reporting it as
+## correctly wound. tools/probe_winding.gd measures the real convention.
+##
+## The top surface is watched from above, so it must wind to a right-hand normal
+## of -Y. The skirt stands on the far (-X) edge and is watched from +X, where the
+## camera is, so it must wind to -X.
 func _triangles(mesh: Mesh) -> Array[String]:
 	var out: Array[String] = []
 	var arrays: Array = mesh.surface_get_arrays(0)
@@ -95,20 +105,20 @@ func _triangles(mesh: Mesh) -> Array[String]:
 	if idx.is_empty():
 		out.append("surface has no indices")
 		return out
-	var up := 0
-	var wall := 0
+	var top_ok := 0
+	var skirt_ok := 0
 	var tris: int = idx.size() / 3
 	for t: int in range(tris):
 		var a: Vector3 = verts[idx[t * 3]]
 		var b: Vector3 = verts[idx[t * 3 + 1]]
 		var c: Vector3 = verts[idx[t * 3 + 2]]
 		var n: Vector3 = (b - a).cross(c - a).normalized()
-		if n.y > 0.5:
-			up += 1
-		elif absf(n.x) > 0.9:
-			wall += 1
-	if tris > 0 and float(up) / float(tris) < 0.5:
-		out.append("only %d/%d triangles face up -- the sand is inside-out and cull_back will hide it" % [up, tris])
-	if wall < 10:
-		out.append("only %d vertical skirt triangles, expected a continuous near-edge wall" % wall)
+		if n.y < -0.5:
+			top_ok += 1
+		elif n.x < -0.9:
+			skirt_ok += 1
+	if tris > 0 and float(top_ok) / float(tris) < 0.5:
+		out.append("only %d/%d triangles face up -- the sand is inside-out and cull_back will hide it from above" % [top_ok, tris])
+	if skirt_ok < 10:
+		out.append("only %d far-edge skirt triangles facing the camera, expected a continuous wall on the -X edge" % skirt_ok)
 	return out

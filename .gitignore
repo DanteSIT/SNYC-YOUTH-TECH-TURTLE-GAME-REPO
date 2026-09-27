@@ -14,3 +14,6 @@ __pycache__/
 
 # Blender scratch autosaves
 *.blend1
+# Screenshots are deliverables written into the game directory, not source. They
+# are also imported by Godot on sight, which would add a .import sidecar for each.
+screenshots/

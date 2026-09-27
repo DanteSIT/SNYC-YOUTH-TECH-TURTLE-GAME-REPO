@@ -260,8 +260,77 @@
 #      start_spin — so all 117 hazards render as identical 0.9 m static boxes.
 #    * clamp_y() buries platform rewards inside their own platform.
 #    * Tutorial stages 5 and 7 are broken.
-#    * The sand is now confirmed DRAWN (11-64% of pixels per band, measured
-#      with the turtle pinned) but has still never been looked at by eye. The
-#      open red-crush problem in shaders/underwater.gdshader means the sand may
-#      well read as water rather than sand — that is a grading question, not a
-#      missing-geometry one, and only a human eye can settle it.
+#    * The sand is now confirmed DRAWN, but it renders DARKER than the water
+#      behind it (in-process A/B at the player camera, level 1, lower band:
+#      99,125,139 with the bed vs 103,130,143 without) and every band is
+#      blue-dominant (R-B ~ -47). So the bed is geometrically correct and
+#      visible, yet still does not read as sand. Two contributing causes, both
+#      still unfixed and both needing an eye to judge:
+#        - the directional light reaches the bed at only ~27 deg elevation
+#          (N.L = 0.456) with the roof geometry directly above it, so a large
+#          part of the bed is shadowed;
+#        - the open red-crush in shaders/underwater.gdshader.
+#
+# -----------------------------------------------------------------------------
+#  NEW WORK — seabed winding + skirt side  (this commit)
+# -----------------------------------------------------------------------------
+#
+#  WHAT WAS WRONG. Two separate defects, both reported by eye as "the floor is
+#  on the wrong direction" and "the side is on the wrong side":
+#
+#    1. WINDING INVERTED. Godot's front faces are CLOCKWISE, so a triangle is
+#       front-facing iff its right-hand-rule normal points AWAY from the viewer.
+#       The OpenGL assumption is the exact opposite. The seabed was wound with
+#       +Y normals, which is a BACK face for a camera above it, so cull_back in
+#       shaders/sand.gdshader hid the whole bed and showed only its underside.
+#       tools/probe_seabed.gd had asserted n.y > 0.5, i.e. the OpenGL
+#       assumption, so the validator agreed with the bug and reported 16/16 OK.
+#    2. SKIRT ON THE WRONG EDGE. The bed spans x = -8..+5 and the player camera
+#       sits at x = +3.576 looking along -X, so the +X edge is 1.4 m BEHIND the
+#       camera and can never appear. The skirt was hung there, where it was
+#       invisible and did nothing, while the edge that actually ends in view at
+#       x = -8 had no wall behind it.
+#
+#  FIXES.
+#    * tools/fix_seabed.py: REVERSE/--unflip replaced by INVERT_WINDING=false /
+#      --invert-winding, defaulting to the winding that puts the top surface's
+#      right-hand normal at -Y and the skirt's at -X, i.e. both facing the
+#      camera. Skirt moved from BED_X + x_half to BED_X - x_half.
+#    * tools/probe_seabed.gd: now requires n.y < -0.5 for the top and n.x < -0.9
+#      for the skirt, and says which failure it saw.
+#    * tools/probe_winding.gd (new): measures the engine's convention by
+#      rendering one quad in both windings under cull_back and comparing against
+#      a cull_disabled control. Self-calibrating, because the first version of
+#      this test read one frame per winding with no warm-up and no control,
+#      returned a non-zero count for a fully culled face, and led to a SECOND
+#      wrong winding fix. It now also needs a warm-up and a control covering
+#      >25% of the frame, and fails loudly rather than guessing.
+#    * tools/shot.gd: hide= now accepts /root/... so autoloads are reachable
+#      (DebugStats is at /root/DebugStats and lands in every capture otherwise),
+#      and a hide path that matches nothing now prints a warning, because a
+#      silently-ignored hide is indistinguishable from a working one.
+#    * New diagnostics kept: diag_seabed_view.gd (bed AABB/transform/layers plus
+#      every mesh whose AABB overlaps it), diag_seabed_bisect.gd (renders the
+#      same Mesh resource in a bare scene to separate "bad mesh" from "occluded"),
+#      diag_seabed_ab.gd (in-process A/B, the only reliable way to compare two
+#      renders of an animated level).
+#
+#  VALIDATED. 16/16 load clean; 16/16 probe_floor OK; 16/16 probe_seabed OK.
+#  The corrected probe_seabed was confirmed to FAIL the inverted build
+#  ("only 0/228 triangles face up") and pass the corrected one, so it is a real
+#  check rather than a rubber stamp. The mesh rasterises: 43983 magenta pixels
+#  in a bare scene, and the bed changes 33-86% of pixels per band in-process.
+#
+#  SCREENSHOTS (on disk in screenshots/, gitignored — they are deliverables, and
+#  Godot would add a .import sidecar for each):
+#    01_level_01_start  02_level_01_mid  03_level_08_mid  04_level_13_mid
+#    05_level_13_angle (3/4 free cam)   06_level_13_sand (low skim of the bed)
+#    07_level_15_boss  08_tutorial
+#  All at 1280x720, turtle pinned, DebugStats hidden, HUD (clock + jellyfish
+#  counts) kept.
+#
+#  TO REVERT JUST THIS WORK:
+#      git revert <this commit>
+#  or, to keep the levels and drop only the tool changes:
+#      git checkout BASELINE-pre-seabed -- tools/
+#
