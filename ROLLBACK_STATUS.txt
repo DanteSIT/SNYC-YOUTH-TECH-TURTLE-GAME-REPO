@@ -73,9 +73,27 @@
 #            Self-contained: touches no level scene, so reverting it cannot
 #            disturb the seabed or the spawn fix.
 #
+#   8e00da6  Rollback log update (bookkeeping only, no game files)
+#            ROLLBACK_STATUS.txt
+#            -> git revert 8e00da6
+#
+#   aa6ee63  FIX: the seabed was invisible on screen. ArrayMesh was serialised
+#            in a format Godot silently ignores (surface_count 0).
+#            16 level scenes, tools/fix_seabed.py, tools/shot.gd,
+#            tools/mesh_from_arrays.gd (new), tools/probe_seabed.gd (new)
+#            -> git revert aa6ee63          (or: git reset --hard aa6ee63^)
+#            CAVEAT: reverting this puts the invisible seabed back. It does
+#            NOT restore the old box seabeds -- for that revert 6098cef as
+#            well, or reset to BASELINE-pre-seabed.
+#            6098cef (boxes, visible) -> aa6ee63 (heightfield, INVISIBLE)
+#            The bug lived in the whole of 6098cef through 8e00da6, so those
+#            three commits are all "sand present but not drawn".
+#
 #  Reverting 8c0e84e and keeping everything else is the "un-HUD" button.
 #  Reverting 6098cef brings back the terrace-stepped, z-fighting beds — that is
 #  the pre-session state of the seabed, not a broken build.
+#  Reverting aa6ee63 restores an invisible heightfield seabed, which is worse
+#  than either of the above; prefer keeping it.
 #
 # -----------------------------------------------------------------------------
 #  WHAT IS IN THE BASELINE  (so you know what you get back)
@@ -157,7 +175,8 @@
 #  baseline commit    a8538ceadbd9291ff052e0ec2407c3c9e2ad8dd5
 #  baseline date      2026-09-27 13:51:02 +0400
 #  prior commits      88a5b56, 189ad34, 3edc658, b3eddda (older snapshots)
-#  HEAD               8c0e84e  "Add a level clock and a missed-jellyfish count"
+#  HEAD               aa6ee63  "Fix invisible seabed: ArrayMesh was serialised
+#                              in a format Godot ignores"
 #
 #  Validate the game after any rollback — every level must load clean:
 #      G=/home/dante-pc/Godot/Engine/Godot_v4.7.2-stable_linux.x86_64
@@ -182,6 +201,18 @@
 #  begins inside the pipe tube) reports no hit. That is a probe artifact, not a
 #  hole in the seabed — probe_floor.gd cross-checks with a ray for this reason.
 #
+#  Then check that the sand is actually DRAWN, which is a separate question from
+#  both of the above and was the one that was broken:
+#      timeout 200 "$G" --headless --path . --script res://tools/probe_seabed.gd
+#  Expected output: "SEABED OK  16/16 levels have a visible, correctly wound
+#  sand surface".
+#
+#  Do not trust the load check or the floor probe to catch a missing floor. Both
+#  passed 16/16 for an entire commit range (6098cef..8e00da6) during which the
+#  seabed was invisible, because the collider is a separate node from the mesh
+#  and a mesh with zero surfaces is not an error to Godot. Only probe_seabed.gd
+#  looks at the surface.
+#
 # -----------------------------------------------------------------------------
 #  SESSION LOG
 # -----------------------------------------------------------------------------
@@ -201,6 +232,25 @@
 #                             VALIDATED label text read directly at runtime;
 #                             worst-case width (level_15, 133) measured against
 #                             the panel edges.
+#  2026-09-27       aa6ee63  THE SAND WAS NEVER BEING DRAWN. Reported as
+#                             "where is the floor? (sand)". The ArrayMesh in all
+#                             16 levels was serialised as `_data` with
+#                             PackedVector3Arrays, which Godot reads as a mesh
+#                             with surface_count 0 — no error, no warning, no
+#                             pixels. Load check 16/16 clean and floor probe
+#                             16/16 the whole time, because the collider is a
+#                             separate HeightMapShape3D. Mesh is now written by
+#                             the engine's own ResourceSaver; added
+#                             probe_seabed.gd because no existing check could see
+#                             this class of failure. Also fixed two idempotency
+#                             bugs in fix_seabed.py (duplicate Col and duplicate
+#                             HeightMapShape3D accumulating per run) and the
+#                             shot.gd hold=on gate that made every screenshot
+#                             non-deterministic.
+#                             VALIDATED 16/16 load, 16/16 floors, 16/16
+#                             probe_seabed; probe_seabed confirmed to FAIL on
+#                             the old mesh and pass on the new.
+#
 #  STILL OUTSTANDING (from the level-design audit, nothing implemented yet):
 #    * 339/1395 collectables (24.3%) and 28/119 gates sit OUTSIDE the playable
 #      [EndPipe.z, StartPipe.z] span — a relength.py regression. This inflates
@@ -209,5 +259,9 @@
 #      generator writes model_scene/model_scale/bob_amplitude/bob_speed/
 #      start_spin — so all 117 hazards render as identical 0.9 m static boxes.
 #    * clamp_y() buries platform rewards inside their own platform.
-#    * Tutorial stages 5 and 7 are broken; the seabed render has still never
-#      been looked at by eye.
+#    * Tutorial stages 5 and 7 are broken.
+#    * The sand is now confirmed DRAWN (11-64% of pixels per band, measured
+#      with the turtle pinned) but has still never been looked at by eye. The
+#      open red-crush problem in shaders/underwater.gdshader means the sand may
+#      well read as water rather than sand — that is a grading question, not a
+#      missing-geometry one, and only a human eye can settle it.
