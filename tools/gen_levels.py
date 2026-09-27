@@ -300,6 +300,11 @@ class Level:
         self.half = length / 2.0
         self.spawn_z = self.half - 6.0
         self.goal_z = -self.half + 6.0
+        # The start pipe IS the start of the level: the turtle spawns on its axis
+        # so the run begins inside the pipe, not a couple of metres downstream of
+        # it. The camera rides at the turtle's own z, so being at the pipe origin
+        # is also what keeps the opening shot framed by the pipe mouth.
+        self.start_pipe_z = self.spawn_z + 2.6
         self.counters = {}
         self.segs = []
     # -- helpers ---------------------------------------------------------
@@ -684,7 +689,7 @@ class Level:
             self.inst(self.nid("BgParticles"), "e_bgp", tx(1, 1, 1, -1.0, 3.0, z))
 
     def build_pipes_and_goal(self):
-        self.inst("StartPipe", "p_pipe", tx(-1, 1, -1, PLANE_X, 1.4, self.spawn_z + 2.6))
+        self.inst("StartPipe", "p_pipe", tx(-1, 1, -1, PLANE_X, 1.4, self.start_pipe_z))
         self.inst("EndPipe", "p_pipe", tx(1, 1, 1, PLANE_X, 1.4, self.goal_z))
         self.inst("Goal", "4_goal", tx(1, 1, 1, PLANE_X, 1.5, self.goal_z))
         self.inst("GoalPillarL", "5_obs", tx(0.4, 3.2, 0.4, -1.2, 1.5, self.goal_z))
@@ -732,7 +737,7 @@ shape = SubResource("ceiling_shape")
 """ % g(CEIL_Y))
         tail = []
         tail.append('[node name="Turtle" parent="." instance=ExtResource("1_turt")]\ntransform = %s\n'
-                    % tx(1, 1, 1, PLANE_X, 0.8, self.spawn_z))
+                    % tx(1, 1, 1, PLANE_X, 0.8, self.start_pipe_z))
         tail.append('[node name="UnderwaterOverlay" parent="." instance=ExtResource("o_uw")]\n')
         tail.append(
             '[node name="DepthFog" type="Node" parent="."]\nscript = ExtResource("d_fog")\n'

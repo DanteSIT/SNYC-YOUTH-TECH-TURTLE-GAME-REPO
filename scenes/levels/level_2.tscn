@@ -136,10 +136,10 @@ shape = SubResource("ceiling_shape")
 transform = Transform3D(13, 0, -0, 0, 6, 0, 0, 0, 15.1483, -1.5, -3, 40.6759)
 
 [node name="Bed2" parent="Terrain" instance=ExtResource("o_seabed")]
-transform = Transform3D(13, 0, -0, 0, 6, 0, 0, 0, 15.0826, -1.5, -4.4, 26.0604)
+transform = Transform3D(13, 0, -0, 0, 6, 0, 0, 0, 15.0826, -1.5, -3, 26.0604)
 
 [node name="Bed3" parent="Terrain" instance=ExtResource("o_seabed")]
-transform = Transform3D(13, 0, -0, 0, 6, 0, 0, 0, 8.179, -1.5, -3.2593, 14.9296)
+transform = Transform3D(13, 0, -0, 0, 6, 0, 0, 0, 8.179, -1.5, -3.25075, 14.9296)
 
 [node name="Bed4" parent="Terrain" instance=ExtResource("o_seabed")]
 transform = Transform3D(13, 0, -0, 0, 6, 0, 0, 0, 13.3878, -1.5, -2.6822, 4.6463)
@@ -148,10 +148,10 @@ transform = Transform3D(13, 0, -0, 0, 6, 0, 0, 0, 13.3878, -1.5, -2.6822, 4.6463
 transform = Transform3D(13, 0, -0, 0, 6, 0, 0, 0, 9.9651, -1.5, -2.322, -6.5302)
 
 [node name="Bed6" parent="Terrain" instance=ExtResource("o_seabed")]
-transform = Transform3D(13, 0, -0, 0, 6, 0, 0, 0, 12.3544, -1.5, -2.0459, -17.1899)
+transform = Transform3D(13, 0, -0, 0, 6, 0, 0, 0, 12.3544, -1.5, -2.54107, -17.1899)
 
 [node name="Bed7" parent="Terrain" instance=ExtResource("o_seabed")]
-transform = Transform3D(13, 0, -0, 0, 6, 0, 0, 0, 8.7671, -1.5, -2.2816, -27.2507)
+transform = Transform3D(13, 0, -0, 0, 6, 0, 0, 0, 8.7671, -1.5, -3, -27.2507)
 
 [node name="Bed8" parent="Terrain" instance=ExtResource("o_seabed")]
 transform = Transform3D(13, 0, -0, 0, 6, 0, 0, 0, 10.6483, -1.5, -3, -36.4583)
@@ -1265,7 +1265,7 @@ transform = Transform3D(0.4, 0, -0, 0, 3.2, 0, 0, 0, 0.4, -1.2, 1.5, -34)
 transform = Transform3D(0.4, 0, -0, 0, 3.2, 0, 0, 0, 0.4, 1.2, 1.5, -34)
 
 [node name="Turtle" parent="." instance=ExtResource("1_turt")]
-transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0, 0.8, 34)
+transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0, 0.8, 36.6)
 [node name="UnderwaterOverlay" parent="." instance=ExtResource("o_uw")]
 [node name="DepthFog" type="Node" parent="."]
 script = ExtResource("d_fog")

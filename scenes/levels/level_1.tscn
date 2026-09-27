@@ -123,7 +123,7 @@ transform = Transform3D(13, 0, 0, 0, 6, 0, 0, 0, 11.4635, -1.5, -4.0045, 1.5537)
 transform = Transform3D(13, 0, 0, 0, 6, 0, 0, 0, 12.7127, -1.5, -3.0228, -10.0344)
 
 [node name="Bed6" parent="Terrain" unique_id=163914183 instance=ExtResource("o_seabed")]
-transform = Transform3D(13, 0, 0, 0, 6, 0, 0, 0, 8.2509, -1.5, -4.4, -20.0162)
+transform = Transform3D(13, 0, 0, 0, 6, 0, 0, 0, 8.2509, -1.5, -3.83773, -20.0162)
 
 [node name="Bed7" parent="Terrain" unique_id=1802753368 instance=ExtResource("o_seabed")]
 transform = Transform3D(13, 0, 0, 0, 6, 0, 0, 0, 14.1861, -1.5, -3, -30.7347)
@@ -1080,7 +1080,7 @@ transform = Transform3D(0.4, 0, 0, 0, 3.2, 0, 0, 0, 0.4, -1.2, 1.5, -38)
 transform = Transform3D(0.4, 0, 0, 0, 3.2, 0, 0, 0, 0.4, 1.2, 1.5, -38)
 
 [node name="Turtle" parent="." unique_id=316559844 instance=ExtResource("1_turt")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 38)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 40.6)
 
 [node name="UnderwaterOverlay" parent="." unique_id=1315353422 instance=ExtResource("o_uw")]
 
