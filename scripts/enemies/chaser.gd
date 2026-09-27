@@ -6,6 +6,8 @@ extends Area3D
 @export var activate_range := 22.0
 @export var despawn_distance := 26.0
 
+const THREAT_SKIN := preload("res://materials/fish_threat.tres")
+
 var _player: Node3D
 var _active := false
 var _vel := Vector3.ZERO
@@ -19,16 +21,12 @@ func _ready() -> void:
 
 
 ## Threat colouring lives here rather than in hard-coded meshes, so the body can
-## be any model: whatever sits under Body/Model gets a red emissive override.
+## be any model: whatever sits under Body/Model gets the red-hot variant of the
+## fish skin. It used to be a flat red StandardMaterial3D, which left the fish as a
+## featureless silhouette with no countershading, specular or rim to give it form.
 func _tint_model() -> void:
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color(0.85, 0.25, 0.15)
-	mat.roughness = 0.45
-	mat.emission_enabled = true
-	mat.emission = Color(0.7, 0.1, 0.05)
-	mat.emission_energy_multiplier = 0.85
 	for m in find_children("*", "MeshInstance3D", true, false):
-		(m as MeshInstance3D).material_override = mat
+		(m as MeshInstance3D).material_override = THREAT_SKIN
 
 
 func _physics_process(delta: float) -> void:

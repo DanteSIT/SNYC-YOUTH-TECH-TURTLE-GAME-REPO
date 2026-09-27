@@ -20,8 +20,15 @@ uniform float caustic_speed : hint_range(0.0, 2.0) = 0.22;
 uniform float chroma : hint_range(0.0, 6.0) = 1.3;
 uniform float vignette_strength : hint_range(0.0, 2.0) = 0.72;
 uniform float vignette_softness : hint_range(0.05, 1.0) = 0.48;
-uniform float brightness : hint_range(0.5, 1.5) = 1.03;
-uniform float saturation : hint_range(0.0, 2.0) = 1.06;
+uniform float brightness : hint_range(0.5, 1.5) = 0.95;
+uniform float saturation : hint_range(0.0, 2.0) = 1.08;
+
+// Grade shape. The scene arrives here already tonemapped, so this pass is the
+// only place the image can be given a real black point: the flat sky ambient and
+// the volumetric fog emission lift every pixel off zero, and without a black
+// point the whole frame reads as milky no matter how the environment is tuned.
+uniform float contrast : hint_range(0.5, 2.0) = 1.16;
+uniform float black_point : hint_range(0.0, 0.25) = 0.05;
 
 // ridged interference -> caustic veins (4 trig; the third field was dropped
 // because this runs on every pixel of a full-screen pass)
@@ -64,8 +71,17 @@ void fragment() {
 	col += shallow_tint * caust * caustic_strength * (1.0 - depth * 0.65);
 
 	// --- underwater colour grade (mix toward tint, deepen shadows) ---
+	// The tint is applied as a straight multiply. It used to be scaled by 1.15,
+	// which pushed blue past 1.0 and quietly re-brightened everything the grade
+	// was meant to be pulling down.
 	vec3 tint = mix(shallow_tint, deep_tint, depth);
-	col = mix(col, col * tint * 1.15, tint_strength);
+	col = mix(col, col * tint, tint_strength);
+
+	// Reclaim the black point, then build contrast around mid grey. Without this
+	// the flat ambient term means the darkest thing in frame is still a pale blue.
+	col = max(col - vec3(black_point), vec3(0.0)) / max(1.0 - black_point, 0.001);
+	col = (col - 0.5) * contrast + 0.5;
+
 	float lum = dot(col, vec3(0.2126, 0.7152, 0.0722));
 	col = mix(col, mix(col, shadow_tint, 0.55), clamp(1.0 - lum, 0.0, 1.0) * (0.18 + depth * 0.4));
 	col *= brightness;

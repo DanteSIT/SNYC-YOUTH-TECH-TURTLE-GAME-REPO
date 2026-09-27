@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://d4nfs4j783uut"]
 
 [ext_resource type="Script" uid="uid://dglpvbn4lwoii" path="res://scripts/ui/splash.gd" id="1_spl"]
-[ext_resource type="Texture2D" uid="uid://ctycoedkvuh84" path="res://Assets/Screenshot 2025-05-30 111609.png" id="2_sykqw"]
+[ext_resource type="Texture2D" uid="uid://ctycoedkvuh84" path="res://assets/textures/title_art.png" id="2_sykqw"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_title"]
 font_size = 56

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://comg4l2imucbx"]
 
-[ext_resource type="PackedScene" uid="uid://dybxey3ewpydl" path="res://Odysse.fbx" id="1_nx6mx"]
+[ext_resource type="PackedScene" uid="uid://dybxey3ewpydl" path="res://assets/models/Odysse.fbx" id="1_nx6mx"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7vv6w"]
 

@@ -1,3 +1,16 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+
+# Build output (regenerate with the Export manager; never commit artifacts)
+Export/
+
+# Python tooling
+__pycache__/
+*.pyc
+
+# Local-only rollback bookkeeping (snapshots + status log, not part of the game)
+.gitinfo/
+
+# Blender scratch autosaves
+*.blend1

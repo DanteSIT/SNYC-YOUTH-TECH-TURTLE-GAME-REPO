@@ -1,0 +1,23 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3]
+
+; Main seagrass tuft for scenes/objects/kelp_bed.tscn.
+;
+; The bed is instanced 4-20 times per level across all 16 levels, so the look
+; lives here rather than in the scene. See shaders/seagrass.gdshader for how the
+; blades are blended.
+;
+; blade_height must match the nominal height of the quads this material is
+; assigned to (1.0 for the "tall" class), because the shader divides by it to
+; normalise the sway falloff.
+
+[ext_resource type="Shader" path="res://shaders/seagrass.gdshader" id="1_grass"]
+
+[resource]
+shader = ExtResource("1_grass")
+shader_parameter/tint_dark = Color(0.28, 0.42, 0.24, 1)
+shader_parameter/tint_light = Color(0.82, 0.98, 0.55, 1)
+shader_parameter/emission_tint = Color(0.18, 0.42, 0.3, 1)
+shader_parameter/emission_energy = 0.16
+shader_parameter/sway_speed = 0.85
+shader_parameter/sway_amount = 0.085
+shader_parameter/blade_height = 1.0

@@ -9,7 +9,7 @@ system, and update it whenever a system changes.
 
 ## 1. Project facts
 
-- **Engine:** Godot 4.7 stable — binary `/home/dante/Godot/Godot_v4.7-stable_linux.x86_64`
+- **Engine:** Godot 4.7 stable — binary `/home/dante-pc/Godot/Engine/Godot_v4.7.2-stable_linux_x86_64`
   (the `/usr/bin/godot` build rejects `--path`, do not use it for CLI work).
 - **Renderer:** Forward+ (Vulkan). NVIDIA RTX 4060 Ti, `DISPLAY=:0` available for capture.
 - **Structure:** corridor runner — turtle swims from `StartPipe` (+z) to `EndPipe` (−z).
@@ -65,17 +65,29 @@ registered into `Odysse/AnimationPlayer`'s default library at `_ready` (base cli
 ### `scripts/enemies/`
 | Script | Role |
 |---|---|
-| `enemy.gd` | Basic chase enemy (Area/hitbox, `take_damage` on contact) |
 | `chaser.gd` | Corridor-restricted chaser, activates on range, despawns behind player |
 | `boss.gd` | Angler boss — behavior only (scene holds body/meshes) |
 | `shark_boss.gd` | Shark boss — chase/spawn logic, imported `zshark.glb` body |
-| `crab.gd` / `jellyfish.gd` | Ambient seabed / decorative swimmers |
-| `fish.gd` / `fish_school.gd` | Ambient schooling fish |
+| `jellyfish.gd` | Ambient decorative swimmer (net drift + jelly texture) |
+| `ambient_fish.gd` | Ambient schooling fish (per-level `AmbientFish` node in `scenes/effects/`) |
+
+> `scripts/enemy.gd` + `scenes/objects/enemy.tscn` (legacy generic enemy) were removed —
+> nothing instanced them; live enemies are chaser/boss/shark/jellyfish scenes.
 
 ### `scripts/world/` — environment & FX
-`current.gd`, `caustics.gd`, `water_surface.gd`, `godrays.gd`, `motion_smear.gd`,
-`cable.gd`, `debris.gd`, `sand_terrain.gd`, `depth_fog.gd` (per-level `DepthFog` node:
+`current.gd`, `ambient_fish.gd`, `depth_fog.gd` (per-level `DepthFog` node:
 dives fog/background/ambient from the StartPipe to the EndPipe for a surface→depth gradient).
+God rays live in `scripts/godrays.gd` (root — the `world/godrays.gd` duplicate was removed).
+
+### `scripts/effects/` — VFX helpers
+`feedback_burst.gd` (damage bubble-burst / eat sparkle bursts), `ocean_debris.gd`
+(attached to each `OceanParticles` pocket in `scenes/effects/ocean_particles.tscn`).
+The pockets are a **glinting flotsam kit**: translucent bag films, faceted metallic
+crushed cans, emissive cork bobbers, wood splinters, kelp strands and shiny gleam
+chips tumbling in near-neutral suspension (`spread=360`, slight damping), plus a
+buoyant `Bobbers` emitter bobbing along the corridor's upper arc above each pocket.
+The script churns both emitters — turbulence field + velocity kick — while the
+turtle is within 6 m, with a per-instance material copy so pockets never cross-react.
 
 ### `scripts/objects/` — interactive props
 `collectable.gd` (jellyfish pickups: chomps via `PlayerAnimator.play_eat`), `hazard.gd`, `goal.gd`.
@@ -113,10 +125,12 @@ reproducible from this pipeline. The in-repo suite lives in `tools/`:
 
 | Tool | What it does |
 | --- | --- |
-| `tools/bake_plants.gd` | Bakes ~11 editable plant scenes |
 | `tools/bake_scenery.gd` | Bakes obstacle/platform/mountain scenes |
 | `tools/gen_levels.py` | Generates the 16 baseline level scenes |
-| `tools/migrate_scripts.py` | One-shot script-folder reorg (moves scripts into the §4 folders + rewrites `res://` refs + deletes legacy files); `--dry-run` to preview |
+| `tools/pipeline/theme_levels.py` | Retunes per-level `DepthFog` palettes into a warm-bright→cool-abyss dive arc (tutorial+1–3 shallow, 4–7 mid; 8–15 left at committed values) |
+| `tools/pipeline/relength.py` | Rebalances committed scene lengths into the 80/110/140 tier ladder (see Level-length ladder below); idempotent, `--dry-run` to preview |
+| `tools/pipeline/clean_levels.py` | Post-relength cleanup pass: relocates gadgets dangling past the sealed pipes back into the corridor (Gate→Hazard→Platform→Collect, keep-out pads, scenery-less bands) and trims far scenery past pipe + 6 m apron; level_1 is the untouched reference; idempotent, `--dry-run` to preview |
+| `tools/pipeline/place_debris.py` | Repositions each level's `OceanParticles` flotsam pockets onto the swim line (x=0, y=0.8) at symmetric corridor slices so the turtle swims *through* the debris (see § Effects); idempotent, `--dry-run` to preview |
 | `tools/pipeline/validate.sh` | Boots every level + splash; exits non-zero on any error |
 | `tools/pipeline/run.sh` | Reproduces bake → gen → validate in order |
 
@@ -129,6 +143,27 @@ Run the whole thing with `bash tools/pipeline/run.sh`, or validate-only with
 > baked into the committed level scenes. If level content must be regenerated, restore those passes
 > under `tools/pipeline/` first and re-enable step 3 of `run.sh`.
 
+**Level-length ladder (`tools/pipeline/relength.py`):**
+The committed scenes already ramp GodRays `level_length` 66 → 232 across the 16 levels.
+`relength.py` rebalances that into three tiers so the longest runs don't sprawl past the
+density curve:
+
+| Tier | Files | `level_length` | Pipe span (= length − 9.4) |
+| --- | --- | --- | --- |
+| tutorial | `tutorial.tscn` | 66 (unchanged) | 56.6 m |
+| short | `level_1..5` | 80 | 70.6 m |
+| mid | `level_6..10` | 110 | 100.6 m |
+| long | `level_11..15` | 140 | 130.6 m |
+
+Geometry invariants every committed level shares and the tool relies on: corridor center
+z = 1.3, pipe span = `level_length − 9.4`, Turtle spawn = StartPipe − 2.6, Goal + GoalPillarL/R
+at EndPipe, GodRays `level_length` stamp matches the tier. (The old `WaterSurface`
+z-scale stamp was removed from all levels in the 2026 backdrop strip.) The tool moves
+StartPipe/EndPipe
+symmetrically, drags Turtle/Goal/pillars along, re-stamps `level_length`, and only
+adds seabed tiles when a pipe would poke past existing coverage (shrinks never need this — scenery
+beyond the new pipes stays in place as backdrop and is never deleted). Re-running is a no-op.
+
 **Rules that must never break:**
 - Camera lane `x ∈ [1.5, 5.5]` stays clear of all scenery. Left walls `x=−3.35`, right walls
   `x=+5.2`, right-side mountains `x ≥ +9.5`. Backdrop mountains near pipes start ≥11 m past the pipe.
@@ -140,7 +175,7 @@ Run the whole thing with `bash tools/pipeline/run.sh`, or validate-only with
 ## 7. Validation runbook
 
 ```bash
-G=/home/dante/Godot/Godot_v4.7-stable_linux.x86_64
+G=/home/dante-pc/Godot/Engine/Godot_v4.7.2-stable_linux_x86_64
 bash tools/pipeline/validate.sh          # 16 levels, menu, tutorial — all OK/FAIL
 $G --headless --path . res://scenes/ui/splash.tscn --quit-after 20   # boot smoke test
 # Screenshot: godot --script MUST use --path, or res:// returns null (black PNGs)

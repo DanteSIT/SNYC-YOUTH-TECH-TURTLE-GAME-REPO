@@ -2,6 +2,14 @@
 
 [ext_resource type="Shader" path="res://shaders/underwater.gdshader" id="1_sh"]
 
+; The grade parameters live here rather than in each level, so the whole corridor
+; shares one look. depth_fog.gd animates `depth` at runtime as the player dives;
+; everything else is static.
+;
+; `contrast` and `black_point` are what stop the frame reading as milky: the
+; environment contributes a flat sky ambient plus volumetric fog emission, which
+; pushes every pixel off zero before this pass ever sees it.
+
 [sub_resource type="ShaderMaterial" id="uw_mat"]
 shader = ExtResource("1_sh")
 shader_parameter/tint_strength = 0.34
@@ -9,7 +17,10 @@ shader_parameter/depth = 0.35
 shader_parameter/wobble_amount = 0.0032
 shader_parameter/caustic_strength = 0.16
 shader_parameter/vignette_strength = 0.72
-shader_parameter/brightness = 1.03
+shader_parameter/brightness = 0.95
+shader_parameter/saturation = 1.08
+shader_parameter/contrast = 1.16
+shader_parameter/black_point = 0.05
 
 [node name="UnderwaterOverlay" type="CanvasLayer"]
 layer = 0

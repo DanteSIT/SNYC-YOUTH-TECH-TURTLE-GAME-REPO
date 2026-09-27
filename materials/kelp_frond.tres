@@ -1,0 +1,24 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3]
+
+; Tall kelp fronds in scenes/objects/kelp_bed.tscn -- the "frond" class, three tall
+; blades rising through each tuft.
+;
+; Same shader as the seagrass, tuned for a blade that is nearly three times taller
+; than it is wide: more sway, a wider tip-to-root gradient, and a slightly lower
+; scissor because the frond sprite is a narrower shape and needs to keep its thin
+; midrib.
+;
+; blade_height matches this class's nominal quad height (2.2); see
+; shaders/seagrass.gdshader for what that uniform drives.
+
+[ext_resource type="Shader" path="res://shaders/seagrass.gdshader" id="1_grass"]
+
+[resource]
+shader = ExtResource("1_grass")
+shader_parameter/tint_dark = Color(0.22, 0.36, 0.2, 1)
+shader_parameter/tint_light = Color(0.9, 1.05, 0.6, 1)
+shader_parameter/emission_tint = Color(0.16, 0.4, 0.26, 1)
+shader_parameter/emission_energy = 0.14
+shader_parameter/sway_speed = 0.62
+shader_parameter/sway_amount = 0.13
+shader_parameter/blade_height = 2.2

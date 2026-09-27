@@ -8,8 +8,6 @@
 [ext_resource type="PackedScene" path="res://scenes/objects/platform.tscn" id="6_plat"]
 [ext_resource type="PackedScene" path="res://scenes/effects/current.tscn" id="7_cur"]
 [ext_resource type="PackedScene" path="res://scenes/objects/seabed.tscn" id="o_seabed"]
-[ext_resource type="PackedScene" path="res://scenes/effects/backdrop_far.tscn" id="o_bdfar"]
-[ext_resource type="PackedScene" path="res://scenes/effects/backdrop_near.tscn" id="o_bdnear"]
 [ext_resource type="Texture2D" path="res://assets/generated/uw_backdrop_far.png" id="sky_tex"]
 [ext_resource type="PackedScene" path="res://assets/models/blender/table coral.blend" id="o_coral"]
 [ext_resource type="PackedScene" path="res://scenes/objects/starfish.tscn" id="o_star"]
@@ -21,7 +19,6 @@
 [ext_resource type="PackedScene" path="res://scenes/objects/shark_boss.tscn" id="o_sboss"]
 [ext_resource type="PackedScene" path="res://scenes/objects/chaser.tscn" id="o_chaser"]
 [ext_resource type="PackedScene" path="res://scenes/objects/transition_pipe.tscn" id="p_pipe"]
-[ext_resource type="PackedScene" path="res://scenes/effects/water_surface.tscn" id="w_ws"]
 [ext_resource type="PackedScene" path="res://scenes/effects/godrays.tscn" id="g_rays"]
 [ext_resource type="PackedScene" path="res://scenes/effects/bubbles.tscn" id="5_bub"]
 [ext_resource type="PackedScene" path="res://scenes/effects/sea_dust.tscn" id="o_dust"]
@@ -67,28 +64,29 @@
 [ext_resource type="PackedScene" path="res://assets/models/kenney/survival/box.glb" id="k_box"]
 [ext_resource type="PackedScene" path="res://assets/models/kenney/survival/bucket.glb" id="k_bucket"]
 [ext_resource type="PackedScene" path="res://assets/models/kenney/survival/metal-panel.glb" id="k_panel"]
-[ext_resource type="PackedScene" path="res://assets/models/kenney/survival/fish.glb" id="k_fish"]
-[ext_resource type="PackedScene" path="res://assets/models/kenney/survival/fish-large.glb" id="k_fishl"]
+[ext_resource type="PackedScene" path="res://scenes/objects/ambient_fish.tscn" id="k_fish"]
+[ext_resource type="PackedScene" path="res://scenes/objects/ambient_fish_large.tscn" id="k_fishl"]
 [ext_resource type="PackedScene" path="res://assets/models/kenney/pirate/ship-wreck.glb" id="k_wreck"]
 
 [sub_resource type="PanoramaSkyMaterial" id="bsky_mat"]
 panorama = ExtResource("sky_tex")
-energy_multiplier = 1.15
+energy_multiplier = 0.851
 
 [sub_resource type="Sky" id="bsky"]
 sky_material = SubResource("bsky_mat")
 
 [sub_resource type="Environment" id="env"]
+; grading retuned by tools/retune_grading.py
 
 background_mode = 2
 sky = SubResource("bsky")
 ambient_light_source = 2
-ambient_light_color = Color(0.3, 0.66, 0.92, 1)
-ambient_light_energy = 0.64
+ambient_light_color = Color(0.300, 0.660, 0.920, 1)
+ambient_light_energy = 0.448
 reflected_light_source = 3
 tonemap_mode = 3
-tonemap_exposure = 0.92
-tonemap_white = 2.0
+tonemap_exposure = 0.7912
+tonemap_white = 2.4
 ssr_enabled = true
 ssr_fade_in = 0.1
 ssr_fade_out = 4.0
@@ -96,20 +94,20 @@ ssao_enabled = true
 ssao_radius = 0.04
 ssao_intensity = 0.55
 glow_enabled = true
-glow_intensity = 0.85
-glow_bloom = 0.16
-glow_hdr_threshold = 0.9
+glow_intensity = 0.4675
+glow_bloom = 0.096
+glow_hdr_threshold = 1.15
 fog_enabled = true
-fog_light_color = Color(0.24, 0.52, 0.78, 1)
+fog_light_color = Color(0.240, 0.520, 0.780, 1)
 fog_light_energy = 0.62
-fog_sun_scatter = 0.3
+fog_sun_scatter = 0.165
 fog_density = 0.0155
 fog_aerial_perspective = 0.1
 fog_sky_affect = 0.4
 volumetric_fog_enabled = true
 volumetric_fog_density = 0.0058
-volumetric_fog_albedo = Color(0.24, 0.45, 0.6, 1)
-volumetric_fog_emission_energy = 0.14
+volumetric_fog_albedo = Color(0.240, 0.450, 0.600, 1)
+volumetric_fog_emission_energy = 0.04
 
 [sub_resource type="BoxShape3D" id="ceiling_shape"]
 size = Vector3(20, 0.2, 178)
@@ -119,7 +117,7 @@ size = Vector3(20, 0.2, 178)
 environment = SubResource("env")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.9704294, -0.06041102, 0.23370345, 0.054571275, 0.888204, 0.4561973, -0.23513567, 0.45546085, -0.8586426, 0, 1.6496612, 0)
-light_color = Color(0.96, 1, 1.03, 1)
+light_color = Color(0.960, 1.000, 1.030, 1)
 light_energy = 0.92
 light_indirect_energy = 1.2
 light_volumetric_fog_energy = 0.8
@@ -130,7 +128,6 @@ shadow_enabled = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.6, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Ceiling"]
 shape = SubResource("ceiling_shape")
-[node name="Backdrops" type="Node3D" parent="."]
 [node name="Terrain" type="Node3D" parent="."]
 [node name="Scenery" type="Node3D" parent="."]
 [node name="Fauna" type="Node3D" parent="."]
@@ -185,17 +182,6 @@ transform = Transform3D(13, 0, -0, 0, 6, 0, 0, 0, 10.874, -1.5, -3, -74.3677)
 
 [node name="Bed17" parent="Terrain" instance=ExtResource("o_seabed")]
 transform = Transform3D(13, 0, -0, 0, 6, 0, 0, 0, 7.9453, -1.5, -3, -83.2774)
-
-[node name="BdFar1" parent="Backdrops" instance=ExtResource("o_bdfar")]
-transform = Transform3D(0, 0, -1, 0, 4, 0, 188, 0, 0, -36, 2, 0)
-shader_parameter/offset_x = 0.1467
-shader_parameter/offset_y = 0
-
-[node name="BdNear1" parent="Backdrops" instance=ExtResource("o_bdnear")]
-transform = Transform3D(0, 0, -1, 0, 4, 0, 188, 0, 0, -21, 2.6, -6)
-shader_parameter/offset_x = 0.5167
-shader_parameter/offset_y = 0.04
-
 [node name="Roof1" parent="Scenery" instance=ExtResource("k_rlC")]
 transform = Transform3D(1.3063, 0, 1.0026, 0, 0.9057, 0, -1.0026, 0, 1.3063, -1.8572, 4.3815, -86.1873)
 
@@ -647,7 +633,7 @@ transform = Transform3D(2.6369, 0, -1.636, 0, 3.1032, 0, 1.636, 0, 2.6369, -1.50
 transform = Transform3D(-3.5478, 0, 2.0696, 0, 4.1074, 0, -2.0696, 0, -3.5478, -2.3003, 1.8, -59.9979)
 
 [node name="Kelp1" parent="Scenery" instance=ExtResource("o_kelp")]
-transform = Transform3D(-1.7891, 0, -0.6437, 0, 1.9013, 0, 0.6437, 0, -1.7891, -2.041, 1.8, -58.9538)
+transform = Transform3D(-1.7891, 0, -0.6437, 0, 1.90138, 0, 0.6437, 0, -1.7891, -2.041, 1.8, -58.9538)
 
 [node name="Plant9" parent="Scenery" instance=ExtResource("k_pb")]
 transform = Transform3D(-3.4248, 0, 1.7378, 0, 3.8405, 0, -1.7378, 0, -3.4248, -2.1477, 1.8, -57.5404)
@@ -659,22 +645,22 @@ transform = Transform3D(0.3959, 0, -3.0409, 0, 3.0666, 0, 3.0409, 0, 0.3959, -1.
 transform = Transform3D(-1.9814, 0, 0.884, 0, 2.1696, 0, -0.884, 0, -1.9814, -2.1067, 1.09, -54.6318)
 
 [node name="Kelp2" parent="Scenery" instance=ExtResource("o_kelp")]
-transform = Transform3D(-1.585, 0, -1.5725, 0, 2.2327, 0, 1.5725, 0, -1.585, -2.3609, 1.09, -53.6147)
+transform = Transform3D(-1.585, 0, -1.5725, 0, 2.23271, 0, 1.5725, 0, -1.585, -2.3609, 1.09, -53.6147)
 
 [node name="Coral2" parent="Scenery" instance=ExtResource("o_coral")]
 transform = Transform3D(-0.0551, 0, -0.5999, 0, 0.6024, 0, 0.5999, 0, -0.0551, -1.8364, 1.09, -52.3329)
 
 [node name="Kelp3" parent="Scenery" instance=ExtResource("o_kelp")]
-transform = Transform3D(-2.1285, 0, 0.7227, 0, 2.2479, 0, -0.7227, 0, -2.1285, -2.1096, 1.09, -51.1778)
+transform = Transform3D(-2.1285, 0, 0.7227, 0, 2.24785, 0, -0.7227, 0, -2.1285, -2.1096, 1.09, -51.1778)
 
 [node name="Coral3" parent="Scenery" instance=ExtResource("o_coral")]
 transform = Transform3D(-0.1225, 0, -0.6429, 0, 0.6545, 0, 0.6429, 0, -0.1225, -1.7848, 1.09, -50.1392)
 
 [node name="Kelp4" parent="Scenery" instance=ExtResource("o_kelp")]
-transform = Transform3D(-2.5947, 0, -0.1, 0, 2.5966, 0, 0.1, 0, -2.5947, -2.4372, 1.8, -48.4059)
+transform = Transform3D(-2.5947, 0, -0.1, 0, 2.59663, 0, 0.1, 0, -2.5947, -2.4372, 1.8, -48.4059)
 
 [node name="Kelp5" parent="Scenery" instance=ExtResource("o_kelp")]
-transform = Transform3D(-2.4583, 0, -0.2866, 0, 2.475, 0, 0.2866, 0, -2.4583, -2.2269, 1.8, -46.8367)
+transform = Transform3D(-2.4583, 0, -0.2866, 0, 2.47495, 0, 0.2866, 0, -2.4583, -2.2269, 1.8, -46.8367)
 
 [node name="Coral4" parent="Scenery" instance=ExtResource("o_coral")]
 transform = Transform3D(-0.2715, 0, -0.3288, 0, 0.4264, 0, 0.3288, 0, -0.2715, -1.676, 1.8, -45.1355)
@@ -701,7 +687,7 @@ transform = Transform3D(-0.2244, 0, 0.6088, 0, 0.6489, 0, -0.6088, 0, -0.2244, -
 transform = Transform3D(0.504, 0, 0.313, 0, 0.5933, 0, -0.313, 0, 0.504, -1.7699, 0.9733, -35.5362)
 
 [node name="Kelp6" parent="Scenery" instance=ExtResource("o_kelp")]
-transform = Transform3D(2.4174, 0, 0.2781, 0, 2.4333, 0, -0.2781, 0, 2.4174, -2.2195, 0.9733, -33.7763)
+transform = Transform3D(2.4174, 0, 0.2781, 0, 2.43334, 0, -0.2781, 0, 2.4174, -2.2195, 0.9733, -33.7763)
 
 [node name="Coral9" parent="Scenery" instance=ExtResource("o_coral")]
 transform = Transform3D(-0.0533, 0, -0.5399, 0, 0.5425, 0, 0.5399, 0, -0.0533, -1.584, 0.9733, -32.4596)
@@ -710,10 +696,10 @@ transform = Transform3D(-0.0533, 0, -0.5399, 0, 0.5425, 0, 0.5399, 0, -0.0533, -
 transform = Transform3D(-1.5004, 0, -2.1602, 0, 2.6302, 0, 2.1602, 0, -1.5004, -1.5097, 0.9733, -31.0892)
 
 [node name="Kelp7" parent="Scenery" instance=ExtResource("o_kelp")]
-transform = Transform3D(0.1766, 0, 2.2779, 0, 2.2847, 0, -2.2779, 0, 0.1766, -2.2115, 0.9733, -29.9888)
+transform = Transform3D(0.1766, 0, 2.2779, 0, 2.28474, 0, -2.2779, 0, 0.1766, -2.2115, 0.9733, -29.9888)
 
 [node name="Kelp8" parent="Scenery" instance=ExtResource("o_kelp")]
-transform = Transform3D(1.0352, 0, -1.8804, 0, 2.1465, 0, 1.8804, 0, 1.0352, -2.2414, 0.9733, -28.7634)
+transform = Transform3D(1.0352, 0, -1.8804, 0, 2.14652, 0, 1.8804, 0, 1.0352, -2.2414, 0.9733, -28.7634)
 
 [node name="Plant13" parent="Scenery" instance=ExtResource("k_pb")]
 transform = Transform3D(2.7775, 0, -1.7276, 0, 3.2709, 0, 1.7276, 0, 2.7775, -2.1612, 0.9733, -27.3108)
@@ -770,7 +756,7 @@ transform = Transform3D(-2.252, 0, -3.9768, 0, 4.5701, 0, 3.9768, 0, -2.252, -2.
 transform = Transform3D(-2.717, 0, -3.1642, 0, 4.1706, 0, 3.1642, 0, -2.717, -2.3722, -1.4, -4.3587)
 
 [node name="Kelp9" parent="Scenery" instance=ExtResource("o_kelp")]
-transform = Transform3D(1.8404, 0, 1.5807, 0, 2.426, 0, -1.5807, 0, 1.8404, -2.3736, -1.4, -2.8372)
+transform = Transform3D(1.8404, 0, 1.5807, 0, 2.42604, 0, -1.5807, 0, 1.8404, -2.3736, -1.4, -2.8372)
 
 [node name="Urchin5" parent="Scenery" instance=ExtResource("o_urchin")]
 transform = Transform3D(2.9968, 0, -0.6914, 0, 3.0756, 0, 0.6914, 0, 2.9968, -1.6678, -1.4, -1.9332)
@@ -779,7 +765,7 @@ transform = Transform3D(2.9968, 0, -0.6914, 0, 3.0756, 0, 0.6914, 0, 2.9968, -1.
 transform = Transform3D(-1.1471, 0, -2.9391, 0, 3.155, 0, 2.9391, 0, -1.1471, -2.1569, -1.4, -0.9479)
 
 [node name="Kelp10" parent="Scenery" instance=ExtResource("o_kelp")]
-transform = Transform3D(-1.6926, 0, 0.5745, 0, 1.7874, 0, -0.5745, 0, -1.6926, -2.0396, -1.4, 0.4366)
+transform = Transform3D(-1.6926, 0, 0.5745, 0, 1.78744, 0, -0.5745, 0, -1.6926, -2.0396, -1.4, 0.4366)
 
 [node name="Fan7" parent="Scenery" instance=ExtResource("o_fan")]
 transform = Transform3D(0.9093, 0, -1.5106, 0, 1.7631, 0, 1.5106, 0, 0.9093, -1.8879, -1.4, 2.0408)
@@ -794,7 +780,7 @@ transform = Transform3D(-4.5738, 0, 2.2877, 0, 5.114, 0, -2.2877, 0, -4.5738, -2
 transform = Transform3D(0.5936, 0, 0.1233, 0, 0.6063, 0, -0.1233, 0, 0.5936, -1.6397, -0.3473, 6.233)
 
 [node name="Kelp11" parent="Scenery" instance=ExtResource("o_kelp")]
-transform = Transform3D(1.5333, 0, -1.7558, 0, 2.3311, 0, 1.7558, 0, 1.5333, -2.1911, -0.3473, 7.8361)
+transform = Transform3D(1.5333, 0, -1.7558, 0, 2.33106, 0, 1.7558, 0, 1.5333, -2.1911, -0.3473, 7.8361)
 
 [node name="Sponge6" parent="Scenery" instance=ExtResource("o_sponge")]
 transform = Transform3D(-0.0617, 0, -0.6428, 0, 0.6457, 0, 0.6428, 0, -0.0617, -1.7582, -0.3473, 8.8225)
@@ -815,7 +801,7 @@ transform = Transform3D(0.8058, 0, -4.8766, 0, 4.9428, 0, 4.8766, 0, 0.8058, -2.
 transform = Transform3D(2.3816, 0, -1.1133, 0, 2.629, 0, 1.1133, 0, 2.3816, -1.4889, -0.3473, 15.9099)
 
 [node name="Kelp12" parent="Scenery" instance=ExtResource("o_kelp")]
-transform = Transform3D(1.1702, 0, -2.224, 0, 2.513, 0, 2.224, 0, 1.1702, -2.273, -0.3473, 17.5229)
+transform = Transform3D(1.1702, 0, -2.224, 0, 2.51307, 0, 2.224, 0, 1.1702, -2.273, -0.3473, 17.5229)
 
 [node name="Fan9" parent="Scenery" instance=ExtResource("o_fan")]
 transform = Transform3D(-1.2936, 0, 1.3523, 0, 1.8714, 0, -1.3523, 0, -1.2936, -2.03, -0.1842, 18.9368)
@@ -878,7 +864,7 @@ transform = Transform3D(-0.3547, 0, -0.4515, 0, 0.5741, 0, 0.4515, 0, -0.3547, -
 transform = Transform3D(-3.9247, 0, -1.2168, 0, 4.109, 0, 1.2168, 0, -3.9247, -2.3916, -0.1695, 45.7308)
 
 [node name="Kelp13" parent="Scenery" instance=ExtResource("o_kelp")]
-transform = Transform3D(1.5505, 0, 1.2945, 0, 2.0199, 0, -1.2945, 0, 1.5505, -2.1757, -0.1695, 47.2599)
+transform = Transform3D(1.5505, 0, 1.2945, 0, 2.01985, 0, -1.2945, 0, 1.5505, -2.1757, -0.1695, 47.2599)
 
 [node name="Coral15" parent="Scenery" instance=ExtResource("o_coral")]
 transform = Transform3D(0.3835, 0, -0.1473, 0, 0.4108, 0, 0.1473, 0, 0.3835, -1.5587, -0.1695, 48.82)
@@ -926,7 +912,7 @@ transform = Transform3D(-1.0554, 0, 2.4951, 0, 2.7092, 0, -2.4951, 0, -1.0554, -
 transform = Transform3D(2.4933, 0, -0.9283, 0, 2.6605, 0, 0.9283, 0, 2.4933, -2.4719, 0, 67.9824)
 
 [node name="Kelp14" parent="Scenery" instance=ExtResource("o_kelp")]
-transform = Transform3D(1.0061, 0, -2.1824, 0, 2.4031, 0, 2.1824, 0, 1.0061, -2.4123, 0, 69.4257)
+transform = Transform3D(1.0061, 0, -2.1824, 0, 2.40315, 0, 2.1824, 0, 1.0061, -2.4123, 0, 69.4257)
 
 [node name="Plant35" parent="Scenery" instance=ExtResource("k_gl")]
 transform = Transform3D(-4.2185, 0, 0.4866, 0, 4.2465, 0, -0.4866, 0, -4.2185, -2.4876, 0, 71.0546)
@@ -938,7 +924,7 @@ transform = Transform3D(-2.917, 0, -0.9553, 0, 3.0695, 0, 0.9553, 0, -2.917, -1.
 transform = Transform3D(0.7155, 0, -0.4251, 0, 0.8322, 0, 0.4251, 0, 0.7155, -1.9137, 0, 74.2072)
 
 [node name="Kelp15" parent="Scenery" instance=ExtResource("o_kelp")]
-transform = Transform3D(-0.6251, 0, -1.5308, 0, 1.6535, 0, 1.5308, 0, -0.6251, -1.8797, 0, 75.3229)
+transform = Transform3D(-0.6251, 0, -1.5308, 0, 1.65351, 0, 1.5308, 0, -0.6251, -1.8797, 0, 75.3229)
 
 [node name="Fan13" parent="Scenery" instance=ExtResource("o_fan")]
 transform = Transform3D(-0.9493, 0, -1.0955, 0, 1.4496, 0, 1.0955, 0, -0.9493, -1.8089, 0, 77.0304)
@@ -2384,11 +2370,7 @@ glow = true
 
 [node name="GodRays" parent="." instance=ExtResource("g_rays")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -1, 9.5, 0)
-level_length = 178
-
-[node name="WaterSurface" parent="." instance=ExtResource("w_ws")]
-transform = Transform3D(6, 0, -0, 0, 1, 0, 0, 0, 178, -1, 9.2, 0)
-
+level_length = 110
 [node name="Bubbles1" parent="." instance=ExtResource("5_bub")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -3.4, 2, 77)
 
@@ -2417,13 +2399,13 @@ transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -1, 2.4, -25)
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -1, 0.441, -25)
 
 [node name="OceanParticles1" parent="." instance=ExtResource("e_ocn")]
-transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -1, 2.6, 77)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -23.85)
 
 [node name="OceanParticles2" parent="." instance=ExtResource("e_ocn")]
-transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -1, 2.6, 25.6667)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 1.3)
 
 [node name="OceanParticles3" parent="." instance=ExtResource("e_ocn")]
-transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -1, 2.6, -25.6667)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 26.45)
 
 [node name="BgParticles1" parent="." instance=ExtResource("e_bgp")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -1, 3, 75)
@@ -2435,35 +2417,35 @@ transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -1, 3, 25)
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -1, 3, -25)
 
 [node name="StartPipe" parent="." instance=ExtResource("p_pipe")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, 0, 1.4, 85.6)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, 0, 1.4, 51.6)
 
 [node name="EndPipe" parent="." instance=ExtResource("p_pipe")]
-transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0, 1.4, -83)
+transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0, 1.4, -49)
 
 [node name="Goal" parent="." instance=ExtResource("4_goal")]
-transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0, 1.5, -83)
+transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0, 1.5, -49)
 
 [node name="GoalPillarL" parent="." instance=ExtResource("5_obs")]
-transform = Transform3D(0.4, 0, -0, 0, 3.2, 0, 0, 0, 0.4, -1.2, 1.5, -83)
+transform = Transform3D(0.4, 0, -0, 0, 3.2, 0, 0, 0, 0.4, -1.2, 1.5, -49)
 
 [node name="GoalPillarR" parent="." instance=ExtResource("5_obs")]
-transform = Transform3D(0.4, 0, -0, 0, 3.2, 0, 0, 0, 0.4, 1.2, 1.5, -83)
+transform = Transform3D(0.4, 0, -0, 0, 3.2, 0, 0, 0, 0.4, 1.2, 1.5, -49)
 
 [node name="Turtle" parent="." instance=ExtResource("1_turt")]
-transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0, 0.8, 83)
+transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0, 0.8, 49)
 [node name="UnderwaterOverlay" parent="." instance=ExtResource("o_uw")]
 [node name="DepthFog" type="Node" parent="."]
 script = ExtResource("d_fog")
-start_fog = Color(0.220, 0.460, 0.700, 1)
-end_fog = Color(0.140, 0.340, 0.560, 1)
-start_bg = Color(0.050, 0.260, 0.420, 1)
-end_bg = Color(0.025, 0.160, 0.320, 1)
-start_ambient = Color(0.360, 0.580, 0.800, 1)
-end_ambient = Color(0.280, 0.500, 0.720, 1)
-start_fog_energy = 0.68
-end_fog_energy = 0.52
-start_fog_density = 0.006
-end_fog_density = 0.0125
+start_fog = Color(0.1870, 0.3910, 0.5950, 1)
+end_fog = Color(0.1190, 0.2890, 0.4760, 1)
+start_bg = Color(0.0400, 0.2080, 0.3360, 1)
+end_bg = Color(0.0200, 0.1280, 0.2560, 1)
+start_ambient = Color(0.2880, 0.4640, 0.6400, 1)
+end_ambient = Color(0.2240, 0.4000, 0.5760, 1)
+start_fog_energy = 0.476
+end_fog_energy = 0.364
+start_fog_density = 0.0054
+end_fog_density = 0.0113
 start_vol_density = 0.004
 end_vol_density = 0.0065
 start_overlay_depth = 0.45

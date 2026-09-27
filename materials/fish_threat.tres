@@ -1,0 +1,28 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3]
+
+[ext_resource type="Shader" path="res://shaders/fish.gdshader" id="1_fish"]
+
+; Threat variant of the fish skin, assigned by scripts/enemies/chaser.gd. It used
+; to force a flat red StandardMaterial3D over every mesh, which flattened the fish
+; into a featureless silhouette. This keeps the same "this one will hurt you" read
+; but with real countershading, a hot rim and specular so the body still has form.
+
+[resource]
+shader = ExtResource("1_fish")
+shader_parameter/back_color = Color(0.28, 0.035, 0.03, 1)
+shader_parameter/flank_color = Color(0.82, 0.16, 0.07, 1)
+shader_parameter/belly_color = Color(0.98, 0.62, 0.28, 1)
+shader_parameter/fin_color = Color(0.9, 0.36, 0.12, 1)
+shader_parameter/rim_color = Color(1, 0.55, 0.25, 1)
+shader_parameter/half_height = 0.08
+shader_parameter/half_length = 0.154
+shader_parameter/fin_start = 0.66
+shader_parameter/fin_fade = 0.2
+shader_parameter/shade_strength = 1.15
+shader_parameter/stripes = 4
+shader_parameter/stripe_strength = 0.3
+shader_parameter/stripe_sharpness = 2.0
+shader_parameter/rim_strength = 0.9
+shader_parameter/rim_power = 2.4
+shader_parameter/ambient_glow = Color(0.75, 0.14, 0.05, 1)
+shader_parameter/glow_strength = 0.28

@@ -15,7 +15,7 @@ Fish are real model nodes that swim, never particles.
 import math
 import os
 import random
-ROOT = "/home/dante/turtle-godot-v-0.1/scenes/levels"
+ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "scenes", "levels")
 KEN = "res://assets/models/kenney"
 NATURE = KEN + "/nature"
 PIRATE = KEN + "/pirate"
@@ -36,8 +36,6 @@ reg("5_obs", "PackedScene", "res://scenes/objects/obstacle.tscn")
 reg("6_plat", "PackedScene", "res://scenes/objects/platform.tscn")
 reg("7_cur", "PackedScene", "res://scenes/effects/current.tscn")
 reg("o_seabed", "PackedScene", "res://scenes/objects/seabed.tscn")
-reg("o_bdfar", "PackedScene", "res://scenes/effects/backdrop_far.tscn")
-reg("o_bdnear", "PackedScene", "res://scenes/effects/backdrop_near.tscn")
 reg("sky_tex", "Texture2D", "res://assets/generated/uw_backdrop_far.png")
 reg("o_coral", "PackedScene", "res://assets/models/blender/table coral.blend")
 reg("o_star", "PackedScene", "res://scenes/objects/starfish.tscn")
@@ -49,7 +47,6 @@ reg("o_boss", "PackedScene", "res://scenes/objects/boss.tscn")
 reg("o_sboss", "PackedScene", "res://scenes/objects/shark_boss.tscn")
 reg("o_chaser", "PackedScene", "res://scenes/objects/chaser.tscn")
 reg("p_pipe", "PackedScene", "res://scenes/objects/transition_pipe.tscn")
-reg("w_ws", "PackedScene", "res://scenes/effects/water_surface.tscn")
 reg("g_rays", "PackedScene", "res://scenes/effects/godrays.tscn")
 reg("5_bub", "PackedScene", "res://scenes/effects/bubbles.tscn")
 reg("o_dust", "PackedScene", "res://scenes/effects/sea_dust.tscn")
@@ -387,30 +384,6 @@ class Level:
             z = z2
     # -- scenery (background layers) -------------------------------------
 
-    def build_backdrops(self):
-        """Parallax backdrop bands far behind the playfield, sized to the
-        visible band (~4 m tall) so texture resolution is used efficiently.
-        Each band spans the full level length; a per-level UV offset stops
-        neighbouring bands lining up."""
-        band_h = 4.0
-        band_y = 2.0
-        z_center = (self.spawn_z + self.goal_z) * 0.5
-        off = self.rng.uniform(0.0, 0.55)
-        self.nodes.append(
-            '[node name="%s" parent="Backdrops" instance=ExtResource("o_bdfar")]\n'
-            'transform = %s\n'
-            'shader_parameter/offset_x = %s\n'
-            'shader_parameter/offset_y = %s\n'
-            % (self.nid("BdFar"), tx(self.L + 10.0, band_h, 1.0, -36.0, band_y, z_center, 90.0),
-               g(off), g(0.0)))
-        self.nodes.append(
-            '[node name="%s" parent="Backdrops" instance=ExtResource("o_bdnear")]\n'
-            'transform = %s\n'
-            'shader_parameter/offset_x = %s\n'
-            'shader_parameter/offset_y = %s\n'
-            % (self.nid("BdNear"), tx(self.L + 10.0, band_h, 1.0, -21.0, band_y + 0.6, z_center - 6.0, 90.0),
-               g((off + 0.37) % 1.0), g(0.04)))
-
     def build_roof(self):
         """Rocky roof hanging off the ceiling so the channel reads as a tunnel."""
         rng = self.rng
@@ -695,7 +668,6 @@ class Level:
     def build_effects(self, bubbles, dust):
         L = self.L
         self.inst("GodRays", "g_rays", tx(1, 1, 1, -1.0, 9.5, 0), extra="level_length = %d\n" % L)
-        self.inst("WaterSurface", "w_ws", tx(6, 1, L, -1.0, 9.2, 0))
         for i in range(bubbles):
             z = self.spawn_z - 6.0 - (self.spawn_z - self.goal_z - 12.0) * i / max(bubbles, 1)
             # never in the camera lane (x ~ +3.58) -- that put bubbles right on the lens
@@ -754,7 +726,6 @@ shadow_enabled = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, %s, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Ceiling"]
 shape = SubResource("ceiling_shape")
-[node name="Backdrops" type="Node3D" parent="."]
 [node name="Terrain" type="Node3D" parent="."]
 [node name="Scenery" type="Node3D" parent="."]
 [node name="Fauna" type="Node3D" parent="."]
@@ -792,7 +763,6 @@ def build(cfg):
     n_reef = max(1, idx // 4)
     n_chase = 0 if idx < 3 else (1 if idx < 8 else 2)
     lv.build_terrain()
-    lv.build_backdrops()
     lv.build_roof()
     lv.build_backdrop()
     lv.build_midrocks()

@@ -5,10 +5,9 @@
 set -euo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")/../.."
-G="${GODOT:-/home/dante/Godot/Godot_v4.7-stable_linux.x86_64}"
+G="${GODOT:-/home/dante-pc/Godot/Engine/Godot_v4.7.2-stable_linux_x86_64}"
 
 echo "== 1/4 Bake editable object scenes (requires editor contexts; run on a machine with DISPLAY, or --headless if the plugin tolerates it)"
-# "$G" --headless --path . --script res://tools/bake_plants.gd
 # "$G" --headless --path . --script res://tools/bake_scenery.gd
 
 echo "== 2/4 Generate baseline levels"

@@ -1,0 +1,28 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3]
+
+[ext_resource type="Shader" path="res://shaders/fish.gdshader" id="1_fish"]
+
+; Procedural countershaded fish skin. The Kenney glbs point their base colour at
+; a "Textures/colormap.png" that does not exist in this repository, so the colour
+; is rebuilt in shaders/fish.gdshader from the mesh's object-space position.
+; See that file for the model-space landmarks the uniforms encode.
+
+[resource]
+shader = ExtResource("1_fish")
+shader_parameter/back_color = Color(0.055, 0.145, 0.26, 1)
+shader_parameter/flank_color = Color(0.13, 0.44, 0.6, 1)
+shader_parameter/belly_color = Color(0.82, 0.9, 0.93, 1)
+shader_parameter/fin_color = Color(0.42, 0.68, 0.8, 1)
+shader_parameter/rim_color = Color(0.55, 0.88, 1, 1)
+shader_parameter/half_height = 0.08
+shader_parameter/half_length = 0.154
+shader_parameter/fin_start = 0.72
+shader_parameter/fin_fade = 0.16
+shader_parameter/shade_strength = 1.0
+shader_parameter/stripes = 0
+shader_parameter/stripe_strength = 0.35
+shader_parameter/stripe_sharpness = 2.5
+shader_parameter/rim_strength = 0.5
+shader_parameter/rim_power = 3.0
+shader_parameter/ambient_glow = Color(0.18, 0.4, 0.52, 1)
+shader_parameter/glow_strength = 0.1

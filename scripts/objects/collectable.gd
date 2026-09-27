@@ -10,6 +10,7 @@ const DOME_COLOR := Color(0.78, 0.42, 0.9, 0.55)
 const DOME_GLOW := Color(1.0, 0.75, 1.0)
 const TENTACLE_COLOR := Color(0.9, 0.62, 0.96, 0.75)
 const CRUNCH_SOUND := preload("res://assets/audio/jellyfish-plastic-crunch.mp3")
+const SPARKLE_BURST := preload("res://scenes/effects/feedback_burst.tscn")
 
 var _base_y := 0.0
 var _mats: Array[StandardMaterial3D] = []
@@ -75,10 +76,32 @@ func _on_body_entered(body: Node3D) -> void:
 		var animator: Node = body.get_node_or_null("PlayerAnimator")
 		if animator != null and animator.has_method("play_eat"):
 			animator.play_eat()
-		var crunch := AudioStreamPlayer.new()
-		crunch.stream = CRUNCH_SOUND
-		crunch.bus = "SFX"
-		get_tree().current_scene.add_child(crunch)
-		crunch.finished.connect(func(): crunch.queue_free())
-		crunch.play()
+		_spawn_sparkles()
+		_play_crunch()
 		queue_free()
+
+
+## The one-shot is parented to the current scene so it outlives this node, which
+## queue_free()s itself immediately below. `current_scene` is null in headless
+## --script runs (the screenshot and inspect tools), so the parent lookup has to
+## be guarded or collecting a jellyfish from a tool hard-errors.
+func _play_crunch() -> void:
+	var root := get_tree().current_scene
+	if root == null:
+		return
+	var crunch := AudioStreamPlayer.new()
+	crunch.stream = CRUNCH_SOUND
+	crunch.bus = "SFX"
+	root.add_child(crunch)
+	crunch.finished.connect(crunch.queue_free)
+	crunch.play()
+
+
+func _spawn_sparkles() -> void:
+	var burst := SPARKLE_BURST.instantiate()
+	burst.kind = 1
+	var root := get_tree().current_scene
+	if root == null:
+		return
+	root.add_child(burst)
+	burst.global_position = global_position

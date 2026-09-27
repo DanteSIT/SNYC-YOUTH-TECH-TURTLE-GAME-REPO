@@ -1,0 +1,22 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3]
+
+; Short seagrass skirt in scenes/objects/kelp_bed.tscn -- the "low" height class
+; that rings the base of each plant so it does not meet the sand at a hard edge.
+;
+; Shorter blades, and they get slightly deeper and bluer with the more light the
+; upward-looking view gives them at that height.
+;
+; blade_height matches this class's nominal quad height (0.62); see
+; shaders/seagrass.gdshader for what that uniform drives.
+
+[ext_resource type="Shader" path="res://shaders/seagrass.gdshader" id="1_grass"]
+
+[resource]
+shader = ExtResource("1_grass")
+shader_parameter/tint_dark = Color(0.2, 0.33, 0.22, 1)
+shader_parameter/tint_light = Color(0.66, 0.86, 0.5, 1)
+shader_parameter/emission_tint = Color(0.14, 0.34, 0.28, 1)
+shader_parameter/emission_energy = 0.12
+shader_parameter/sway_speed = 1.05
+shader_parameter/sway_amount = 0.055
+shader_parameter/blade_height = 0.62

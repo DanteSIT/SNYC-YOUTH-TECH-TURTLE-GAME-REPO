@@ -2,27 +2,23 @@
 
 [ext_resource type="Script" uid="uid://dsbbic5n57w32" path="res://scripts/objects/goal.gd" id="1_x"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_e11en"]
-albedo_color = Color(0.62352943, 1, 1, 1)
-emission_enabled = true
-emission = Color(0.2793342, 0.7581877, 0.66842335, 1)
-emission_energy_multiplier = 2.8
-roughness = 0.2
-specular = 1.0
+[sub_resource type="CylinderMesh" id="CylinderMesh_d1k5b"]
+top_radius = 0.8276367
+bottom_radius = 0.8276367
+height = 1.0185547
 
-[sub_resource type="BoxMesh" id="BoxMesh_1pxh0"]
-material = SubResource("StandardMaterial3D_e11en")
-size = Vector3(1.86, 1.54, 0.315)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_goal"]
-size = Vector3(0.8093567, 0.8094101, 0.8095703)
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_d1k5b"]
+height = 0.6015625
+radius = 0.5253906
 
 [node name="Goal" type="Area3D" unique_id=1643995708 groups=["goal"]]
 script = ExtResource("1_x")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1523959350]
-mesh = SubResource("BoxMesh_1pxh0")
+transform = Transform3D(1.2316287, 0, 0, 0, -0.017624207, 1.3449336, 0, -1.3881007, -0.017076131, 0, 0, 0)
+visible = false
+mesh = SubResource("CylinderMesh_d1k5b")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1549818080]
-transform = Transform3D(2.295, 0, 0, 0, 1.885, 0, 0, 0, 0.4, -0.005, 0.008, 0)
-shape = SubResource("BoxShape3D_goal")
+transform = Transform3D(2.3179057, 0, 0, 0, -0.023414437, 2.286167, 0, -1.8848546, -0.028399702, -0.005, 0.008, 0)
+shape = SubResource("CylinderShape3D_d1k5b")

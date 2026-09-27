@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3]
+
+; Ambient decorative fish — the large Kenney survival-kit fish, wrapped so it
+; carries a proper skin. The raw glb references a "Textures/colormap.png" that is
+; not in this repository, so the model imports with a dead texture and renders as
+; a flat grey blob; materials/fish.tres rebuilds the colour procedurally instead.
+;
+; ambient_fish.gd (attached by the level) drives the swim, bob and roll, and
+; expects the model head to point along LOCAL -X.
+
+[ext_resource type="PackedScene" path="res://assets/models/kenney/survival/fish-large.glb" id="1_fish"]
+[ext_resource type="Material" path="res://materials/fish.tres" id="2_mat"]
+
+[node name="AmbientFishLarge" type="Node3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_fish")]
+
+[node name="fish-large" parent="Model" index="0"]
+material_override = ExtResource("2_mat")

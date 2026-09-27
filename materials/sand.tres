@@ -1,10 +1,24 @@
-[gd_resource type="ShaderMaterial" load_steps=3 format=3]
+[gd_resource type="ShaderMaterial" load_steps=4 format=3]
+
+; Seabed material. Both maps come from tools/make_sand_textures.py and share one
+; periodic height field, so they tile seamlessly and agree with each other.
+;
+; This replaced materials/sand.tres's previous "OIP (1) 1.jpg" -- a flat 474x430
+; scan whose standard deviation was only ~15, which is why the corridor read as a
+; sheet of pale card.
 
 [ext_resource type="Shader" path="res://shaders/sand.gdshader" id="1_sand"]
-[ext_resource type="Texture2D" uid="uid://b4imje6y0ddaf" path="res://Assets/OIP (1) 1.jpg" id="2_tex"]
+[ext_resource type="Texture2D" path="res://assets/textures/sand_albedo.png" id="2_albedo"]
+[ext_resource type="Texture2D" path="res://assets/textures/sand_normal.png" id="3_normal"]
 
 [resource]
 shader = ExtResource("1_sand")
-shader_parameter/albedo_tex = ExtResource("2_tex")
-shader_parameter/tile = 4.0
-shader_parameter/tint = Color(1, 0.98, 0.92, 1)
+shader_parameter/albedo_tex = ExtResource("2_albedo")
+shader_parameter/normal_tex = ExtResource("3_normal")
+shader_parameter/tile_size = 2.5
+shader_parameter/tint = Color(1, 0.97, 0.92, 1)
+shader_parameter/detail_strength = 0.45
+shader_parameter/detail_scale = 7.0
+shader_parameter/detail_range = 14.0
+shader_parameter/normal_strength = 1.15
+shader_parameter/wetness = 0.0

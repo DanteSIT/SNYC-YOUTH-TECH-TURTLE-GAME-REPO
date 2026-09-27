@@ -5,11 +5,8 @@ signal changed
 const SAVE_PATH := "user://graphics.cfg"
 
 const AA_OPTIONS: Array[Dictionary] = [
-	{"name": "Off", "msaa": 0, "ssaa": 0, "taa": false},
 	{"name": "FXAA", "msaa": 0, "ssaa": 1, "taa": false},
-	{"name": "MSAA 2x", "msaa": 1, "ssaa": 0, "taa": false},
-	{"name": "MSAA 4x", "msaa": 2, "ssaa": 0, "taa": false},
-	{"name": "MSAA 8x", "msaa": 3, "ssaa": 0, "taa": false},
+	{"name": "TAA", "msaa": 0, "ssaa": 0, "taa": true},
 ]
 
 const SHADOW_OPTIONS: Array[Dictionary] = [
@@ -24,8 +21,8 @@ const SCALES: Array[float] = [0.5, 0.75, 1.0]
 const PRESETS: Array[Dictionary] = [
 	{"name": "Low", "aa": 0, "sharpen": 0.0, "scale": 0, "ssao": false, "ssr": false, "fog": true, "volumetric": false, "glow": false, "shadows": 0},
 	{"name": "Medium", "aa": 1, "sharpen": 0.15, "scale": 1, "ssao": true, "ssr": false, "fog": true, "volumetric": false, "glow": true, "shadows": 1},
-	{"name": "High", "aa": 2, "sharpen": 0.2, "scale": 2, "ssao": true, "ssr": false, "fog": true, "volumetric": true, "glow": true, "shadows": 2},
-	{"name": "Ultra", "aa": 4, "sharpen": 0.3, "scale": 2, "ssao": true, "ssr": true, "fog": true, "volumetric": true, "glow": true, "shadows": 3},
+	{"name": "High", "aa": 1, "sharpen": 0.2, "scale": 2, "ssao": true, "ssr": false, "fog": true, "volumetric": true, "glow": true, "shadows": 2},
+	{"name": "Ultra", "aa": 1, "sharpen": 0.3, "scale": 2, "ssao": true, "ssr": true, "fog": true, "volumetric": true, "glow": true, "shadows": 3},
 ]
 
 var aa_index := 0
@@ -243,7 +240,7 @@ func _load_settings() -> void:
 	var cfg := ConfigFile.new()
 	if cfg.load(SAVE_PATH) != OK:
 		return
-	aa_index = clampi(int(cfg.get_value("graphics", "aa", 1)), 0, AA_OPTIONS.size() - 1)
+	aa_index = clampi(int(cfg.get_value("graphics", "aa", 0)), 0, AA_OPTIONS.size() - 1)
 	sharpen = clampf(float(cfg.get_value("graphics", "sharpen", 0.15)), 0.0, 1.0)
 	scale_index = clampi(int(cfg.get_value("graphics", "scale", 2)), 0, SCALES.size() - 1)
 	shadows_index = clampi(int(cfg.get_value("graphics", "shadows", 2)), 0, SHADOW_OPTIONS.size() - 1)

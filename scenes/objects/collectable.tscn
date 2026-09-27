@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://n20iy84uuaod"]
 
 [ext_resource type="Script" uid="uid://dvrt26j43uyhg" path="res://scripts/objects/collectable.gd" id="1_x"]
-[ext_resource type="PackedScene" uid="uid://d3suoaio6cpry" path="res://blender/jeLLyfiSH.blend" id="2_3cqwa"]
+[ext_resource type="PackedScene" uid="uid://d3suoaio6cpry" path="res://assets/models/blender/jeLLyfiSH.blend" id="2_3cqwa"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_un20x"]
 radius = 0.25
