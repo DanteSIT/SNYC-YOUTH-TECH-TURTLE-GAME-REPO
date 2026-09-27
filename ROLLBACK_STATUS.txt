@@ -1,0 +1,144 @@
+# =============================================================================
+#  GIT ROLLBACK STATUS LOG  —  turtle-godot-v-0.1
+# =============================================================================
+#
+#  WHAT THIS FILE IS FOR
+#  ----------------------
+#  A plain-text map of "which commit do I roll back to, and what do I lose".
+#  Read this BEFORE running any git restore / reset / checkout command.
+#
+#  This file is deliberately NOT tracked by git (see .gitignore -> .gitinfo/ is
+#  ignored; this file lives at the repo root as ROLLBACK_STATUS.txt). It is
+#  bookkeeping for you, not part of the game.
+#
+# -----------------------------------------------------------------------------
+#  THE ONE-LINE ANSWER
+# -----------------------------------------------------------------------------
+#  To undo EVERYTHING done in the "seabed + level revamp" session and get back
+#  to the last known-good state:
+#
+#      git reset --hard BASELINE-pre-seabed
+#
+#  That commit is tagged, so the tag survives even if you make more commits.
+#
+# -----------------------------------------------------------------------------
+#  SAFETY NETS, STRONGEST FIRST
+# -----------------------------------------------------------------------------
+#
+#  1. TAG (survives new commits — use this one)
+#     BASELINE-pre-seabed
+#     -> git reset --hard BASELINE-pre-seabed
+#
+#  2. COMMIT (survives unless you reset past it)
+#     a8538ce  "BASELINE: working state before seabed removal + level revamp"
+#     -> git reset --hard a8538ce
+#
+#  3. STASH-FREE DIFFS (survive any reset — pure text on disk)
+#     .gitinfo/snapshots/pre_seabed_fix_20260927_135013_staged.diff
+#         the 533 staged file changes (mostly deletions) as a patch
+#     .gitinfo/snapshots/pre_seabed_fix_20260927_135013_unstaged.diff
+#         the 46 modified-but-unstaged files as a patch
+#     .gitinfo/snapshots/pre_seabed_fix_20260927_135013_untracked.txt
+#         list of the 45 files that were untracked (i.e. NOT in any commit)
+#     -> git apply .gitinfo/snapshots/<name>_unstaged.diff
+#     NOTE: the untracked files' *contents* are not in these diffs. If a rollback
+#     deletes a file that was only ever untracked, recover it from commit
+#     BASELINE-pre-seabed (it captured them) — do NOT rely on the diffs alone.
+#
+# -----------------------------------------------------------------------------
+#  WHAT IS IN THE BASELINE  (so you know what you get back)
+# -----------------------------------------------------------------------------
+#  Commit a8538ce captured the complete working state of the game as of
+#  2026-09-27 13:51, including everything untracked up to that point:
+#
+#    * fish textures   - shaders/fish.gdshader, materials/fish{,_threat}.tres,
+#                        scenes/objects/ambient_fish{,_large}.tscn
+#                        (fixes the missing Textures/colormap.png reference)
+#    * sand            - assets/textures/sand_{albedo,normal}.png,
+#                        tools/make_sand_textures.py, shaders/sand.gdshader
+#    * grading         - tools/retune_grading.py applied to all 16 levels
+#    * seagrass        - shaders/seagrass.gdshader, materials/seagrass*.tres,
+#                        rebuilt scenes/objects/kelp_bed.tscn
+#    * tutorial        - scripts/tutorial/tutorial.gd (9 stages, arrow fix,
+#                        restyled panel)
+#    * hitstop fix     - scripts/player/player_controller.gd (wall-clock deadline)
+#    * input map fix   - project.godot gained ui_up / ui_down
+#
+#  It ALSO recorded a large set of deliberate deletions that were staged but
+#  never committed before this session. Rolling back restores them, which you
+#  probably do NOT want. Specifically it re-adds:
+#
+#    * addons/terrabrush/   (424 files) — third-party terrain editor, unused
+#    * blender/             (30 files)  — source .blend files
+#    * Export/              (25 files)  — build output, also in .gitignore
+#    * Assets/, Odysse.fbx, _menu_test.tscn — case-duplicate asset tree that
+#      was merged away into canonical lowercase assets/models
+#
+#  If you only want the *game* back and not those 500-odd dead files, prefer
+#  reverting individual paths (see "PARTIAL ROLLBACK" below) over a full reset.
+#
+# -----------------------------------------------------------------------------
+#  PARTIAL ROLLBACK  (safer for targeted undo)
+# -----------------------------------------------------------------------------
+#  Undo only the level files:
+#      git checkout BASELINE-pre-seabed -- scenes/levels/
+#
+#  Undo only the seabed scene:
+#      git checkout BASELINE-pre-seabed -- scenes/objects/seabed.tscn
+#
+#  Undo one level:
+#      git checkout BASELINE-pre-seabed -- scenes/levels/level_7.tscn
+#
+#  See exactly what changed since the baseline:
+#      git diff --stat BASELINE-pre-seabed
+#      git diff BASELINE-pre-seabed -- scenes/levels/level_1.tscn
+#
+# -----------------------------------------------------------------------------
+#  BEFORE YOU ROLL BACK
+# -----------------------------------------------------------------------------
+#
+#  * ALWAYS commit or stash your current work first, or reset --hard will
+#    destroy it:
+#        git add -A && git commit -m "WIP before rollback"
+#     or
+#        git stash push -u -m "WIP before rollback"
+#    (the -u matters: 45 files here are untracked and reset will delete them)
+#
+#  * Check what you are about to lose:
+#        git diff --stat BASELINE-pre-seabed
+#        git status --short
+#
+#  * Untracked files are the real danger. `git reset --hard` DELETES files that
+#    are not in the target commit. Use `git stash push -u` first if unsure.
+#
+#  * .godot/ (the import cache) is gitignored. After any rollback run the
+#    editor once, or delete .godot/ if scenes fail to load — the .import files
+#    can point at files a rollback removed.
+#
+# -----------------------------------------------------------------------------
+#  REPO FACTS
+# -----------------------------------------------------------------------------
+#  branch            master
+#  remote            NONE (this repo is local only — nothing to push to,
+#                    and a rollback cannot be undone from a remote)
+#  .git size         ~437 MB
+#  baseline commit    a8538ceadbd9291ff052e0ec2407c3c9e2ad8dd5
+#  baseline date      2026-09-27 13:51:02 +0400
+#  prior commits      88a5b56, 189ad34, 3edc658, b3eddda (older snapshots)
+#
+#  Validate the game after any rollback — every level must load clean:
+#      G=/home/dante-pc/Godot/Engine/Godot_v4.7.2-stable_linux.x86_64
+#      for f in scenes/levels/*.tscn; do
+#        timeout 90 "$G" --headless --path . --quit-after 40 "$f" 2>&1 \
+#          | grep -E "SCRIPT ERROR|Parse Error|Cannot open|Failed to load|SHADER ERROR" \
+#          && echo "FAIL: $f"
+#      done
+#  Expected output: nothing (no FAIL lines).
+#
+# -----------------------------------------------------------------------------
+#  SESSION LOG
+# -----------------------------------------------------------------------------
+#  2026-09-27 13:50  Snapshots written to .gitinfo/snapshots/
+#  2026-09-27 13:51  BASELINE committed (a8538ce) + tagged BASELINE-pre-seabed
+#  2026-09-27 13:5x  Started: seabed removal + level revamp
+#                   (append outcomes here as this session progresses)
