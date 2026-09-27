@@ -4,14 +4,14 @@
 [ext_resource type="PackedScene" uid="uid://dhehhbfhrduha" path="res://assets/models/zshark.glb" id="1_shark"]
 
 [sub_resource type="BoxShape3D" id="hit_shape"]
-size = Vector3(1.3515625, 0.38339844, 1.4697266)
+size = Vector3(1.3515625, 0.35744628, 0.9425354)
 
 [node name="Boss" type="Area3D" unique_id=1876800922]
 script = ExtResource("1_sb")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1654248450]
-transform = Transform3D(-0.99999994, 0, 8.742277e-08, 0, 1, 0, -8.742277e-08, 0, -0.99999994, -0.0043929815, 0.59365237, -0.50779414)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0043929815, 0.6166138, 0.059817553)
 shape = SubResource("hit_shape")
 
 [node name="Body" parent="." unique_id=222915509 instance=ExtResource("1_shark")]
-transform = Transform3D(-0.9, 0, 7.86805e-08, 0, 0.9, 0, -7.86805e-08, 0, -0.9, 0, 0.6, 0)
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 0, 0.6, 0)

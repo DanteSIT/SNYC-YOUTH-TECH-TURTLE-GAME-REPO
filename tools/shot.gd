@@ -20,6 +20,10 @@ extends SceneTree
 ##   hud=off            hide the in-game HUD canvas
 ##   ortho=on           use an orthographic camera
 ##   ortho_size=n       orthographic half-height in world units (default 4)
+##   spawn=path        call _spawn_behind_player() on this node before capturing.
+##                     Bosses start invisible and only appear once the player has
+##                     swum far enough, so without this a level_10 capture shows
+##                     no boss at all. Accepts a name or a sub-path.
 ##   freecam=on         honour cam=/look= even when the scene has a player
 ##                      camera, which is otherwise always preferred
 
@@ -94,6 +98,31 @@ func _run() -> void:
 	var h: int = int(spec.get("h", 720))
 	var vp: Viewport = get_root()
 	vp.size = Vector2i(w, h)
+
+	# Spawning has to happen here rather than with the other setup, for two
+	# reasons: _spawn_behind_player() places the boss relative to the player, so
+	# the turtle must already be where the spec asked; and the boss only knows
+	# who the player is once its own _physics_process has run, so at least one
+	# frame has to pass. Called earlier it dereferences a null _player, throws,
+	# and leaves the boss parked on the origin.
+	if spec.has("spawn"):
+		for _i in 4:
+			await process_frame
+		var spawn_path: String = String(spec["spawn"])
+		# Try the sub-path first, then a bare node name, since bosses are usually
+		# just "Boss" and a path lookup alone would miss them.
+		var spawner: Node = _find(world, spawn_path)
+		if spawner == null:
+			spawner = world.find_child(spawn_path, true, false)
+		if spawner == null or not spawner.has_method("_spawn_behind_player"):
+			printerr("SHOT: spawn= matched nothing that can spawn: ", spawn_path)
+		else:
+			spawner.call("_spawn_behind_player")
+			# get_node_or_null, not get: "Body" is a child node, not a property,
+			# so Object.get() returns null for it and the warning never fired.
+			var body: Node3D = spawner.get_node_or_null("Body") as Node3D
+			if body == null or not body.visible:
+				printerr("SHOT: ", spawn_path, " spawned but its Body is not visible")
 
 	var frames: int = int(spec.get("frames", 8))
 	for _i in range(frames):
@@ -188,5 +217,14 @@ func _parse_spec(text: String) -> Dictionary:
 				nums.append(float(piece))
 			out[key] = PackedFloat64Array(nums)
 		else:
+			# A scalar's value runs to the start of the next "key=", so it still
+			# carries the comma that separated them: in "hide=/root/DebugStats,w=1280"
+			# the value is "/root/DebugStats,". strip_edges does not remove that, and
+			# every comparison here is against a bare "on"/"off"/path, so hold=,
+			# freecam=, hud=, ortho= and hide= have all been silently doing nothing
+			# whenever another key followed them in the spec. Tuple keys are exempt
+			# because they split on "," with empty pieces dropped.
+			while value.ends_with(","):
+				value = value.substr(0, value.length() - 1).strip_edges()
 			out[key] = value
 	return out
