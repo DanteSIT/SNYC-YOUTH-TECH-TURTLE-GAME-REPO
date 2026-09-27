@@ -1,7 +1,10 @@
 extends Control
 
 func _ready() -> void:
-	$ScoreLabel.text = "Score : %d    Jellyfish : %d" % [GameManager.score, GameManager.jellyfish]
+	var jelly: String = "%d / %d" % [GameManager.jellyfish, GameManager.level_jellyfish_total]
+	var missed: int = GameManager.jellyfish_missed()
+	$ScoreLabel.text = "Score : %d    Jellyfish : %s    Missed : %d\nTime : %s" % [
+		GameManager.score, jelly, missed, GameManager.format_time(GameManager.level_time)]
 	$NextButton.pressed.connect(_on_next_pressed)
 	$MenuButton.pressed.connect(_on_menu_pressed)
 

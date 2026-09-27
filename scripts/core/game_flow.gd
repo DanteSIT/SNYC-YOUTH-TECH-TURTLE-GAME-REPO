@@ -61,4 +61,8 @@ func to_level_complete() -> void:
 
 
 func restart_current_level() -> void:
+	# This path reloads the level scene directly rather than through
+	# GameManager.start_level, so the per-attempt state has to be cleared here
+	# or a retry inherits the dead attempt's score, jellyfish and clock.
+	GameManager.reset_level_progress()
 	change_scene_deferred(GameManager.LEVELS[GameManager.current_level])

@@ -168,9 +168,14 @@ func _build_ui() -> void:
 	margin.add_child(_label)
 
 
+## Bottom-right, not top-right: the in-level HUD's clock panel owns the top-right
+## corner, and this overlay is on by default, so leaving it there would have the
+## two drawn on top of each other.
 func _position_panel() -> void:
 	var vp_size := get_viewport().get_visible_rect().size
-	_panel.position = Vector2(maxf(0.0, vp_size.x - _panel.size.x - 10.0), 10.0)
+	_panel.position = Vector2(
+		maxf(0.0, vp_size.x - _panel.size.x - 10.0),
+		maxf(0.0, vp_size.y - _panel.size.y - 10.0))
 
 
 func _build_text() -> String:
