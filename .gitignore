@@ -17,3 +17,6 @@ __pycache__/
 # Screenshots are deliverables written into the game directory, not source. They
 # are also imported by Godot on sight, which would add a .import sidecar for each.
 screenshots/
+
+# Vendored ziva agent addon (huge binaries, no longer used)
+addons/ziva_agent/
