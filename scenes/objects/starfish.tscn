@@ -1,42 +1,11 @@
-[gd_scene format=3]
+[gd_scene load_steps=2 format=3]
+; Seabed decor. Rebuilt from real imported models in assets/models/vegetation/
+; (see CREDITS.md for sources). Each model is scaled to the height/footprint
+; the previous primitive placeholder occupied and its base rests on y = 0, so
+; the level instances keep their authored scale/rotation unchanged.
+[ext_resource type="PackedScene" path="res://assets/models/vegetation/starfish_a.glb" id="1_starfish_a"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1uwg8"]
-albedo_color = Color(0.95, 0.52, 0.18, 1)
-roughness = 0.55
-emission_enabled = true
-emission = Color(0.95, 0.52, 0.18, 1)
-emission_energy_multiplier = 0.2
+[node name="Starfish" type="Node3D"]
 
-[sub_resource type="BoxMesh" id="BoxMesh_53b42"]
-
-[node name="Starfish" type="Node3D" unique_id=1903863156]
-
-[node name="@MeshInstance3D@115" type="MeshInstance3D" parent="." unique_id=492428157]
-transform = Transform3D(0.22, 0, 0, 0, 0.07, 0, 0, 0, 0.55, 0, 0, 0.35)
-material_override = SubResource("StandardMaterial3D_1uwg8")
-mesh = SubResource("BoxMesh_53b42")
-
-[node name="@MeshInstance3D@116" type="MeshInstance3D" parent="." unique_id=382325293]
-transform = Transform3D(0.22, 0, 0, 0, 0.07, 0, 0, 0, 0.55, 0.33287, 0, 0.10816)
-material_override = SubResource("StandardMaterial3D_1uwg8")
-mesh = SubResource("BoxMesh_53b42")
-
-[node name="@MeshInstance3D@117" type="MeshInstance3D" parent="." unique_id=829052977]
-transform = Transform3D(0.22, 0, 0, 0, 0.07, 0, 0, 0, 0.55, 0.20572, 0, -0.28316)
-material_override = SubResource("StandardMaterial3D_1uwg8")
-mesh = SubResource("BoxMesh_53b42")
-
-[node name="@MeshInstance3D@118" type="MeshInstance3D" parent="." unique_id=614064603]
-transform = Transform3D(0.22, 0, 0, 0, 0.07, 0, 0, 0, 0.55, -0.20572, 0, -0.28316)
-material_override = SubResource("StandardMaterial3D_1uwg8")
-mesh = SubResource("BoxMesh_53b42")
-
-[node name="@MeshInstance3D@119" type="MeshInstance3D" parent="." unique_id=1334615156]
-transform = Transform3D(0.22, 0, 0, 0, 0.07, 0, 0, 0, 0.55, -0.33287, 0, 0.10816)
-material_override = SubResource("StandardMaterial3D_1uwg8")
-mesh = SubResource("BoxMesh_53b42")
-
-[node name="@MeshInstance3D@120" type="MeshInstance3D" parent="." unique_id=1518129736]
-transform = Transform3D(0.34, 0, 0, 0, 0.09, 0, 0, 0, 0.34, 0, 0, 0)
-material_override = SubResource("StandardMaterial3D_1uwg8")
-mesh = SubResource("BoxMesh_53b42")
+[node name="starfish_a1" parent="." instance=ExtResource("1_starfish_a")]
+transform = Transform3D(0.072766, 0, 0, 0, 0.072766, 0, 0, 0, 0.072766, 0.139674, 0, 0.185954)

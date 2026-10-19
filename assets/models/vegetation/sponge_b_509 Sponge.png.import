@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b4imje6y0ddaf"
-path.s3tc="res://.godot/imported/OIP (1) 1.jpg-0380a2c2c01ec4085af109f8de32de40.s3tc.ctex"
+uid="uid://b0he8vbpdwse0"
+path.s3tc="res://.godot/imported/sponge_b_509 Sponge.png-e8fe12efef4f55c931463b8e7a97122d.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://assets/textures/OIP (1) 1.jpg"
-dest_files=["res://.godot/imported/OIP (1) 1.jpg-0380a2c2c01ec4085af109f8de32de40.s3tc.ctex"]
+source_file="res://assets/models/vegetation/sponge_b_509 Sponge.png"
+dest_files=["res://.godot/imported/sponge_b_509 Sponge.png-e8fe12efef4f55c931463b8e7a97122d.s3tc.ctex"]
 
 [params]
 

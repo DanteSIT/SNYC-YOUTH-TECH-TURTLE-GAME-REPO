@@ -1,25 +1,18 @@
-[gd_scene format=3]
+[gd_scene load_steps=4 format=3 uid="uid://bpvghtf2xcxcn"]
 
+; Hazard: real ocean-litter model in the 'hazard' group. Model is centred on
+; the Area3D origin and the box collision hugs its scaled footprint.
 [ext_resource type="Script" path="res://scripts/hazard.gd" id="1_x"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_haz"]
-albedo_color = Color(0.4, 0.28, 0.2, 1)
-roughness = 0.22
-metallic = 0.0
-specular = 1.0
-
-[sub_resource type="BoxMesh" id="BoxMesh_haz"]
-material = SubResource("StandardMaterial3D_haz")
-size = Vector3(0.9, 0.9, 0.9)
+[ext_resource type="PackedScene" path="res://assets/models/hazard/bag.glb" id="2_m"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_haz"]
-size = Vector3(0.9, 0.9, 0.9)
+size = Vector3(0.749222, 0.85, 0.75896)
 
 [node name="Hazard" type="Area3D" groups=["hazard"]]
 script = ExtResource("1_x")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("BoxMesh_haz")
+[node name="Model" parent="." instance=ExtResource("2_m")]
+transform = Transform3D(1.507862, 0, 0, 0, 1.507862, 0, 0, 0, 1.507862, 0.000871, -0.40775, -0.00127)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_haz")

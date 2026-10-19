@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3]
+
+; Seabed decor variant (per-level biome). Wraps real imported models from
+; assets/models/vegetation/ (see CREDITS.md). Base rests on y = 0; the level
+; instance supplies the final scale/yaw, exactly like the default scene.
+[ext_resource type="PackedScene" path="res://assets/models/vegetation/sponge_b.glb" id="1_sponge_b"]
+[ext_resource type="PackedScene" path="res://assets/models/vegetation/sponge_c.glb" id="2_sponge_c"]
+[ext_resource type="PackedScene" path="res://assets/models/vegetation/sponge_a.glb" id="3_sponge_a"]
+
+[node name="Sponge" type="Node3D"]
+
+[node name="sponge_b1" parent="." instance=ExtResource("1_sponge_b")]
+transform = Transform3D(0.028571, 0, 0, 0, 0.028571, 0, 0, 0, 0.028571, -0.002557, 0, 0)
+
+[node name="sponge_c2" parent="." instance=ExtResource("2_sponge_c")]
+transform = Transform3D(0, 0, -0.000001, 0, 0.000001, 0, 0.000001, 0, 0, -0.321995, -0.552835, -0.605135)
+
+[node name="sponge_a3" parent="." instance=ExtResource("3_sponge_a")]
+transform = Transform3D(-0.130986, 0, 0.047675, 0, 0.139392, 0, -0.047675, 0, -0.130986, -0.200048, 0.001255, 0.159053)

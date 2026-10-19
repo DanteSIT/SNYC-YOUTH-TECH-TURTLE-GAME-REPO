@@ -2,20 +2,17 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cgagm2rr5cm2u"
-path.s3tc="res://.godot/imported/zshark_Image.png-dd1e9b183127fdc333c75c8329027b79.s3tc.ctex"
+uid="uid://cg2wsaja4lrtd"
+path.s3tc="res://.godot/imported/urchin_a_Tex_SeaUrchin.png-c7c11e40a0ddd749c7b06f608a54bb4e.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
-generator_parameters={
-"md5": "8597d4e7e65352a302b63e07bc01a7da"
-}
 
 [deps]
 
-source_file="res://assets/models/zshark_Image.png"
-dest_files=["res://.godot/imported/zshark_Image.png-dd1e9b183127fdc333c75c8329027b79.s3tc.ctex"]
+source_file="res://assets/models/vegetation/urchin_a_Tex_SeaUrchin.png"
+dest_files=["res://.godot/imported/urchin_a_Tex_SeaUrchin.png-c7c11e40a0ddd749c7b06f608a54bb4e.s3tc.ctex"]
 
 [params]
 

@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3]
+
+; Hazard: real ocean-litter model in the 'hazard' group. Model is centred on
+; the Area3D origin and the box collision hugs its scaled footprint.
+[ext_resource type="Script" path="res://scripts/hazard.gd" id="1_x"]
+[ext_resource type="PackedScene" path="res://assets/models/hazard/net.glb" id="2_m"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_haz"]
+size = Vector3(0.5, 0.85, 0.5)
+
+[node name="Hazard" type="Area3D" groups=["hazard"]]
+script = ExtResource("1_x")
+
+[node name="Model" parent="." instance=ExtResource("2_m")]
+transform = Transform3D(0.232755, 0, 0, 0, 0, 0.232755, 0, -0.232755, 0, 0, -0.067563, 0.057072)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_haz")

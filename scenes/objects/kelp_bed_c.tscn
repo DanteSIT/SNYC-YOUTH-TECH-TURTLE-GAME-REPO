@@ -1,0 +1,31 @@
+[gd_scene load_steps=4 format=3]
+
+; Seabed decor variant (per-level biome). Wraps real imported models from
+; assets/models/vegetation/ (see CREDITS.md). Base rests on y = 0; the level
+; instance supplies the final scale/yaw, exactly like the default scene.
+[ext_resource type="PackedScene" path="res://assets/models/vegetation/kelp_c.glb" id="1_kelp_c"]
+[ext_resource type="PackedScene" path="res://assets/models/vegetation/kelp_a.glb" id="2_kelp_a"]
+[ext_resource type="PackedScene" path="res://assets/models/vegetation/kelp_b.glb" id="3_kelp_b"]
+
+[node name="KelpBed" type="Node3D"]
+
+[node name="kelp_c1" parent="." instance=ExtResource("1_kelp_c")]
+transform = Transform3D(0.465033, 0, 0, 0, 0.465033, 0, 0, 0, 0.465033, -0.033017, 0.007441, 0.012091)
+
+[node name="kelp_c2" parent="." instance=ExtResource("1_kelp_c")]
+transform = Transform3D(0.068329, 0, -0.387512, 0, 0.39349, 0, 0.387512, 0, 0.068329, 0.305224, 0.006296, 0.20929)
+
+[node name="kelp_a3" parent="." instance=ExtResource("2_kelp_a")]
+transform = Transform3D(-0.735731, 0, -0.267784, 0, 0.782949, 0, 0.267784, 0, -0.735731, -0.240774, 0.872988, -0.251758)
+
+[node name="kelp_c4" parent="." instance=ExtResource("1_kelp_c")]
+transform = Transform3D(-0.09176, 0, 0.252109, 0, 0.268288, 0, -0.252109, 0, -0.09176, 0.09996, 0.004293, 0.319715)
+
+[node name="kelp_a5" parent="." instance=ExtResource("2_kelp_a")]
+transform = Transform3D(0.41651, 0, -0.349493, 0, 0.543715, 0, 0.349493, 0, 0.41651, 0.294619, 0.606242, -0.17252)
+
+[node name="kelp_c6" parent="." instance=ExtResource("1_kelp_c")]
+transform = Transform3D(-0.176476, 0, 0.064232, 0, 0.187802, 0, -0.064232, 0, -0.176476, -0.30914, 0.003005, 0.210851)
+
+[node name="kelp_b7" parent="." instance=ExtResource("3_kelp_b")]
+transform = Transform3D(-0.376766, 0, -1.035157, 0, 1.101591, 0, 1.035157, 0, -0.376766, -0.068996, 0.458262, -0.020909)

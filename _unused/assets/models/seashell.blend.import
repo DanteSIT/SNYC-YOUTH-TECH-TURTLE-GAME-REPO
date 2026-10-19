@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://cif0o7xsgctuf"
-path="res://.godot/imported/seashell.blend-0a70742d63a35620df0f47faf531036e.scn"
+path="res://.godot/imported/seashell.blend-ceaac5903d5d707f993c234d2b3aecae.scn"
 
 [deps]
 
-source_file="res://assets/models/seashell.blend"
-dest_files=["res://.godot/imported/seashell.blend-0a70742d63a35620df0f47faf531036e.scn"]
+source_file="res://_unused/assets/models/seashell.blend"
+dest_files=["res://.godot/imported/seashell.blend-ceaac5903d5d707f993c234d2b3aecae.scn"]
 
 [params]
 
@@ -43,8 +43,8 @@ _subresources={
 "materials": {
 "Material.001": {
 "use_external/enabled": true,
-"use_external/fallback_path": "res://assets/models/Material.001.material",
-"use_external/path": "uid://due3ga2gx50xx"
+"use_external/fallback_path": "res://_unused/assets/models/Material.001.material",
+"use_external/path": "uid://dlljobpcasml8"
 }
 },
 "nodes": {

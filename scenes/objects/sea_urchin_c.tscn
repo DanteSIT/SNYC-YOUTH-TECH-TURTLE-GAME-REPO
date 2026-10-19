@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3]
+
+; Seabed decor variant (per-level biome). Wraps real imported models from
+; assets/models/vegetation/ (see CREDITS.md). Base rests on y = 0; the level
+; instance supplies the final scale/yaw, exactly like the default scene.
+[ext_resource type="PackedScene" path="res://assets/models/vegetation/urchin_c.glb" id="1_urchin_c"]
+[ext_resource type="PackedScene" path="res://assets/models/vegetation/urchin_a.glb" id="2_urchin_a"]
+[ext_resource type="PackedScene" path="res://assets/models/vegetation/urchin_b.glb" id="3_urchin_b"]
+
+[node name="SeaUrchin" type="Node3D"]
+
+[node name="urchin_c1" parent="." instance=ExtResource("1_urchin_c")]
+transform = Transform3D(0.579955, 0, 0, 0, 0.579955, 0, 0, 0, 0.579955, -0.018457, 0.171906, 0.044522)
+
+[node name="urchin_a2" parent="." instance=ExtResource("2_urchin_a")]
+transform = Transform3D(0, 0, -0.057018, 0, 0.057018, 0, 0.057018, 0, 0, 0.280855, 0.169743, 0.120057)
+
+[node name="urchin_b3" parent="." instance=ExtResource("3_urchin_b")]
+transform = Transform3D(-0.451839, 0, 0.26087, 0, 0.521739, 0, -0.26087, 0, -0.451839, -0.238519, 0.154435, 0.15575)

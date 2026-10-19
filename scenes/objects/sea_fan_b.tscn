@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3]
+
+; Seabed decor variant (per-level biome). Wraps real imported models from
+; assets/models/vegetation/ (see CREDITS.md). Base rests on y = 0; the level
+; instance supplies the final scale/yaw, exactly like the default scene.
+[ext_resource type="PackedScene" path="res://assets/models/vegetation/fan_b.glb" id="1_fan_b"]
+[ext_resource type="PackedScene" path="res://assets/models/vegetation/fan_c.glb" id="2_fan_c"]
+[ext_resource type="PackedScene" path="res://assets/models/vegetation/seafan_a.glb" id="3_seafan_a"]
+
+[node name="SeaFan" type="Node3D"]
+
+[node name="fan_b1" parent="." instance=ExtResource("1_fan_b")]
+transform = Transform3D(0.004187, 0, 0, 0, 0.004187, 0, 0, 0, 0.004187, 0.010051, 0, -0.001424)
+
+[node name="fan_c2" parent="." instance=ExtResource("2_fan_c")]
+transform = Transform3D(-0.135882, 0, -0.161938, 0, 0.211395, 0, 0.161938, 0, -0.135882, 0.242614, 0.240779, 0.066124)
+
+[node name="seafan_a3" parent="." instance=ExtResource("3_seafan_a")]
+transform = Transform3D(-0.06044, 0, 0.166058, 0, 0.176715, 0, -0.166058, 0, -0.06044, -0.171019, 0.109033, 0.080375)

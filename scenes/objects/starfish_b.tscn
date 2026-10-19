@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3]
+
+; Seabed decor variant (per-level biome). Wraps real imported models from
+; assets/models/vegetation/ (see CREDITS.md). Base rests on y = 0; the level
+; instance supplies the final scale/yaw, exactly like the default scene.
+[ext_resource type="PackedScene" path="res://assets/models/vegetation/star_b.glb" id="1_star_b"]
+
+[node name="Starfish" type="Node3D"]
+
+[node name="star_b1" parent="." instance=ExtResource("1_star_b")]
+transform = Transform3D(0.394017, 0, 0, 0, 0.394017, 0, 0, 0, 0.394017, 0, 0.318994, 0)
