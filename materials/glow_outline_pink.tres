@@ -1,0 +1,22 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+; Glowing inverted-hull outline used for collectables.
+;
+; The material is attached as a `next_pass` of the model's real material, so the
+; object itself still renders normally. `grow` pushes the shell outwards along
+; the vertex normals and `cull_mode = CULL_FRONT` hides its near faces, leaving
+; only the silhouette ring visible around the object. Emission is pushed above
+; the levels' glow_hdr_threshold (~1.15) so the outline blooms.
+;
+; `grow_amount` is in the mesh's own local units -- GlowOutline.apply() retunes
+; it per mesh instance so the outline keeps a constant width in world units.
+[resource]
+resource_name = "glow_outline_pink"
+shading_mode = 0
+albedo_color = Color(1, 0.38, 0.78, 1)
+emission_enabled = true
+emission = Color(1, 0.38, 0.78, 1)
+emission_energy_multiplier = 1.6
+cull_mode = 1
+grow = true
+grow_amount = 0.05
