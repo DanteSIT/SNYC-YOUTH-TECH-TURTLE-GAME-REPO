@@ -1,9 +1,9 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://cehvxrogjdfj8"]
 
-[ext_resource type="Script" path="res://scripts/ui/controls_screen.gd" id="1_cs"]
-[ext_resource type="Script" path="res://scripts/ui/controls.gd" id="2_cu"]
+[ext_resource type="Script" uid="uid://cqrp8w8maokyf" path="res://scripts/ui/controls_screen.gd" id="1_cs"]
+[ext_resource type="Script" uid="uid://ck81amxcpnbm1" path="res://scripts/ui/controls.gd" id="2_cu"]
 
-[node name="Controls" type="Control"]
+[node name="Controls" type="Control" unique_id=1778987474]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -12,7 +12,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_cs")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=846169245]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,7 +21,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.02, 0.1, 0.18, 1)
 
-[node name="ControlsUI" type="Control" parent="."]
+[node name="ControlsUI" type="Control" parent="." unique_id=1688922525]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
