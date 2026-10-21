@@ -1,9 +1,9 @@
 extends Area3D
 
 @export var points := 50
-@export var bob_amplitude := 0.9
+@export var bob_amplitude := 0.3
 @export var bob_speed := 1.4
-@export var sway_amount := 0.6
+@export var sway_amount := 0.1
 @export var spin_speed := 1.6
 
 const DOME_COLOR := Color(0.78, 0.42, 0.9, 0.55)
