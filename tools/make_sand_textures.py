@@ -1,25 +1,12 @@
 #!/usr/bin/env python3
 """
-make_sand_textures.py — generates the seabed albedo and its matching normal map.
+Generate the seamless sand albedo and normal maps.
 
-The sand was a single flat JPEG ("OIP (1) 1.jpg", 474x430, mean RGB 216/199/181,
-standard deviation ~15) fed straight into a triplanar shader. Almost no tonal
-range means the seabed reads as a sheet of pale card: it catches the caustics
-overlay as one flat value, has no grain at any distance, and its 1.09 aspect
-ratio cannot tile without a visible seam every four metres.
+Both maps come from the same tileable height field, so they line up and repeat
+without seams. Change the palette below and run:
 
-This builds a proper pair of seamless 1024x1024 maps from a shared height field:
-
-    sand_albedo.png   warm dry sand: broad dune drifts, fine grain, shell grit
-    sand_normal.png   the same height field as a tangent-space normal map
-
-Both are generated from one periodic fractal value-noise lattice, so they tile
-infinitely in every direction and the lighting in the normal map agrees with
-the colour in the albedo (raised grains are lit, hollows are shaded).
-
-Usage:
-    python3 tools/make_sand_textures.py            # write PNGs
-    python3 tools/make_sand_textures.py --preview  # also dump a 2x2 tile check
+    python3 tools/make_sand_textures.py
+    python3 tools/make_sand_textures.py --preview   # also write a 2x2 tile check
 """
 import os
 import sys
@@ -147,9 +134,9 @@ def albedo(height: np.ndarray, size: int = SIZE) -> np.ndarray:
     brightness: the earlier JPEG averaged 216/199/181, which is why the whole
     corridor read as washed out.
     """
-    shadow = np.array([96, 78, 58], dtype=np.float64)     # hollows, packed and wet
-    mid = np.array([168, 143, 105], dtype=np.float64)     # the body of the sand
-    light = np.array([214, 194, 156], dtype=np.float64)   # crests catching light
+    shadow = np.array([126, 103, 76], dtype=np.float64)    # hollows
+    mid = np.array([190, 164, 124], dtype=np.float64)      # the body of the sand
+    light = np.array([232, 212, 172], dtype=np.float64)    # crests catching light
 
     t = np.clip((height - 0.22) / 0.56, 0.0, 1.0)
     t = t * t * (3.0 - 2.0 * t)

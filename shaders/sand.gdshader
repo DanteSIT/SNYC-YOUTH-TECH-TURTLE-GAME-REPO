@@ -20,15 +20,15 @@ uniform sampler2D normal_tex : hint_normal, repeat_enable, filter_linear_mipmap_
 // How many metres one repeat of the texture covers. Bigger = coarser sand.
 uniform float tile_size : hint_range(0.25, 16.0, 0.05) = 2.5;
 
-uniform vec3 tint : source_color = vec3(1.0, 0.97, 0.92);
+uniform vec3 tint : source_color = vec3(1.7, 1.35, 0.95);
 
 // A second, much finer grain that only fades in near the camera. Sand that reads
 // well at arm's length and does not boil at the far end of the corridor.
-uniform float detail_strength : hint_range(0.0, 1.0) = 0.45;
+uniform float detail_strength : hint_range(0.0, 1.0) = 0.35;
 uniform float detail_scale : hint_range(1.0, 24.0) = 7.0;
 uniform float detail_range : hint_range(1.0, 40.0) = 14.0;
 
-uniform float normal_strength : hint_range(0.0, 3.0) = 1.15;
+uniform float normal_strength : hint_range(0.0, 3.0) = 0.9;
 uniform float wetness : hint_range(0.0, 1.0) = 0.0;
 
 varying vec3 world_pos;
@@ -77,7 +77,12 @@ void fragment() {
 		col = mix(col, col * (fine * 2.0), detail_strength * near);
 	}
 
-	ALBEDO = clamp(col * tint, vec3(0.0), vec3(1.0));
+	// Lift the midtones a little and add a faint bounce term. Underwater sand
+	// picks up a lot of scattered light, and without it the bed reads almost
+	// black wherever the sun does not hit it directly.
+	vec3 sand = pow(clamp(col * tint, 0.0, 1.0), vec3(0.85));
+	ALBEDO = sand;
+	EMISSION = sand * vec3(1.0, 0.85, 0.65) * 0.1;
 
 	// Triplanar normal blend, with each projection's tangent frame rotated into
 	// world space before it is mixed.
