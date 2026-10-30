@@ -4,12 +4,15 @@ extends Area3D
 @export var patrol_end := Vector3.ZERO
 @export_range(0.0, 10.0) var patrol_speed := 1.5
 
+const OUTLINE := preload("res://materials/glow_outline_red.tres")
+
 var _patrol_start: Vector3
 var _patrol_dir := 1.0
 
 func _ready() -> void:
 	body_entered.connect(_on_body_entered)
 	_patrol_start = global_position
+	GlowOutline.apply(self, OUTLINE)
 
 func _physics_process(delta: float) -> void:
 	if patrol_end == Vector3.ZERO:

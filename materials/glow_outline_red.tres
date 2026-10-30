@@ -1,7 +1,6 @@
 [gd_resource type="StandardMaterial3D" format=3]
 
-; Glowing inverted-hull outline used for hazards. Same technique as
-; materials/glow_outline_pink.tres -- see that file for how it works.
+; Outline for hazards. Same setup as glow_outline_pink.tres.
 [resource]
 resource_name = "glow_outline_red"
 shading_mode = 0

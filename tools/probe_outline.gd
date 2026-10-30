@@ -1,10 +1,7 @@
 extends SceneTree
 
-## Verifies the glow-outline wiring without needing an eye:
-##   collectable  -> materials carry a pink next_pass shell
-##   hazard*      -> every mesh material carries a red next_pass shell
-## Also reports the world-space outline width each shell resolves to, since
-## grow_amount is local and the models are scaled all over the place.
+## Checks that collectables and hazards have their outline material attached,
+## and prints the world-space width of each shell.
 
 
 func _initialize() -> void:

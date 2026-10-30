@@ -11,6 +11,7 @@ const DOME_GLOW := Color(1.0, 0.75, 1.0)
 const TENTACLE_COLOR := Color(0.9, 0.62, 0.96, 0.75)
 const CRUNCH_SOUND := preload("res://assets/audio/jellyfish-plastic-crunch.mp3")
 const SPARKLE_BURST := preload("res://scenes/effects/feedback_burst.tscn")
+const OUTLINE := preload("res://materials/glow_outline_pink.tres")
 
 var _base_y := 0.0
 var _mats: Array[StandardMaterial3D] = []
@@ -44,17 +45,22 @@ func _apply_jelly_materials() -> void:
 	meshes.append_array(jelly.find_children("*", "MeshInstance3D", true, false))
 	var dome_mat := _make_mat(DOME_COLOR, 1.6)
 	var tentacle_mat := _make_mat(TENTACLE_COLOR, 0.8)
-	_mats.append(dome_mat)
 	for node in meshes:
 		var mesh_instance: MeshInstance3D = node
 		var mesh: Mesh = mesh_instance.mesh
 		if mesh == null:
 			continue
+		var bbox := mesh.get_aabb()
+		var is_dome := bbox.size.y > bbox.size.x and bbox.size.y > bbox.size.z
+		# Each surface gets its own material copy: the outline shell's grow
+		# amount is tuned per mesh scale, and the dome copies are the ones the
+		# pulse in _process() animates.
+		var shell := GlowOutline.shell(OUTLINE, mesh_instance)
 		for surface_index in range(mesh.get_surface_count()):
-			var mat := tentacle_mat
-			var bbox := mesh.get_aabb()
-			if bbox.size.y > bbox.size.x and bbox.size.y > bbox.size.z:
-				mat = dome_mat
+			var mat := (dome_mat if is_dome else tentacle_mat).duplicate() as StandardMaterial3D
+			mat.next_pass = shell
+			if is_dome:
+				_mats.append(mat)
 			mesh_instance.set_surface_override_material(surface_index, mat)
 
 
