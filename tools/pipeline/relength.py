@@ -1,34 +1,15 @@
 #!/usr/bin/env python3
 """
-relength.py — rebalance the level-length ladder in the committed level scenes.
+Set the length of each level.
 
-The committed scenes already ramp 66m (tutorial) -> 232m (level_15). This tool
-flattens that ramp into the agreed tiers.  Target values are the generator's
-`level_length` stamp (the value on the GodRays node); the playable pipe span is
-always `level_length - 9.4` and the corridor center is always z = 1.3:
-
-    tutorial      66  (unchanged)
-    level_1..5  -> 80
-    level_6..10 -> 110
-    level_11..15-> 140
-
-Per level it symmetrically nudges StartPipe/EndPipe toward the corridor center,
-drags the spawn anchor (Turtle) and the goal anchor (Goal + GoalPillarL/R) with
-them, and re-stamps the GodRays level_length to the tier length.  Scenery
-beyond the new pipes is deliberately left in place — it reads as backdrop past
-the pipe mouth and avoids deleting hand-placed work.
-
-Floor/backdrop coverage is checked and, only if the new pipes would poke past
-the existing seabed tiles, a Bridging Bed is added at that end.
-
-Idempotent: re-running is a no-op.  Only targeted transform/length lines are
-rewritten and edits stay strictly inside the Transform3D(...) argument list —
-no reordering, no unique_id churn.
+Moves StartPipe, EndPipe, Goal and Turtle to match the target length and updates
+the GodRays level_length stamp. The playable span is always `length - 9.4`,
+centred on z = 1.3. Content outside the pipes is left alone.
 
 Usage:
     python3 tools/pipeline/relength.py            # apply
-    python3 tools/pipeline/relength.py --dry-run  # preview only
-    OVERRIDE_TIERS="level_1.tscn:160" python3 tools/pipeline/relength.py  # dev/test
+    python3 tools/pipeline/relength.py --dry-run  # preview
+    OVERRIDE_TIERS="level_1.tscn:160" python3 tools/pipeline/relength.py
 """
 import os
 import re
@@ -50,13 +31,11 @@ MOVED = ("StartPipe", "EndPipe", "Turtle", "Goal", "GoalPillarL", "GoalPillarR")
 
 
 def default_tiers():
+    # Same lengths gen_levels.py uses. Keep these in sync with CONFIGS there.
+    lengths = [88, 100, 112, 124, 136, 148, 158, 168, 178, 188, 198, 208, 216, 224, 232]
     tiers = {"tutorial.tscn": 66}
-    for i in range(1, 6):
-        tiers["level_%d.tscn" % i] = 80
-    for i in range(6, 11):
-        tiers["level_%d.tscn" % i] = 110
-    for i in range(11, 16):
-        tiers["level_%d.tscn" % i] = 140
+    for i, length in enumerate(lengths, start=1):
+        tiers["level_%d.tscn" % i] = length
     override = os.environ.get("OVERRIDE_TIERS")
     if override:
         for pair in override.split(";"):
@@ -200,6 +179,8 @@ def main():
         for n in MOVED:
             r = find_transform(lines, n)
             if r is None:
+                if n.startswith("GoalPillar"):
+                    continue
                 print("FAIL %s: %s transform not found" % (name, n))
                 return 1
             cur[n] = (r[0], r[1], r[2])
@@ -233,6 +214,8 @@ def main():
             "GoalPillarR": new_end,
         }
         for n, new_z in targets.items():
+            if n not in cur:
+                continue
             idx, prefix, args = cur[n]
             args[11] = fnum(new_z)
             lines[idx] = fmt_transform(prefix, args)
