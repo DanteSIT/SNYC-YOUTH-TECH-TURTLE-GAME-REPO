@@ -1,41 +1,9 @@
 extends SceneTree
-## Measures which triangle winding Godot treats as FRONT under cull_back.
+## Measures which triangle winding Godot treats as front-facing. Godot uses the
+## opposite convention from OpenGL, so this is checked instead of assumed.
 ##
-## WHY THIS IS A TOOL AND NOT A COMMENT
-## ------------------------------------
-## Godot's front faces are CLOCKWISE. Equivalently: a triangle is front-facing iff
-## its right-hand-rule normal (b-a) x (c-a) points AWAY from the viewer. OpenGL
-## has the opposite convention -- front means counter-clockwise, normal pointing
-## at the camera -- and reaching for OpenGL by habit produces geometry that is
-## culled from exactly the side you are looking at.
-##
-## This has bitten this project twice:
-##   * the seabed was wound with right-hand normals pointing +Y, so it rendered
-##     only from underneath and was invisible from the player camera;
-##   * tools/probe_seabed.gd then "validated" it using the OpenGL assumption
-##     (n.y > 0.5), so the checker agreed with the bug and reported 16/16 OK.
-##
-## So the convention is measured here rather than assumed. But the first version
-## of this script was NOT trustworthy and led to a second wrong "fix": it read
-## one frame per winding with no warm-up and no control, and the first reading
-## came back as a non-zero 132 px for a face that ought to have been fully
-## culled. The viewport was not settled yet. The result still inverted the
-## winding a second time, and the bed stayed invisible.
-##
-## So this version is self-calibrating:
-##   1. warm-up frames are rendered and thrown away;
-##   2. the quad is rendered with cull_mode = CULL_DISABLED, which gives the
-##      coverage the quad occupies when it is definitely being drawn -- call it
-##      C, the yardstick;
-##   3. each winding is then rendered with cull_back and compared against C.
-## A winding counts as front only if it draws most of C AND the other winding
-## draws almost none of it. Both or neither means the measurement failed.
-##
-## Run WITHOUT --headless: headless mode has no rendering server at all, so
-## get_texture() returns null and every count is 0.
-##
-## Usage:
-##   godot --path . --script res://tools/probe_winding.gd
+## Run without --headless; headless mode has no rendering server.
+## Usage: godot --path . --script res://tools/probe_winding.gd
 
 const SIZE := Vector2i(400, 225)
 

@@ -1,36 +1,9 @@
 #!/usr/bin/env python3
-"""Flatten a clear run-in around each level's start and end pipe.
+"""Flatten the seabed around each level's start and end pipe.
 
-BUG
----
-`gen_levels.py` builds the seabed with an explicit "flat, fair start and finish"
-rule (`build_terrain`, top = 0.0 while within 7 m of spawn_z / goal_z). But
-`tools/pipeline/relength.py` later stretched every corridor to the 80/110/140 m
-ladder and moved the pipes, goal and turtle to match -- without rebuilding the
-terrain. The flat start stayed where the *original*, shorter corridor began.
-
-Result: in 6 of 16 levels the StartPipe no longer sits in open water. The pipe
-tube spans pipe_z +/- 3.5, and the seabed there is a random-walk bank instead of
-the flat 0.0 run-in, so the pipe is buried up to 1.8 m deep and the turtle
-spawns inside solid sand:
-
-    level_5   bed top 1.80 at the pipe   (turtle y 0.80 -> 1.0 m inside sand)
-    level_8   bed top 0.70              (0.1 m clearance)
-    level_9   bed top 1.26
-    level_10  bed top 1.80
-    level_14  bed top 1.21
-    level_15  bed top 1.80
-
-WHAT THIS DOES
---------------
-Blends every bed's top height toward FLAT_TOP inside a protected window around
-each pipe, with a linear taper outside it so the seabed ramps into the flat
-rather than stepping. Only the bed's origin y is touched; its z span and scale
-are untouched, so the walk's horizontal structure and every level-design
-placement anchored to it are preserved -- the ground just stops being a wall
-across the entrance.
-
-Idempotent (running twice is a no-op: the blend is a pure function of z).
+The corridor can be re-lengthed after the terrain is built, which leaves some
+pipes buried in sand. This blends the bed top toward FLAT_TOP near each pipe so
+the turtle always starts and finishes in open water. Idempotent.
 """
 
 import glob

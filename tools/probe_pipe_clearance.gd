@@ -1,44 +1,6 @@
 extends SceneTree
-## Can the turtle reliably get through a transition pipe?
-##
-## ## The bug this exists for
-##
-## "When coming into contact with the pipe the player gets stuck." It was a hard
-## lock, not a bump: the turtle sat at (z 37.57, y 0.13) for 6 s with the forward
-## key held, and the swim key moved it 0.00 m. Four separate things had to be
-## measured to explain that, and every one of them was wrong on the first guess:
-##
-##  1. The player SPAWNS INSIDE the pipe. In every level the Turtle is authored at
-##     the same z as the StartPipe (level_1: both at 40.6), sitting in the middle
-##     of the tube, ~0.6 m below its axis.
-##  2. The vertical input was INVERTED. player_controller read
-##     Input.get_axis("ui_up", "ui_down"), and Godot's signature is
-##     get_axis(NEGATIVE, POSITIVE) -- the first action returns -1. So ui_up, which
-##     project.godot binds to W and the up arrow, produced a downward push:
-##     measured, ui_up moved the turtle -1.000 m in y over a third of a second.
-##     Inside a pipe, where the only way out is upward, the obvious key drove the
-##     turtle into the wall. That alone is enough to explain the report.
-##  3. Gravity pulled the turtle into the bore wall in ~0.22 s, because the level's
-##     own spawn leaves only ~0.24 m of floor under the box.
-##  4. The collider could not let go. It was a 2624-face ConcavePolygonShape3D
-##     baked from the .blend, and move_and_slide cannot depenetrate a body out of
-##     a concave surface -- once inside, there is no "inside" to be pushed out of.
-##     It was also not trustworthy: cast_motion reported contacts at offsets where
-##     ray casts proved the bore empty, and at its own reported contact poses
-##     intersect_shape found nothing overlapping at all.
-##
-## It is now a ring of 16 convex boxes, which fixes 4 properly, plus the corrected
-## input axis for 2. Gravity is left alone: an earlier attempt made the turtle
-## neutrally buoyant in the bore, which turned out to be unnecessary and actively
-## harmful, and the comment at the gravity line in player_controller.gd explains
-## what the measurements said.
-##
-## ## Reading the output
-##
-##   PIPE OK / PIPE FAIL   the verdict, on the last line
-##
-## Run it per level, since the pipes are instanced and placed by each level:
-##   godot --headless --path . --script res://tools/probe_pipe_clearance.gd
+## Checks that the transition pipes are clear and that the turtle can swim
+## through them. Run per level:
 ##   godot --headless --path . --script res://tools/probe_pipe_clearance.gd -- res://scenes/levels/level_9.tscn
 
 

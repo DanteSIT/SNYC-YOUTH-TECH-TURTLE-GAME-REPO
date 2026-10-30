@@ -113,29 +113,15 @@ func _physics_process(delta: float) -> void:
 
 	velocity.x = 0
 
-	# Plain gravity, including inside a transition pipe. An earlier version made
-	# the turtle neutrally buoyant in the bore, on the theory that its curved wall
-	# was too steep to stand on. Measurement said otherwise: with the bore built
-	# from convex pieces (see transition_pipe.tscn) the turtle slides along the
-	# bottom of the tube perfectly well, and the buoyancy was only making things
-	# worse -- the turtle hovered at spawn height with is_on_floor() false, which
-	# broke the floor probe, and it crawled for up to 2 s against a gate in
-	# level_2 that it passed cleanly without it. Traversal went from 30/32 to
-	# 32/32 when the buoyancy came out.
+	# Gravity stays on inside pipes too. The convex tube walls let the turtle
+	# slide along the bottom, and turning gravity off made it hover and snag.
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 
 	if Input.is_action_just_pressed("ui_accept"):
 		velocity.y = JUMP_VELOCITY
 
-	# Godot's signature is get_axis(NEGATIVE, POSITIVE): the FIRST action is the
-	# one that returns -1. This used to read ("ui_up", "ui_down"), which yielded
-	# -1 for ui_up and +1 for ui_down, so the line below turned the up key into a
-	# downward push. project.godot binds ui_up to W and the up arrow, so holding W
-	# dove, and inside a pipe -- where the only way out is upward -- it drove the
-	# turtle straight into the bore wall and jammed it there. Measured: ui_up moved
-	# the turtle -1.000 m in y over a third of a second. tools/probe_pipe_clearance.gd
-	# checks the polarity, so this cannot quietly invert again.
+	# get_axis takes (negative, positive), so down comes first here.
 	var swim := Input.get_axis("ui_down", "ui_up")
 	if not is_zero_approx(swim):
 		velocity.y = swim * SWIM_VELOCITY
@@ -209,17 +195,8 @@ func _add_shake(amount: float) -> void:
 	_shake = minf(_shake + amount, 1.0)
 
 
-## Hit-stop: freeze the world for a beat when the turtle takes a hit.
-##
-## The deadline is wall-clock, not a countdown on a delta. That distinction is the
-## whole bug this replaced: counting down `_hitstop -= get_physics_process_delta_time()`
-## while also setting `Engine.time_scale = HITSTOP_SCALE` means the delta being
-## consumed is already divided by HITSTOP_SCALE, so the 0.11 s of hit-stop took
-## 0.11 / 0.04 = 2.75 s of real time. For those three seconds the entire game --
-## turtle, hazards, particles, physics -- ran at 4% speed, which is what made a
-## collision with a hazard read as the turtle being stuck and then slowly sinking.
-##
-## `Time.get_ticks_msec()` is unscaled, so the freeze now lasts as long as it says.
+## Brief freeze when the turtle is hit. The deadline uses wall-clock time
+## because Time.get_ticks_msec() ignores Engine.time_scale.
 func _start_hitstop() -> void:
 	if get_tree().paused:
 		return
@@ -237,9 +214,7 @@ func _update_hitstop() -> void:
 	Engine.time_scale = 1.0
 
 
-## A fatal hit restarts the level from inside `take_damage`, so this node can be
-## freed while the world is still frozen. `_ready` resets the scale on the way in,
-## but leaving a live hit-stop with no owner would strand the game at 4% speed.
+## A fatal hit can free this node mid-freeze, so restore the time scale on exit.
 func _exit_tree() -> void:
 	if _hitstop_until_ms != 0:
 		_hitstop_until_ms = 0

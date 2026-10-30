@@ -1,32 +1,8 @@
 extends SceneTree
-## Checks that a boss model FACES the player it is chasing, and works out which
-## way the model faces from its own geometry rather than assuming a convention.
+## Checks that the boss models face the player. The shark model faces +Z, so
+## this finds the tail from the mesh shape instead of assuming a convention.
 ##
-## WHY GEOMETRY, NOT -Z
-## --------------------
-## zshark.glb turned out to face +Z, not -Z. Its tail fin is a tall, laterally
-## thin plate (X 0.088 wide, Y 1.153 tall) at local z = -4.06, which puts the
-## head at the +Z end. Assuming the glTF -Z convention here is not a harmless
-## default: it makes this probe report a correct model as broken. It already did
-## once, and the first version of tools/diag_shark_facing.gd made the same
-## mistake by calling the widest slab the head -- that slab is the pectoral fins,
-## which sit behind the head and are both the widest and the deepest thing on
-## the animal.
-##
-## So the tail is found by shape: the caudal fin is by a wide margin the most
-## vertically-elongated, laterally-thin slab, so the slab maximising Y/X is the
-## tail, and the model faces the other way. A model where that does not produce a
-## clear winner is reported INCONCLUSIVE rather than guessed at.
-##
-## WHAT THIS IS FOR
-## ----------------
-## The shark was authored with a 180 degree yaw baked into its Body while
-## shark_boss.gd points the node's -Z at the player, so the shark swam tail-first.
-## Nothing reported it: the scene loaded, the hit box worked, damage still
-## applied. Only looking at it caught it. This turns that into a number.
-##
-## Usage:
-##   godot --headless --path . --script res://tools/probe_boss_facing.gd
+## Usage: godot --headless --path . --script res://tools/probe_boss_facing.gd
 
 
 func _initialize() -> void:

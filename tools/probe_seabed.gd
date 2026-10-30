@@ -1,22 +1,9 @@
 extends SceneTree
-## Validates the seabed in every level actually renders, not just collides.
+## Checks that every level's seabed has a real mesh with upward-facing
+## triangles. A mesh can collide while drawing nothing, so this looks at the
+## surface data directly.
 ##
-## WHY THIS EXISTS
-## ---------------
-## The seabed used to be serialised as an ArrayMesh `_data` dictionary holding
-## PackedVector3Arrays. Godot parses that with no error and no warning and
-## produces a mesh whose surface_count is 0 -- a mesh that draws nothing. The
-## scene still loaded, still reported no errors, and still collided perfectly,
-## because collision lives in a separate CollisionShape3D. Both the load check
-## and the floor probe passed, 16 levels out of 16, while the entire seabed was
-## invisible on screen.
-##
-## So every one of those checks was blind to the only question that mattered.
-## This one is not: it loads each level, pulls the seabed mesh out of the running
-## scene, and requires a real surface with real triangles facing the right way.
-##
-## Usage:
-##   godot --headless --path . --script res://tools/probe_seabed.gd
+## Usage: godot --headless --path . --script res://tools/probe_seabed.gd
 
 const LEVEL_DIR := "res://scenes/levels/"
 

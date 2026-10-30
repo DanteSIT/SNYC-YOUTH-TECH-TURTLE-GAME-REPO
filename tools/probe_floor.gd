@@ -1,23 +1,9 @@
 extends SceneTree
 
-## Headless floor validation. The seabed is the thing the player stands on, so
-## replacing hundreds of box colliders with a generated surface has to be proven
-## to still hold the turtle up, and a still screenshot cannot show that.
+## Drops the turtle and sweeps a test body down the corridor to check that the
+## seabed actually holds the player up.
 ##
-## Two independent checks per level:
-##
-##   1. the level's own turtle is dropped and must come to rest on the floor
-##      rather than falling through it;
-##   2. a bare CharacterBody3D is swept down at points along the corridor, which
-##      measures the floor independently of the player controller's own physics.
-##
-## Samples taken at a pipe's z are skipped: the sweep would start inside the pipe
-## tube and report a miss that has nothing to do with the seabed.
-##
-## Usage:
-##   godot --headless --path . --script res://tools/probe_floor.gd -- <scene> [n]
-##
-## Exits 0 if every level passed, 1 otherwise.
+## Usage: godot --headless --path . --script res://tools/probe_floor.gd -- <scene> [samples]
 
 const FALL_FRAMES := 90
 const SWEEP_FROM_Y := 4.0

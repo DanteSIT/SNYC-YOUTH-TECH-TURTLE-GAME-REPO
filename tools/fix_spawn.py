@@ -1,26 +1,8 @@
 #!/usr/bin/env python3
-"""Move every level's turtle spawn onto its start pipe.
+"""Move each level's turtle onto the start pipe axis.
 
-BUG
----
-All 16 levels placed the turtle at ``StartPipe.z - 2.6`` while the generator
-emitted the pipe at ``spawn_z + 2.6``. The start pipe is a 7 m long, 3 m
-diameter opaque tube running along Z and centred on its node origin, so it
-spans ``z = pipe_z +/- 3.5``. A turtle at ``pipe_z - 2.6`` is therefore 0.9 m
-*inside* the tube: the run began downstream of the start, with the camera (which
-rides at the turtle's own z, 3.576 m to +X) level with the tube's side wall.
-
-The fix is to spawn on the pipe's axis. Inside a hollow tube the turtle is
-unobstructed -- the tube's inward-facing walls are back faces from a camera
-outside it, so they cull and the turtle reads normally (verified: 0.89 % of the
-frame crushed, turtle silhouette present).
-
-Only z is touched. The generator anchors terrain, collectables, hazards, gates
-and platforms to ``spawn_z``; moving the pipe instead of re-anchoring the level
-keeps every one of those placements exactly where it was and only corrects
-where the player begins.
-
-Idempotent.
+The old spawn sat 2.6 m behind the pipe, inside the tube. Only z is changed, so
+the rest of the level stays put. Idempotent.
 """
 
 import glob

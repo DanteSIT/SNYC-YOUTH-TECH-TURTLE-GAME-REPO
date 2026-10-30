@@ -8,19 +8,9 @@ cull_mode = 2
 shading_mode = 0
 albedo_color = Color(0.7, 0.92, 1, 0.4)
 
-; The collision for this pipe is a ring of 16 convex boxes, not the
-; ConcavePolygonShape3D that used to live in pipe_collision.tres. That trimesh
-; was baked from the .blend and could not be trusted: probing it reported
-; contacts in the middle of a bore that ray casts proved empty (it is a clean
-; 1.50 m cylinder), and a turtle whose box ended up low in the tube was frozen
-; solid -- 6 s with no forward progress and 0.00 m of response to the swim key,
-; because move_and_slide cannot depenetrate a body out of a concave surface.
-;
-; Convex pieces fix both halves of that. The bore is now exactly defined by these
-; numbers rather than by whatever triangles the bake produced, and every piece
-; can push a body back out, so the worst case is a nudge instead of a dead stop.
-; tools/probe_pipe_clearance.gd checks the bore and drives the real controller
-; through the pipe.
+; The tube uses 16 convex box segments instead of a baked concave mesh. Convex
+; shapes can push the turtle back out if it clips a wall; a concave trimesh
+; could trap it. tools/probe_pipe_clearance.gd checks the bore.
 [sub_resource type="BoxShape3D" id="tube_seg"]
 size = Vector3(0.5, 7.62, 0.7169)
 

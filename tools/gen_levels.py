@@ -1,16 +1,9 @@
 #!/usr/bin/env python3
 """
-Generate the 16 levels for Turtle Odyssey -- a SIDE-SCROLLING turtle game.
-Coordinate model (this is the important bit):
-  * The turtle only ever moves in Z (horizontal on screen) and Y (vertical).
-    Its X is locked, so the entire playfield is the plane x = 0.
-  * z decreases as you advance; the camera sits off to +X looking at the turtle.
-  * x < 0 is BACKGROUND (visible, behind the turtle). x > 0 is behind the camera.
-  * Therefore: every gameplay element (ground, platforms, gates, hazards,
-    collectables, currents) is authored on x = 0, and scenery is layered in the
-    background so plants read in front of rocks instead of being swallowed.
-Particles are used only for small ambience (bubbles, silt, marine snow, drift).
-Fish are real model nodes that swim, never particles.
+Generate the 16 levels.
+
+The turtle moves on the plane x = 0: z is forward/back and y is up/down. The
+camera sits at +X. Keep gameplay on x = 0 and put scenery at x < 0.
 """
 import math
 import os
