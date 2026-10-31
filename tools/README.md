@@ -37,6 +37,9 @@ godot --headless --path . --script res://tools/<name>.gd -- [args]
 
 - `fix_spawn.py` — puts the turtle on the start pipe axis.
 - `flatten_pipes.py` — clears sand around the start and end pipes.
-- `fix_buried.py` — lifts collectables, hazards and gates out of the sand.
+- `fix_buried.py` — lifts collectables and hazards out of the sand.
+- `ground_platforms.py` — drops platforms onto the seabed as rock piles.
+- `remove_gates.py` — strips the gate obstacles from every level.
+- `remove_ceiling.py` — strips the old hard ceiling from every level.
 - `make_sand_textures.py`, `make_flotsam_textures.py` — generate textures.
 - `diag_*.gd` — diagnostics kept from earlier rendering bugs.
