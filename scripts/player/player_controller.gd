@@ -12,6 +12,11 @@ const TUBE_HALF_LEN = 2.4
 const TUBE_RADIUS = 2.0
 const TUBE_FALLOFF = 1.0
 
+# Soft roof. Past this height a downward push eases the turtle back down, so
+# there is no hard collider at the top of the channel.
+const ROOF_Y := 4.2
+const ROOF_PUSH := 2.5
+
 # --- game feel (shake / hit-stop / feedback bursts) ---
 const SHAKE_DAMAGE := 0.6
 const SHAKE_BOOST := 0.22
@@ -125,6 +130,12 @@ func _physics_process(delta: float) -> void:
 	var swim := Input.get_axis("ui_down", "ui_up")
 	if not is_zero_approx(swim):
 		velocity.y = swim * SWIM_VELOCITY
+
+	# Above the roof line, replace upward speed with a gentle downward push.
+	# The push grows with height, so the turtle settles instead of escaping.
+	var over_roof := global_position.y - ROOF_Y
+	if over_roof > 0.0:
+		velocity.y = minf(velocity.y, -ROOF_PUSH * over_roof)
 
 	var direction := Input.get_axis("ui_left", "ui_right")
 	var is_boosting = Input.is_action_pressed("shift")
