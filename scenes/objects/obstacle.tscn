@@ -1,18 +1,17 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=3 format=3]
 
-[ext_resource type="Material" path="res://materials/stone.tres" id="1_obs"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_obs"]
-material = ExtResource("1_obs")
-size = Vector3(1, 1, 1)
+; Rock pillar used for gates and the goal posts. The mesh is a Kenney rock
+; normalised to the unit box, so the level's transform still sets its size and
+; the box collider below still matches it.
+[ext_resource type="PackedScene" path="res://assets/models/kenney/nature/rock_tallA.glb" id="1_rock"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_obs"]
 size = Vector3(1, 1, 1)
 
 [node name="Obstacle" type="StaticBody3D"]
 
-[node name="Mesh" type="MeshInstance3D" parent="."]
-mesh = SubResource("BoxMesh_obs")
+[node name="Mesh" parent="." instance=ExtResource("1_rock")]
+transform = Transform3D(1.017219, 0, 0, 0, 1.004091, 0, 0, 0, 1.463677, 0, -0.4498, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_obs")
