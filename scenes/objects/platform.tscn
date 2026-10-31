@@ -1,16 +1,29 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=6 format=3]
 
-; Rock ledge. Same trick as the gate: a Kenney rock normalised to the unit box,
-; so the level transform sets its size and the box collider still matches.
-[ext_resource type="PackedScene" path="res://assets/models/kenney/nature/stone_largeA.glb" id="1_rock"]
+; A pile of rocks the turtle can stand on. Each rock is normalised to the unit
+; box and then placed inside it, so the level transform sizes the whole pile and
+; the box collider still matches it. The lowest rocks sit at y = -0.5.
+[ext_resource type="PackedScene" path="res://assets/models/kenney/nature/rock_largeA.glb" id="1_base"]
+[ext_resource type="PackedScene" path="res://assets/models/kenney/nature/rock_smallA.glb" id="2_mid"]
+[ext_resource type="PackedScene" path="res://assets/models/kenney/nature/rock_smallC.glb" id="3_low"]
+[ext_resource type="PackedScene" path="res://assets/models/kenney/nature/rock_tallA.glb" id="4_top"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_plat"]
 size = Vector3(1, 1, 1)
 
 [node name="Platform" type="StaticBody3D"]
 
-[node name="Mesh" parent="." instance=ExtResource("1_rock")]
-transform = Transform3D(1.274037, 0, 0, 0, 3.849463, 0, 0, 0, 0.984776, 0, -0.3075, 0)
+[node name="Rock1" parent="." instance=ExtResource("1_base")]
+transform = Transform3D(1.019229, 0, 0, 0, 3.079458, 0, 0, 0, 0.787820, 0, -0.3460, 0)
+
+[node name="Rock2" parent="." instance=ExtResource("2_mid")]
+transform = Transform3D(1.524390, 0, 0, 0, 2.876058, 0, 0, 0, 1.524390, 0.2200, -0.3512, 0.2000)
+
+[node name="Rock3" parent="." instance=ExtResource("3_low")]
+transform = Transform3D(1.385809, 0, 0, 0, 4.075578, 0, 0, 0, 1.385809, -0.2500, -0.2962, -0.2000)
+
+[node name="Rock4" parent="." instance=ExtResource("4_top")]
+transform = Transform3D(0.457750, 0, 0, 0, 0.451841, 0, 0, 0, 0.658655, 0.0500, 0.0476, -0.0500)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_plat")

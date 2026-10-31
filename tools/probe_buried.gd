@@ -1,11 +1,11 @@
 extends SceneTree
 ## Finds gameplay objects that sit inside the seabed.
 ##
-## Casts a ray straight down at each collectable, hazard, gate, platform and
-## current, and compares the object's own origin with the floor height there.
-## Negative clearance means the sand is above the object's origin.
+## Casts a ray straight down at each collectable, hazard and platform, and
+## compares the object's own origin with the floor height there. Negative
+## clearance means the sand is above the object's origin.
 
-const PREFIXES := ["Collect", "Hazard", "Gate"]
+const PREFIXES := ["Collect", "Hazard"]
 
 
 func _initialize() -> void:
@@ -37,6 +37,16 @@ func _run() -> void:
 	print("level ", level_path)
 	for child in world.get_children():
 		var name := String(child.name)
+		if not (child is Node3D):
+			continue
+		var pos: Vector3 = (child as Node3D).global_position
+		# Platforms are grounded by tools/ground_platforms.py, so just report
+		# where the floor is under each one.
+		if name.begins_with("Platform"):
+			var ground := _terrain_under(space, terrain, child, pos)
+			if not is_nan(ground):
+				print("PLATFORM %s %.4f %.4f %.4f" % [name, pos.y, ground, pos.z])
+			continue
 		var prefix := ""
 		for p in PREFIXES:
 			if name.begins_with(p):
@@ -44,9 +54,6 @@ func _run() -> void:
 				break
 		if prefix == "":
 			continue
-		if not (child is Node3D):
-			continue
-		var pos: Vector3 = (child as Node3D).global_position
 		var floor_y := _terrain_under(space, terrain, child, pos)
 		if is_nan(floor_y):
 			continue
@@ -62,7 +69,7 @@ func _run() -> void:
 	quit(1 if buried > 0 else 0)
 
 
-## Ray-casts down until it reaches the seabed, skipping platforms and gates.
+## Ray-casts down until it reaches the seabed, skipping platforms.
 func _terrain_under(space: PhysicsDirectSpaceState3D, terrain: Node, child: Node, pos: Vector3) -> float:
 	var top := 4.4
 	var bottom := pos.y - 6.0

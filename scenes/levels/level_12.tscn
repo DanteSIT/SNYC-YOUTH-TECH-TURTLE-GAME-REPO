@@ -1,4 +1,4 @@
-[gd_scene load_steps=78 format=3]
+[gd_scene load_steps=77 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player/turtle.tscn" id="1_turt"]
 [ext_resource type="PackedScene" path="res://scenes/objects/collectable.tscn" id="2_coll"]
@@ -111,8 +111,6 @@ volumetric_fog_density = 0.0068
 volumetric_fog_albedo = Color(0.160, 0.340, 0.500, 1)
 volumetric_fog_emission_energy = 0.04
 
-[sub_resource type="BoxShape3D" id="ceiling_shape"]
-size = Vector3(20, 0.2, 208)
 
 [sub_resource type="ArrayMesh" id="seabed_mesh"]
 _surfaces = [{
@@ -143,10 +141,6 @@ light_volumetric_fog_energy = 0.8
 light_angular_distance = 1.5
 light_specular = 0.366
 shadow_enabled = true
-[node name="Ceiling" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.6, 0)
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Ceiling"]
-shape = SubResource("ceiling_shape")
 [node name="Terrain" type="Node3D" parent="."]
 
 [node name="SeabedBody" type="StaticBody3D" parent="Terrain"]
@@ -1013,7 +1007,7 @@ transform = Transform3D(0.0098, 0, -1.0305, 0, 1.0305, 0, 1.0305, 0, 0.0098, -1.
 transform = Transform3D(-0.7653, 0, -0.6231, 0, 0.9869, 0, 0.6231, 0, -0.7653, -2.7517, 0.5486, 34.4275)
 
 [node name="Platform1" parent="." instance=ExtResource("6_plat")]
-transform = Transform3D(2.2151, 0, -0, 0, 0.32, 0, 0, 0, 2.9162, 0, 0.9937, 76.125)
+transform = Transform3D(2.2151, 0.0000, -0.0000, 0.0000, 1.2000, 0.0000, 0.0000, 0.0000, 2.9162, 0.0000, 0.5836, 76.1250)
 
 [node name="Collect1" parent="." instance=ExtResource("2_coll")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.0949, 1.8437, 75.5555)
@@ -1025,7 +1019,7 @@ transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -0.0232, 2.0437, 75.6013)
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.0204, 2.2437, 76.3936)
 
 [node name="Platform2" parent="." instance=ExtResource("6_plat")]
-transform = Transform3D(2.2016, 0, -0, 0, 0.32, 0, 0, 0, 2.9471, 0, 1.5092, 54.375)
+transform = Transform3D(2.2016, 0.0000, -0.0000, 0.0000, 1.2000, 0.0000, 0.0000, 0.0000, 2.9471, 0.0000, 0.6000, 54.3750)
 
 [node name="Collect4" parent="." instance=ExtResource("2_coll")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -0.1036, 2.3592, 54.7807)
@@ -1037,7 +1031,7 @@ transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -0.099, 2.5592, 53.5867)
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -0.0828, 2.7592, 54.5386)
 
 [node name="Platform3" parent="." instance=ExtResource("6_plat")]
-transform = Transform3D(2.1877, 0, -0, 0, 0.32, 0, 0, 0, 3.1498, 0, 2.0962, 32.625)
+transform = Transform3D(2.1877, 0.0000, -0.0000, 0.0000, 1.2000, 0.0000, 0.0000, 0.0000, 3.1498, 0.0000, 1.1272, 32.6250)
 
 [node name="Collect7" parent="." instance=ExtResource("2_coll")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.0805, 2.9462, 32.6038)
@@ -1046,7 +1040,7 @@ transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.0805, 2.9462, 32.6038)
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.0613, 3.1462, 32.3121)
 
 [node name="Platform4" parent="." instance=ExtResource("6_plat")]
-transform = Transform3D(2.0488, 0, -0, 0, 0.32, 0, 0, 0, 3.051, 0, 3.7765, 10.875)
+transform = Transform3D(2.0488, 0.0000, -0.0000, 0.0000, 1.2000, 0.0000, 0.0000, 0.0000, 3.0510, 0.0000, 2.3500, 10.8750)
 
 [node name="Collect9" parent="." instance=ExtResource("2_coll")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -0.1185, 3.85, 10.887)
@@ -1058,7 +1052,7 @@ transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -0.0194, 3.85, 10.0236)
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.0586, 3.85, 10.0417)
 
 [node name="Platform5" parent="." instance=ExtResource("6_plat")]
-transform = Transform3D(2.1527, 0, -0, 0, 0.32, 0, 0, 0, 2.9983, 0, 3.2808, -10.875)
+transform = Transform3D(2.1527, 0.0000, -0.0000, 0.0000, 1.2000, 0.0000, 0.0000, 0.0000, 2.9983, 0.0000, 1.8885, -10.8750)
 
 [node name="Collect12" parent="." instance=ExtResource("2_coll")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.0522, 3.85, -10.6929)
@@ -1070,7 +1064,7 @@ transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -0.0193, 3.85, -10.5855)
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.018, 3.85, -10.4045)
 
 [node name="Platform6" parent="." instance=ExtResource("6_plat")]
-transform = Transform3D(1.9084, 0, -0, 0, 0.32, 0, 0, 0, 3.3637, 0, 3.2415, -32.625)
+transform = Transform3D(1.9084, 0.0000, -0.0000, 0.0000, 1.2000, 0.0000, 0.0000, 0.0000, 3.3637, 0.0000, 1.4812, -32.6250)
 
 [node name="Collect15" parent="." instance=ExtResource("2_coll")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -0.0975, 3.85, -31.9669)
@@ -1082,7 +1076,7 @@ transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -0.0539, 3.85, -32.8269)
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.0803, 3.85, -33.2602)
 
 [node name="Platform7" parent="." instance=ExtResource("6_plat")]
-transform = Transform3D(1.8285, 0, -0, 0, 0.32, 0, 0, 0, 3.1398, 0, 3.7401, -54.375)
+transform = Transform3D(1.8285, 0.0000, -0.0000, 0.0000, 1.2000, 0.0000, 0.0000, 0.0000, 3.1398, 0.0000, 0.5998, -54.3750)
 
 [node name="Collect18" parent="." instance=ExtResource("2_coll")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.1173, 3.85, -54.1706)
@@ -1091,7 +1085,7 @@ transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.1173, 3.85, -54.1706)
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -0.1085, 3.85, -54.0404)
 
 [node name="Platform8" parent="." instance=ExtResource("6_plat")]
-transform = Transform3D(1.7143, 0, -0, 0, 0.32, 0, 0, 0, 3.0511, 0, 2.2519, -76.125)
+transform = Transform3D(1.7143, 0.0000, -0.0000, 0.0000, 1.2000, 0.0000, 0.0000, 0.0000, 3.0511, 0.0000, 0.5049, -76.1250)
 
 [node name="Collect20" parent="." instance=ExtResource("2_coll")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.0093, 3.1019, -75.229)
@@ -1099,8 +1093,6 @@ transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.0093, 3.1019, -75.229)
 [node name="Collect21" parent="." instance=ExtResource("2_coll")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.0065, 3.3019, -76.6138)
 
-[node name="Gate1" parent="." instance=ExtResource("5_obs")]
-transform = Transform3D(4.2, 0, -0, 0, 0.7249, 0, 0, 0, 0.7, 0, 0.8624, 89)
 
 [node name="Collect22" parent="." instance=ExtResource("2_coll")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.0883, 1.1801, 87)
@@ -1108,20 +1100,14 @@ transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.0883, 1.1801, 87)
 [node name="Collect23" parent="." instance=ExtResource("2_coll")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -0.0775, 1.1357, 85.5)
 
-[node name="Gate2" parent="." instance=ExtResource("5_obs")]
-transform = Transform3D(4.2, 0, -0, 0, 1.1958, 0, 0, 0, 0.7, 0, 3.9317, 72.8182)
 
 [node name="Collect24" parent="." instance=ExtResource("2_coll")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -0.006, 3.85, 70.8182)
 
-[node name="Gate3" parent="." instance=ExtResource("5_obs")]
-transform = Transform3D(4.2, 0, -0, 0, 1.085, 0, 0, 0, 0.7, 0, 0.6977, 56.6364)
 
 [node name="Collect25" parent="." instance=ExtResource("2_coll")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -0.0306, 0.2224, 54.6364)
 
-[node name="Gate4" parent="." instance=ExtResource("5_obs")]
-transform = Transform3D(4.2, 0, -0, 0, 1.1157, 0, 0, 0, 0.7, 0, 3.6725, 40.4545)
 
 [node name="Collect26" parent="." instance=ExtResource("2_coll")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -0.0844, 3.0378, 38.4545)
@@ -1132,20 +1118,14 @@ transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.0065, 3.1109, 36.9545)
 [node name="Collect28" parent="." instance=ExtResource("2_coll")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.0552, 3.85, 35.4545)
 
-[node name="Gate5" parent="." instance=ExtResource("5_obs")]
-transform = Transform3D(4.2, 0, -0, 0, 0.9888, 0, 0, 0, 0.7, 0, 1.3392, 24.2727)
 
 [node name="Collect29" parent="." instance=ExtResource("2_coll")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.0257, 1.9233, 22.2727)
 
-[node name="Gate6" parent="." instance=ExtResource("5_obs")]
-transform = Transform3D(4.2, 0, -0, 0, 0.7496, 0, 0, 0, 0.7, 0, 3.8457, 8.0909)
 
 [node name="Collect30" parent="." instance=ExtResource("2_coll")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.1051, 3.85, 6.0909)
 
-[node name="Gate7" parent="." instance=ExtResource("5_obs")]
-transform = Transform3D(4.2, 0, -0, 0, 0.8881, 0, 0, 0, 0.7, 0, 2.4197, -8.0909)
 
 [node name="Collect31" parent="." instance=ExtResource("2_coll")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.0378, 2.2302, -10.0909)
@@ -1153,8 +1133,6 @@ transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.0378, 2.2302, -10.0909)
 [node name="Collect32" parent="." instance=ExtResource("2_coll")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -0.0898, 1.9757, -11.5909)
 
-[node name="Gate8" parent="." instance=ExtResource("5_obs")]
-transform = Transform3D(4.2, 0, -0, 0, 1.0729, 0, 0, 0, 0.7, 0, 3.9268, -24.2727)
 
 [node name="Collect33" parent="." instance=ExtResource("2_coll")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.1128, 3.1333, -26.2727)
@@ -1162,14 +1140,10 @@ transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.1128, 3.1333, -26.2727)
 [node name="Collect34" parent="." instance=ExtResource("2_coll")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.003, 3.85, -27.7727)
 
-[node name="Gate9" parent="." instance=ExtResource("5_obs")]
-transform = Transform3D(4.2, 0, -0, 0, 1.1755, 0, 0, 0, 0.7, 0, 0.9471, -40.4545)
 
 [node name="Collect35" parent="." instance=ExtResource("2_coll")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.0157, 1.068, -42.4545)
 
-[node name="Gate10" parent="." instance=ExtResource("5_obs")]
-transform = Transform3D(4.2, 0, -0, 0, 1.0088, 0, 0, 0, 0.7, 0, 3.7512, -56.6364)
 
 [node name="Collect36" parent="." instance=ExtResource("2_coll")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.1016, 3.6757, -58.6364)
@@ -1180,8 +1154,6 @@ transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.0719, 3.7563, -60.1364)
 [node name="Collect38" parent="." instance=ExtResource("2_coll")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.0134, 3.5857, -61.6364)
 
-[node name="Gate11" parent="." instance=ExtResource("5_obs")]
-transform = Transform3D(4.2, 0, -0, 0, 0.916, 0, 0, 0, 0.7, 0, 1.4377, -72.8182)
 
 [node name="Collect39" parent="." instance=ExtResource("2_coll")]
 transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -0.0268, 1.2875, -74.8182)

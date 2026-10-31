@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Lift collectables, hazards and gates that ended up inside the seabed.
+Lift collectables and hazards that ended up inside the seabed.
 
 The levels were laid out against the old segmented ground model, but the sand
 is now one continuous heightfield, so a few objects sit under the surface. This
@@ -26,8 +26,7 @@ LEVELS = sorted(glob.glob("scenes/levels/*.tscn"))
 
 # How far above the floor each kind of object should sit.
 CLEARANCE = {"Collect": 0.9, "Hazard": 0.5}
-GATE_GAP = 0.5          # gap under a low gate wall
-MAX_Y = 3.7             # stay under the ceiling
+MAX_Y = 3.7             # keep pickups inside the playable band
 
 NODE = re.compile(r'^\[node name="([^"]+)" parent="[^"]*"[^\]]*\]$', re.M)
 FIX = re.compile(r'^FIX (\w+) (\S+) (\S+) (\S+) (\S+)$', re.M)
@@ -76,8 +75,6 @@ def main():
                 continue
             start, end, args = hit
             new_y = floor + CLEARANCE.get(kind, 0.5)
-            if kind == "Gate":
-                new_y = floor + GATE_GAP + args[4] * 0.5
             new_y = min(new_y, MAX_Y)
             if new_y <= y + 1e-3:
                 continue

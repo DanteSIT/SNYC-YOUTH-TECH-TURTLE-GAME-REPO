@@ -1,8 +1,8 @@
 [gd_scene load_steps=3 format=3]
 
-; Rock pillar used for gates and the goal posts. The mesh is a Kenney rock
-; normalised to the unit box, so the level's transform still sets its size and
-; the box collider below still matches it.
+; Rock pillar used for the goal posts. The mesh is a Kenney rock normalised to
+; the unit box, so the level's transform still sets its size and the box
+; collider below still matches it.
 [ext_resource type="PackedScene" path="res://assets/models/kenney/nature/rock_tallA.glb" id="1_rock"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_obs"]

@@ -498,45 +498,18 @@ class Level:
     # -- gameplay (playfield plane) --------------------------------------
 
     def build_platforms(self, count):
-        """Floating ledges for the turtle to land on, with a reward above."""
+        """Piles of rock resting on the seabed, with a reward above each one."""
         rng = self.rng
         for i in range(count):
             t = (i + 0.5) / max(count, 1)
             z = self.spawn_z - 11.0 - t * ((self.spawn_z - 11.0) - (self.goal_z + 11.0))
             gy = self.ground_at(z)
-            y = self.clamp_y(gy + rng.uniform(1.3, 2.6), z)
+            # The pile is 1.2 m tall, so its centre sits 0.6 m above the floor.
+            y = gy + 0.6
             self.inst(self.nid("Platform"), "6_plat",
-                      tx(rng.uniform(1.6, 2.4), 0.32, rng.uniform(2.4, 3.4), PLANE_X, y, z))
+                      tx(rng.uniform(1.6, 2.4), 1.2, rng.uniform(2.4, 3.4), PLANE_X, y, z))
             for k in range(rng.randint(2, 3)):
                 self.collect(y + 0.85 + k * 0.2, z + rng.uniform(-1.0, 1.0))
-
-    def build_gates(self, count):
-        """Rock pillars that leave a gap: swim over / under them."""
-        rng = self.rng
-        span = (self.spawn_z - 9.0) - (self.goal_z + 9.0)
-        if count <= 0:
-            return
-        step = span / count
-        low_first = rng.random() < 0.5
-        for i in range(count):
-            z = self.spawn_z - 9.0 - step * i
-            lo, hi = self.band(z)
-            if (i % 2 == 0) == low_first:
-                # low wall rising from the ground -> swim over it
-                h = rng.uniform(0.7, 1.3)
-                top = min(lo + h, hi - 0.9)          # always leave room to pass
-                h = max(0.45, top - lo)
-                y = lo + h * 0.5
-                self.inst(self.nid("Gate"), "5_obs", tx(4.2, h, 0.7, PLANE_X, y, z))
-            else:
-                # hanging pillar -> swim under it
-                h = min(rng.uniform(0.7, 1.3), max(0.45, (CEIL_Y - lo) - 1.4))
-                bottom = max(lo + 0.9, CEIL_Y - h - rng.uniform(0.05, 0.4))
-                y = min(CEIL_Y - h * 0.5 - 0.05, bottom + h * 0.5)
-                self.inst(self.nid("Gate"), "5_obs", tx(4.2, h, 0.7, PLANE_X, y, z))
-            # a small reward tucked just past the gap
-            for k in range(rng.randint(1, 3)):
-                self.collect(y + rng.uniform(-0.8, 0.8), z - 2.0 - k * 1.5)
 
     def build_hazards(self, count):
         """Debris on the playfield plane: forces a vertical dodge."""
@@ -699,7 +672,7 @@ energy_multiplier = 1.15
 """)
         sub.append('[sub_resource type="Sky" id="bsky"]\nsky_material = SubResource("bsky_mat")\n')
         sub.append('[sub_resource type="Environment" id="env"]\n' + ENVS[self.tier])
-        sub.append('[sub_resource type="BoxShape3D" id="ceiling_shape"]\nsize = Vector3(20, 0.2, %s)\n' % g(float(self.L)))
+
         ext = "\n".join('[ext_resource type="%s" path="%s" id="%s"]' % (t, p, i)
                         for i, (t, p) in _RES.items())
         header = "[gd_scene load_steps=%d format=3]\n\n%s\n" % (
@@ -720,14 +693,10 @@ light_angular_distance = 1.5
 light_specular = 0.366
 shadow_enabled = true
 """ % g(self.light_energy))
-        head.append("""[node name="Ceiling" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, %s, 0)
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Ceiling"]
-shape = SubResource("ceiling_shape")
-[node name="Terrain" type="Node3D" parent="."]
+        head.append("""[node name="Terrain" type="Node3D" parent="."]
 [node name="Scenery" type="Node3D" parent="."]
 [node name="Fauna" type="Node3D" parent="."]
-""" % g(CEIL_Y))
+""")
         tail = []
         tail.append('[node name="Turtle" parent="." instance=ExtResource("1_turt")]\ntransform = %s\n'
                     % tx(1, 1, 1, PLANE_X, 0.8, self.start_pipe_z))
@@ -754,7 +723,6 @@ def build(cfg):
     rng = lv.rng
     frac = (length - 70.0) / 160.0
     idx = int(name.split("_")[1].replace(".tscn", "")) if name.startswith("level_") else 0
-    n_gates = max(2, int(round(2 + frac * 10)))
     n_haz = max(1, int(round(1 + frac * 8)))
     n_plat = max(2, int(round(2 + frac * 7)))
     n_cur = 1 if length < 120 else (2 if length < 190 else 3)
@@ -768,7 +736,6 @@ def build(cfg):
     if length >= 130 and rng.random() < 0.8:
         lv.build_wreck(lv.goal_z + (lv.spawn_z - lv.goal_z) * rng.uniform(0.45, 0.7))
     lv.build_platforms(n_plat)
-    lv.build_gates(n_gates)
     lv.build_hazards(n_haz)
     lv.build_currents(n_cur)
     lv.build_collectables(density=1.0 if length < 140 else 1.15)
