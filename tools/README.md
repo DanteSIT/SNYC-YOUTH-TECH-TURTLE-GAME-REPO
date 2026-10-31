@@ -21,8 +21,10 @@ godot --headless --path . --script res://tools/<name>.gd -- [args]
 - `probe_seabed.gd` — every level has a visible seabed.
 - `probe_floor.gd` — the turtle lands on the floor instead of falling through.
 - `probe_pipe_clearance.gd` — pipes are clear and traversable.
+- `probe_buried.gd` — nothing is stuck inside the seabed.
 - `probe_boss_facing.gd` — boss models face the player.
 - `probe_outline.gd` — collectables and hazards have their glow outline.
+- `probe_ui_back.gd` — Escape leaves each menu screen without crashing.
 - `probe_aabb.gd`, `inspect.gd` — print mesh bounds and node details.
 
 ## Screenshots
@@ -35,5 +37,6 @@ godot --headless --path . --script res://tools/<name>.gd -- [args]
 
 - `fix_spawn.py` — puts the turtle on the start pipe axis.
 - `flatten_pipes.py` — clears sand around the start and end pipes.
+- `fix_buried.py` — lifts collectables, hazards and gates out of the sand.
 - `make_sand_textures.py`, `make_flotsam_textures.py` — generate textures.
 - `diag_*.gd` — diagnostics kept from earlier rendering bugs.
