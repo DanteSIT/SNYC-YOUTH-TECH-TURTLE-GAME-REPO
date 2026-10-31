@@ -893,7 +893,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0427, -0.5, -19.6395)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1098, -0.5, -21.4395)
 
 [node name="Collect40" parent="." unique_id=444544722 instance=ExtResource("2_coll")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0186, -0.5, -23.2395)
+transform = Transform3D(1.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000, 0.0000, 1.0000, -0.0186, 0.4440, -23.2395)
 
 [node name="Collect41" parent="." unique_id=1850567002 instance=ExtResource("2_coll")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.014, 0.5, -25.0395)
