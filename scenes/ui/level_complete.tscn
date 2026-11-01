@@ -1,14 +1,30 @@
 [gd_scene format=3 uid="uid://cnfcbj0dl1ipj"]
 
 [ext_resource type="Script" uid="uid://eomqtdbnm3f5" path="res://scripts/ui/level_complete.gd" id="1_win"]
+[ext_resource type="Script" uid="uid://bymfgcrhdwnvo" path="res://scripts/ui/star_row.gd" id="2_star"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_title"]
-font_size = 48
+font_size = 46
 
 [sub_resource type="LabelSettings" id="LabelSettings_score"]
-font_size = 26
+font_size = 22
 
-[node name="LevelComplete" type="Control" unique_id=656704948]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.025, 0.12, 0.17, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.32, 0.7, 0.86, 0.35)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 18
+shadow_offset = Vector2(0, 8)
+
+[node name="LevelComplete" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -17,65 +33,153 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_win")
 
-[node name="ColorRect" type="ColorRect" parent="." unique_id=277697813]
+[node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.02, 0.2, 0.15, 1)
+color = Color(0.015, 0.09, 0.13, 1)
 
-[node name="Title" type="Label" parent="." unique_id=1253188381]
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -440.0
+offset_top = -300.0
+offset_right = 440.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Title" type="Label" parent="."]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_top = 160.0
-offset_bottom = 240.0
+offset_top = 88.0
+offset_bottom = 158.0
 grow_horizontal = 2
-text = "Level Complete !"
+text = "Level Complete!"
 label_settings = SubResource("LabelSettings_title")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ScoreLabel" type="Label" parent="." unique_id=2098292681]
+[node name="StarRow" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -230.0
+offset_top = -188.0
+offset_right = 230.0
+offset_bottom = -68.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_star")
+
+[node name="Hints" type="HBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_top = 262.0
-offset_bottom = 348.0
+offset_top = 300.0
+offset_bottom = 330.0
 grow_horizontal = 2
-text = "Score : 0"
+alignment = 1
+theme_override_constants/separation = 44
+
+[node name="FinishHint" type="Label" parent="Hints"]
+layout_mode = 2
+text = "✓ Finish"
+theme_override_colors/font_color = Color(1, 0.84, 0.4, 1)
+theme_override_font_sizes/font_size = 17
+
+[node name="JellyHint" type="Label" parent="Hints"]
+layout_mode = 2
+text = "✓ 80% jelly"
+theme_override_colors/font_color = Color(1, 0.84, 0.4, 1)
+theme_override_font_sizes/font_size = 17
+
+[node name="DamageHint" type="Label" parent="Hints"]
+layout_mode = 2
+text = "✓ No damage"
+theme_override_colors/font_color = Color(1, 0.84, 0.4, 1)
+theme_override_font_sizes/font_size = 17
+
+[node name="StatsLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 348.0
+offset_bottom = 392.0
+grow_horizontal = 2
+text = "Time 0:00.00      Jelly 0 / 0      Score 0"
 label_settings = SubResource("LabelSettings_score")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="NextButton" type="Button" parent="." unique_id=2042364241]
+[node name="BestLabel" type="Label" parent="."]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -160.0
-offset_top = 80.0
-offset_right = 160.0
-offset_bottom = 145.0
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 400.0
+offset_bottom = 436.0
 grow_horizontal = 2
-grow_vertical = 2
-text = "Next Level"
+text = "FIRST CLEAR"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_colors/font_color = Color(1, 0.84, 0.4, 1)
+theme_override_font_sizes/font_size = 20
 
-[node name="MenuButton" type="Button" parent="." unique_id=1137637355]
+[node name="Buttons" type="HBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -160.0
-offset_top = 160.0
-offset_right = 160.0
-offset_bottom = 225.0
+offset_left = -370.0
+offset_top = 170.0
+offset_right = 370.0
+offset_bottom = 238.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "Level Select"
+alignment = 1
+theme_override_constants/separation = 22
+
+[node name="NextButton" type="Button" parent="Buttons"]
+custom_minimum_size = Vector2(230, 68)
+layout_mode = 2
+text = "NEXT LEVEL"
+
+[node name="RetryButton" type="Button" parent="Buttons"]
+custom_minimum_size = Vector2(190, 68)
+layout_mode = 2
+text = "RETRY"
+
+[node name="MenuButton" type="Button" parent="Buttons"]
+custom_minimum_size = Vector2(230, 68)
+layout_mode = 2
+text = "LEVEL SELECT"
+
+[node name="EscHint" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -52.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Esc returns to the level select"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_colors/font_color = Color(0.42, 0.58, 0.68, 1)
+theme_override_font_sizes/font_size = 14
