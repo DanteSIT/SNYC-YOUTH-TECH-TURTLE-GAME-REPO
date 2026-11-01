@@ -8,6 +8,9 @@ signal game_over
 const MAX_HEALTH := 100
 const START_LIVES := 3
 
+const SAVE_PATH := "user://progress.cfg"
+const SAVE_VERSION := 1
+
 const LEVELS: Array[String] = [
 	"res://scenes/levels/tutorial.tscn",
 	"res://scenes/levels/level_1.tscn",
@@ -48,15 +51,21 @@ var level_time := 0.0
 ## freed as they are picked up.
 var level_jellyfish_total := 0
 
-## Fastest clear of each level this session, indexed like LEVELS. 0.0 means no
-## clear yet. Session-scoped on purpose: campaign progress is not persisted
-## either, so a saved best time next to a reset level list would be odd.
+## Per-level records, all indexed like LEVELS. A best time of 0.0 means the level
+## has not been cleared yet.
 var best_times: Array[float] = []
+var best_jelly: Array[int] = []
+var jelly_totals: Array[int] = []
+var levels_completed: Array[bool] = []
+
+## Overridable so tools can exercise save/load without touching the real file.
+var progress_path := SAVE_PATH
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	best_times.resize(LEVELS.size())
+	_resize_progress()
+	load_progress()
 
 
 func add_score(amount: int) -> void:
@@ -129,8 +138,7 @@ func jellyfish_missed() -> int:
 
 ## Banks the attempt's time as this level's best. Returns true on a new record.
 func record_finish_time() -> bool:
-	if best_times.size() != LEVELS.size():
-		best_times.resize(LEVELS.size())
+	_resize_progress()
 	var idx: int = clampi(current_level, 0, best_times.size() - 1)
 	if best_times[idx] > 0.0 and best_times[idx] <= level_time:
 		return false
@@ -144,6 +152,44 @@ func best_time_for_level(index: int) -> float:
 	return best_times[index]
 
 
+func best_jelly_for_level(index: int) -> int:
+	if index < 0 or index >= best_jelly.size():
+		return 0
+	return best_jelly[index]
+
+
+func jelly_total_for_level(index: int) -> int:
+	if index < 0 or index >= jelly_totals.size():
+		return 0
+	return jelly_totals[index]
+
+
+func is_level_completed(index: int) -> bool:
+	if index < 0 or index >= levels_completed.size():
+		return false
+	return levels_completed[index]
+
+
+## True once the player has cleared anything, so the menu can offer Continue
+## instead of starting a brand-new run.
+func has_progress() -> bool:
+	if levels_unlocked > 1:
+		return true
+	for done in levels_completed:
+		if done:
+			return true
+	return false
+
+
+## The level a Continue press should open: the furthest unlocked one.
+func continue_index() -> int:
+	return clampi(levels_unlocked - 1, 0, LEVELS.size() - 1)
+
+
+func continue_game() -> void:
+	start_level(continue_index() if has_progress() else 0)
+
+
 ## M:SS.hh, the single format used by the HUD and the results screen so the two
 ## never disagree. Hundredths rather than tenths because tenths can round a
 ## 59.96 up to a "60.0" that is not a real time.
@@ -152,17 +198,99 @@ static func format_time(seconds: float) -> String:
 	return "%d:%05.2f" % [m, fmod(maxf(0.0, seconds), 60.0)]
 
 
+## Stores everything a clear earns: best time, best jelly count, completion, and
+## the next unlock. Split from complete_level() so tools can test it without a
+## scene change.
+func record_level_result() -> bool:
+	var new_record := record_finish_time()
+	var idx: int = clampi(current_level, 0, LEVELS.size() - 1)
+	levels_completed[idx] = true
+	best_jelly[idx] = maxi(best_jelly[idx], jellyfish)
+	jelly_totals[idx] = maxi(jelly_totals[idx], level_jellyfish_total)
+	levels_unlocked = maxi(levels_unlocked, mini(idx + 2, LEVELS.size()))
+	save_progress()
+	return new_record
+
+
 func complete_level() -> void:
-	record_finish_time()
+	record_level_result()
 	GameFlow.to_level_complete()
 
 
 func next_level() -> void:
 	if current_level + 1 < LEVELS.size():
 		levels_unlocked = maxi(levels_unlocked, current_level + 2)
+		save_progress()
 		start_level(current_level + 1)
 	else:
 		GameFlow.to_menu()
+
+
+func unlock_all_levels() -> void:
+	levels_unlocked = LEVELS.size()
+	save_progress()
+
+
+func reset_progress(save := true) -> void:
+	levels_unlocked = 1
+	_resize_progress()
+	best_times.fill(0.0)
+	best_jelly.fill(0)
+	jelly_totals.fill(0)
+	levels_completed.fill(false)
+	if save:
+		save_progress()
+
+
+func _resize_progress() -> void:
+	var count := LEVELS.size()
+	if best_times.size() != count:
+		best_times.resize(count)
+	if best_jelly.size() != count:
+		best_jelly.resize(count)
+	if jelly_totals.size() != count:
+		jelly_totals.resize(count)
+	if levels_completed.size() != count:
+		levels_completed.resize(count)
+
+
+## One section per level keeps the file readable and makes a damaged section
+## harmless: the rest of the campaign still loads.
+func save_progress() -> void:
+	_resize_progress()
+	var cfg := ConfigFile.new()
+	cfg.set_value("progress", "version", SAVE_VERSION)
+	cfg.set_value("progress", "unlocked", levels_unlocked)
+	for i in LEVELS.size():
+		var section := "level_%d" % i
+		cfg.set_value(section, "completed", levels_completed[i])
+		cfg.set_value(section, "best_time", best_times[i])
+		cfg.set_value(section, "best_jelly", best_jelly[i])
+		cfg.set_value(section, "jelly_total", jelly_totals[i])
+	var err := cfg.save(progress_path)
+	if err != OK:
+		push_warning("Could not save progress to %s (error %d)" % [progress_path, err])
+
+
+func load_progress() -> void:
+	_resize_progress()
+	var cfg := ConfigFile.new()
+	if cfg.load(progress_path) != OK:
+		return
+	levels_unlocked = clampi(
+		int(cfg.get_value("progress", "unlocked", 1)), 1, LEVELS.size())
+	best_times.fill(0.0)
+	best_jelly.fill(0)
+	jelly_totals.fill(0)
+	levels_completed.fill(false)
+	for i in LEVELS.size():
+		var section := "level_%d" % i
+		if not cfg.has_section(section):
+			continue
+		levels_completed[i] = bool(cfg.get_value(section, "completed", false))
+		best_times[i] = float(cfg.get_value(section, "best_time", 0.0))
+		best_jelly[i] = int(cfg.get_value(section, "best_jelly", 0))
+		jelly_totals[i] = int(cfg.get_value(section, "jelly_total", 0))
 
 
 func return_to_level_select() -> void:

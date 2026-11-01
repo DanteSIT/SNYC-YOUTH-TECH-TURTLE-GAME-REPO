@@ -27,6 +27,9 @@ godot --headless --path . --script res://tools/<name>.gd -- [args]
 - `probe_ui_back.gd` — Escape leaves each menu screen without crashing.
 - `probe_roof.gd` — the soft roof keeps the turtle under the ceiling line.
 - `probe_tutorial.gd` — tutorial steps wait for their action and reload at the saved step.
+- `probe_progress.gd` — the campaign save round-trips and records only improve.
+- `probe_level_select.gd` — level cards show cleared, next and locked states.
+- `probe_menu.gd` — the menu shows Play or Continue to match saved progress.
 - `probe_aabb.gd`, `inspect.gd` — print mesh bounds and node details.
 
 ## Screenshots
