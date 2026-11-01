@@ -33,6 +33,7 @@ func _run() -> void:
 	_expect("clear marks level completed", gm.is_level_completed(1))
 	_expect("clear stores best time", is_equal_approx(gm.best_time_for_level(1), 42.5))
 	_expect("clear stores best jelly", gm.best_jelly_for_level(1) == 7)
+	_expect("clear stores stars", gm.best_stars_for_level(1) == 2)
 	_expect("continue points at next level", gm.continue_index() == 2)
 	_expect("save file was written", FileAccess.file_exists(PROBE_PATH))
 
@@ -43,6 +44,7 @@ func _run() -> void:
 	_expect("load restores completion", gm.is_level_completed(1))
 	_expect("load restores time", is_equal_approx(gm.best_time_for_level(1), 42.5))
 	_expect("load restores jelly", gm.best_jelly_for_level(1) == 7)
+	_expect("load restores stars", gm.best_stars_for_level(1) == 2)
 
 	# A slower, worse run must not overwrite the records.
 	gm.current_level = 1
@@ -62,11 +64,23 @@ func _run() -> void:
 	# A clear stores the level's jellyfish total for the select screen.
 	gm.current_level = 4
 	gm.level_time = 10.0
+	gm.jellyfish = 12
 	gm.level_jellyfish_total = 12
+	gm.damage_taken = 0
 	gm.record_level_result()
+	_expect("perfect clear earns three stars", gm.best_stars_for_level(4) == 3)
+
+	# A later hit run must not lower the stored star record.
+	gm.level_time = 20.0
+	gm.damage_taken = 25
+	gm.record_level_result()
+	_expect("stars only improve", gm.best_stars_for_level(4) == 3)
+	_expect("hit run itself scores fewer", gm.last_stars == 2)
+
 	gm.reset_progress(false)
 	gm.load_progress()
 	_expect("load restores jelly total", gm.jelly_total_for_level(4) == 12)
+	_expect("load restores perfect stars", gm.best_stars_for_level(4) == 3)
 
 	gm.unlock_all_levels()
 	_expect("unlock all opens every level", gm.levels_unlocked == gm.LEVELS.size())

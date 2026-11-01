@@ -11,6 +11,11 @@ const START_LIVES := 3
 const SAVE_PATH := "user://progress.cfg"
 const SAVE_VERSION := 1
 
+## A clear earns three stars: finish, collect most of the jellyfish, and take no
+## damage. 80% leaves room for a missed collectable without losing the star.
+const STARS := 3
+const JELLY_STAR_RATIO := 0.8
+
 const LEVELS: Array[String] = [
 	"res://scenes/levels/tutorial.tscn",
 	"res://scenes/levels/level_1.tscn",
@@ -37,6 +42,16 @@ var lives := START_LIVES
 var current_level := 0
 var levels_unlocked := 1
 
+## Damage taken during the current attempt. Kept separate from health because a
+## healed hit still costs the no-damage star.
+var damage_taken := 0
+
+## The result of the clear that opened the results screen. Read by the screen so
+## it does not have to recompute stars after the level scene is gone.
+var last_stars := 0
+var last_new_best := false
+var last_previous_best := 0.0
+
 ## The tutorial step the player is on. Kept here so losing a life reloads the
 ## tutorial at the same step instead of starting the whole lesson again.
 var tutorial_stage := 0
@@ -55,6 +70,7 @@ var level_jellyfish_total := 0
 ## has not been cleared yet.
 var best_times: Array[float] = []
 var best_jelly: Array[int] = []
+var best_stars: Array[int] = []
 var jelly_totals: Array[int] = []
 var levels_completed: Array[bool] = []
 
@@ -79,6 +95,7 @@ func add_jellyfish(amount: int) -> void:
 
 
 func take_damage(amount: int) -> void:
+	damage_taken += amount
 	health = maxi(0, health - amount)
 	health_changed.emit(health)
 	if health > 0:
@@ -117,6 +134,10 @@ func reset_level_progress() -> void:
 	jellyfish = 0
 	level_time = 0.0
 	level_jellyfish_total = 0
+	damage_taken = 0
+	last_stars = 0
+	last_new_best = false
+	last_previous_best = 0.0
 	health = MAX_HEALTH
 	score_changed.emit(score)
 	jellyfish_changed.emit(jellyfish)
@@ -156,6 +177,35 @@ func best_jelly_for_level(index: int) -> int:
 	if index < 0 or index >= best_jelly.size():
 		return 0
 	return best_jelly[index]
+
+
+func best_stars_for_level(index: int) -> int:
+	if index < 0 or index >= best_stars.size():
+		return 0
+	return best_stars[index]
+
+
+## Whether this attempt collected enough jellyfish for the second star. A level
+## with no jellyfish cannot lose the star.
+func earned_jelly_star() -> bool:
+	if level_jellyfish_total <= 0:
+		return true
+	var needed := int(ceil(level_jellyfish_total * JELLY_STAR_RATIO))
+	return jellyfish >= needed
+
+
+func earned_no_damage_star() -> bool:
+	return damage_taken <= 0
+
+
+## The stars this attempt is worth. Finishing always earns the first one.
+func calculate_stars() -> int:
+	var stars := 1
+	if earned_jelly_star():
+		stars += 1
+	if earned_no_damage_star():
+		stars += 1
+	return clampi(stars, 0, STARS)
 
 
 func jelly_total_for_level(index: int) -> int:
@@ -202,14 +252,18 @@ static func format_time(seconds: float) -> String:
 ## the next unlock. Split from complete_level() so tools can test it without a
 ## scene change.
 func record_level_result() -> bool:
-	var new_record := record_finish_time()
+	_resize_progress()
 	var idx: int = clampi(current_level, 0, LEVELS.size() - 1)
+	last_previous_best = best_times[idx]
+	last_new_best = record_finish_time()
+	last_stars = calculate_stars()
 	levels_completed[idx] = true
 	best_jelly[idx] = maxi(best_jelly[idx], jellyfish)
+	best_stars[idx] = maxi(best_stars[idx], last_stars)
 	jelly_totals[idx] = maxi(jelly_totals[idx], level_jellyfish_total)
 	levels_unlocked = maxi(levels_unlocked, mini(idx + 2, LEVELS.size()))
 	save_progress()
-	return new_record
+	return last_new_best
 
 
 func complete_level() -> void:
@@ -236,6 +290,7 @@ func reset_progress(save := true) -> void:
 	_resize_progress()
 	best_times.fill(0.0)
 	best_jelly.fill(0)
+	best_stars.fill(0)
 	jelly_totals.fill(0)
 	levels_completed.fill(false)
 	if save:
@@ -248,6 +303,8 @@ func _resize_progress() -> void:
 		best_times.resize(count)
 	if best_jelly.size() != count:
 		best_jelly.resize(count)
+	if best_stars.size() != count:
+		best_stars.resize(count)
 	if jelly_totals.size() != count:
 		jelly_totals.resize(count)
 	if levels_completed.size() != count:
@@ -266,6 +323,7 @@ func save_progress() -> void:
 		cfg.set_value(section, "completed", levels_completed[i])
 		cfg.set_value(section, "best_time", best_times[i])
 		cfg.set_value(section, "best_jelly", best_jelly[i])
+		cfg.set_value(section, "best_stars", best_stars[i])
 		cfg.set_value(section, "jelly_total", jelly_totals[i])
 	var err := cfg.save(progress_path)
 	if err != OK:
@@ -281,6 +339,7 @@ func load_progress() -> void:
 		int(cfg.get_value("progress", "unlocked", 1)), 1, LEVELS.size())
 	best_times.fill(0.0)
 	best_jelly.fill(0)
+	best_stars.fill(0)
 	jelly_totals.fill(0)
 	levels_completed.fill(false)
 	for i in LEVELS.size():
@@ -290,6 +349,7 @@ func load_progress() -> void:
 		levels_completed[i] = bool(cfg.get_value(section, "completed", false))
 		best_times[i] = float(cfg.get_value(section, "best_time", 0.0))
 		best_jelly[i] = int(cfg.get_value(section, "best_jelly", 0))
+		best_stars[i] = int(cfg.get_value(section, "best_stars", 0))
 		jelly_totals[i] = int(cfg.get_value(section, "jelly_total", 0))
 
 
