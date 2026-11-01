@@ -21,6 +21,9 @@ func _run() -> void:
 	var fresh := await _load()
 	_expect("new game shows PLAY", _play_text(fresh) == "PLAY")
 	_expect("controls label is spelled", _controls_text(fresh) == "CONTROLS")
+	var play := fresh.get_node("Menu/PlayButton") as Button
+	_expect("primary button has its own style", play.has_theme_stylebox_override("normal"))
+	_expect("buttons get UI sound wiring", play.has_meta("ui_sound"))
 	fresh.queue_free()
 	await process_frame
 
