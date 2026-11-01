@@ -25,6 +25,8 @@ godot --headless --path . --script res://tools/<name>.gd -- [args]
 - `probe_boss_facing.gd` — boss models face the player.
 - `probe_outline.gd` — collectables and hazards have their glow outline.
 - `probe_ui_back.gd` — Escape leaves each menu screen without crashing.
+- `probe_roof.gd` — the soft roof keeps the turtle under the ceiling line.
+- `probe_tutorial.gd` — tutorial steps wait for their action and reload at the saved step.
 - `probe_aabb.gd`, `inspect.gd` — print mesh bounds and node details.
 
 ## Screenshots
