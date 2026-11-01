@@ -25,6 +25,7 @@ DebugStats="*res://scripts/core/debug_stats.gd"
 Graphics="*res://scripts/core/graphics_settings.gd"
 NavCleanup="*res://scripts/core/nav_cleanup.gd"
 Audio="*res://scripts/core/audio_manager.gd"
+UISound="*res://scripts/core/ui_sound.gd"
 SceneryBaker="*res://scripts/core/scenery_baker.gd"
 
 [display]
