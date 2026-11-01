@@ -9,6 +9,7 @@ const TURTLE_SCENE := "res://scenes/player/odysse.tscn"
 
 func _ready():
 	_spawn_backdrop()
+	_refresh_play_button()
 	$Menu/PlayButton.pressed.connect(_on_play_pressed)
 	$Menu/LevelsButton.pressed.connect(_on_levels_pressed)
 	$Menu/ControlsButton.pressed.connect(_on_controls_pressed)
@@ -51,8 +52,14 @@ func _add(parent: Node3D, path: String, node_name: String, transform: Transform3
 func _tf(xx, yx, zx, xy, yy, zy, xz, yz, zz, ox, oy, oz) -> Transform3D:
 	return Transform3D(Basis(Vector3(xx, xy, xz), Vector3(yx, yy, yz), Vector3(zx, zy, zz)), Vector3(ox, oy, oz))
 
+## A returning player should not have to replay the tutorial to reach their
+## progress, so the main button becomes Continue once there is a save.
+func _refresh_play_button() -> void:
+	$Menu/PlayButton.text = "CONTINUE" if GameManager.has_progress() else "PLAY"
+
+
 func _on_play_pressed() -> void:
-	GameManager.start_level(0)
+	GameManager.continue_game()
 
 func _on_levels_pressed() -> void:
 	GameFlow.to_level_select()
