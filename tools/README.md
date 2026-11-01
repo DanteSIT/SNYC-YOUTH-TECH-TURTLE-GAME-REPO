@@ -30,6 +30,7 @@ godot --headless --path . --script res://tools/<name>.gd -- [args]
 - `probe_progress.gd` — the campaign save round-trips and records only improve.
 - `probe_level_select.gd` — level cards show cleared, next and locked states.
 - `probe_menu.gd` — the menu shows Play or Continue to match saved progress.
+- `probe_ui_sound.gd` — generated UI tones exist and buttons are wired to them.
 - `probe_aabb.gd`, `inspect.gd` — print mesh bounds and node details.
 
 ## Screenshots

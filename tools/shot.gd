@@ -26,6 +26,7 @@ extends SceneTree
 ##                     no boss at all. Accepts a name or a sub-path.
 ##   freecam=on         honour cam=/look= even when the scene has a player
 ##                      camera, which is otherwise always preferred
+##   settle=seconds     real-time wait before capture, for fades and intro tweens
 
 func _initialize() -> void:
 	_run.call_deferred()
@@ -123,6 +124,10 @@ func _run() -> void:
 			var body: Node3D = spawner.get_node_or_null("Body") as Node3D
 			if body == null or not body.visible:
 				printerr("SHOT: ", spawn_path, " spawned but its Body is not visible")
+
+	var settle := float(spec.get("settle", 0.0))
+	if settle > 0.0:
+		await create_timer(settle).timeout
 
 	var frames: int = int(spec.get("frames", 8))
 	for _i in range(frames):
