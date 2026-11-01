@@ -109,6 +109,15 @@ func _build_card(index: int, is_next: bool) -> Button:
 	meta.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	col.add_child(meta)
 
+	if completed:
+		var best_stars := GameManager.best_stars_for_level(index)
+		var stars := Label.new()
+		stars.text = "%d / %d STARS" % [best_stars, GameManager.STARS]
+		stars.add_theme_font_size_override("font_size", 12)
+		stars.add_theme_color_override("font_color",
+			NEXT if best_stars >= GameManager.STARS else MUTED)
+		col.add_child(stars)
+
 	return btn
 
 

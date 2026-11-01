@@ -16,6 +16,7 @@ func _initialize() -> void:
 
 
 func _run() -> void:
+	get_root().size = Vector2i(1280, 720)
 	var gm: Node = get_root().get_node("GameManager")
 	gm.progress_path = PROBE_PATH
 	gm.reset_progress(false)
@@ -25,9 +26,11 @@ func _run() -> void:
 	gm.best_times[0] = 56.9
 	gm.best_jelly[0] = 31
 	gm.jelly_totals[0] = 32
+	gm.best_stars[0] = 3
 	gm.best_times[1] = 33.54
 	gm.best_jelly[1] = 39
 	gm.jelly_totals[1] = 41
+	gm.best_stars[1] = 2
 
 	var world := await _load()
 	var grid := world.get_node("Grid") as GridContainer
@@ -40,9 +43,15 @@ func _run() -> void:
 	_expect("tutorial shows cleared", tutorial.has("✓  TUTORIAL") and tutorial.has("CLEARED"))
 	_expect("tutorial shows best time and jelly",
 		tutorial.has("BEST 0:56.90   ·   JELLY 31 / 32"))
+	_expect("tutorial shows three stars", tutorial.has("3 / 3 STARS"))
 
 	var level_one := _texts(grid.get_child(1))
 	_expect("level 1 shows cleared", level_one.has("✓  LEVEL 1") and level_one.has("CLEARED"))
+	_expect("level 1 shows two stars", level_one.has("2 / 3 STARS"))
+
+	# The extra star line must still fit inside the fixed card height.
+	var card := grid.get_child(0) as Button
+	_expect("card content fits", _content_bottom(card) <= card.get_global_rect().end.y - 2.0)
 
 	var level_two := grid.get_child(2) as Button
 	var two := _texts(level_two)
@@ -103,6 +112,15 @@ func _texts(node: Node) -> PackedStringArray:
 	for child in node.get_children():
 		out.append_array(_texts(child))
 	return out
+
+
+func _content_bottom(node: Node) -> float:
+	var bottom := 0.0
+	if node is Label:
+		bottom = maxf(bottom, (node as Label).get_global_rect().end.y)
+	for child in node.get_children():
+		bottom = maxf(bottom, _content_bottom(child))
+	return bottom
 
 
 func _expect(label: String, ok: bool) -> void:
