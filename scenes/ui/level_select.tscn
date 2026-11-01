@@ -119,6 +119,19 @@ horizontal_alignment = 1
 vertical_alignment = 1
 label_settings = SubResource("LabelSettings_title")
 
+[node name="Summary" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 112.0
+offset_bottom = 142.0
+grow_horizontal = 2
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_colors/font_color = Color(0.62, 0.8, 0.9, 1)
+theme_override_font_sizes/font_size = 17
+
 [node name="Grid" type="GridContainer" parent="."]
 layout_mode = 1
 anchors_preset = 8
@@ -126,45 +139,13 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -320.0
-offset_top = -160.0
-offset_right = 320.0
-offset_bottom = 160.0
+offset_left = -584.0
+offset_top = -210.0
+offset_right = 584.0
+offset_bottom = 264.0
 grow_horizontal = 2
 grow_vertical = 2
 columns = 4
-
-[node name="Level1" type="Button" parent="Grid"]
-custom_minimum_size = Vector2(150, 60)
-text = "Tutorial"
-
-[node name="Level2" type="Button" parent="Grid"]
-custom_minimum_size = Vector2(150, 60)
-text = "Level 1"
-
-[node name="Level3" type="Button" parent="Grid"]
-custom_minimum_size = Vector2(150, 60)
-text = "Level 2"
-
-[node name="Level4" type="Button" parent="Grid"]
-custom_minimum_size = Vector2(150, 60)
-text = "Level 3"
-
-[node name="Level5" type="Button" parent="Grid"]
-custom_minimum_size = Vector2(150, 60)
-text = "Level 4"
-
-[node name="Level6" type="Button" parent="Grid"]
-custom_minimum_size = Vector2(150, 60)
-text = "Level 5"
-
-[node name="Level7" type="Button" parent="Grid"]
-custom_minimum_size = Vector2(150, 60)
-text = "Level 6"
-
-[node name="Level8" type="Button" parent="Grid"]
-custom_minimum_size = Vector2(150, 60)
-text = "Level 7"
 
 [node name="BackButton" type="Button" parent="."]
 layout_mode = 1
