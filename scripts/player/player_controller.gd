@@ -39,6 +39,9 @@ var boost_timer := 0.0
 var invulnerable := false
 var invulnerable_timer := 0.0
 var current_flow := 0.0
+## Extra backward push used by the tutorial to hold the player at a step until
+## they complete it. Normal levels leave this at zero.
+var tutorial_push := 0.0
 
 var _cam_rest := Transform3D.IDENTITY
 var _cam_anchor := Vector3.ZERO
@@ -58,6 +61,7 @@ func _ready() -> void:
 	Engine.time_scale = 1.0
 	_shake = 0.0
 	_hitstop_until_ms = 0
+	tutorial_push = 0.0
 	_swim_sound = $SwimSound
 	_swim_sound.bus = "SFX"
 	if _swim_sound.stream is AudioStreamMP3:
@@ -175,7 +179,7 @@ func _physics_process(delta: float) -> void:
 
 	_animator.update_movement(direction, swimming, boosting, velocity.y, delta)
 
-	velocity.z += current_flow
+	velocity.z += current_flow + tutorial_push
 	move_and_slide()
 
 	if global_position.y < -15.0:
@@ -187,6 +191,17 @@ func _physics_process(delta: float) -> void:
 
 func set_flow(value: float) -> void:
 	current_flow = value
+
+
+## Used by the tutorial to ease the player back if they reach a step's gate
+## before doing what the step asks.
+func set_tutorial_push(value: float) -> void:
+	tutorial_push = value
+
+
+## Jump the follow camera straight to the body, for tutorial respawns.
+func snap_camera_to_body() -> void:
+	_cam_anchor = global_position
 
 
 func take_damage(amount: int) -> void:

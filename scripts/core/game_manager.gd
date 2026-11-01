@@ -34,6 +34,10 @@ var lives := START_LIVES
 var current_level := 0
 var levels_unlocked := 1
 
+## The tutorial step the player is on. Kept here so losing a life reloads the
+## tutorial at the same step instead of starting the whole lesson again.
+var tutorial_stage := 0
+
 ## Play time in the current level, in seconds. Lives here rather than in the HUD
 ## because reaching the goal replaces the whole level scene with the results
 ## screen, so anything the results screen wants to show has to outlive the HUD.
@@ -87,6 +91,10 @@ func heal(amount: int) -> void:
 
 func start_level(index: int) -> void:
 	current_level = clampi(index, 0, LEVELS.size() - 1)
+	# Entering the tutorial from a menu starts the lesson over. A life lost
+	# mid-lesson reloads through restart_current_level(), which keeps the step.
+	if current_level == 0:
+		tutorial_stage = 0
 	lives = START_LIVES
 	reset_level_progress()
 	GameFlow.change_scene(LEVELS[current_level])
