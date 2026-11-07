@@ -34,6 +34,7 @@ godot --headless --path . --script res://tools/<name>.gd -- [args]
 - `probe_ui_sound.gd` — generated UI tones exist and buttons are wired to them.
 - `probe_accessibility.gd` — large text scales menus and cards but not the HUD.
 - `probe_hazard_cue.gd` — hazards carry the pulsing warning marker.
+- `probe_tuning.gd` — gameplay values and model/animation slots come from `tuning.gd`.
 - `probe_aabb.gd`, `inspect.gd` — print mesh bounds and node details.
 
 ## Screenshots

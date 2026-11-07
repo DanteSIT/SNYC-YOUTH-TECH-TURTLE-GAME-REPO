@@ -5,35 +5,18 @@ signal health_changed(value: int)
 signal jellyfish_changed(value: int)
 signal game_over
 
-const MAX_HEALTH := 100
-const START_LIVES := 3
+# The values themselves live in scripts/core/tuning.gd. These names stay here
+# so the rest of the game can keep asking GameManager, which also owns the save
+# file and the live health/lives values.
+const MAX_HEALTH := Tuning.Rules.MAX_HEALTH
+const START_LIVES := Tuning.Rules.STARTING_LIVES
+const STARS := Tuning.Rules.STARS
+const JELLY_STAR_RATIO := Tuning.Rules.JELLY_STAR_RATIO
 
 const SAVE_PATH := "user://progress.cfg"
 const SAVE_VERSION := 1
 
-## A clear earns three stars: finish, collect most of the jellyfish, and take no
-## damage. 80% leaves room for a missed collectable without losing the star.
-const STARS := 3
-const JELLY_STAR_RATIO := 0.8
-
-const LEVELS: Array[String] = [
-	"res://scenes/levels/tutorial.tscn",
-	"res://scenes/levels/level_1.tscn",
-	"res://scenes/levels/level_2.tscn",
-	"res://scenes/levels/level_3.tscn",
-	"res://scenes/levels/level_4.tscn",
-	"res://scenes/levels/level_5.tscn",
-	"res://scenes/levels/level_6.tscn",
-	"res://scenes/levels/level_7.tscn",
-	"res://scenes/levels/level_8.tscn",
-	"res://scenes/levels/level_9.tscn",
-	"res://scenes/levels/level_10.tscn",
-	"res://scenes/levels/level_11.tscn",
-	"res://scenes/levels/level_12.tscn",
-	"res://scenes/levels/level_13.tscn",
-	"res://scenes/levels/level_14.tscn",
-	"res://scenes/levels/level_15.tscn",
-]
+const LEVELS: Array[String] = Tuning.Levels.PATHS
 
 var score := 0
 var jellyfish := 0
