@@ -89,11 +89,32 @@ func _build_card(index: int, is_next: bool) -> Button:
 	col.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	pad.add_child(col)
 
+	# Stars share the title row so a cleared card stays three lines tall. The
+	# cards have a fixed height, and a fourth line would clip when the
+	# accessibility text scale is on.
+	var head := HBoxContainer.new()
+	head.add_theme_constant_override("separation", 8)
+	head.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	col.add_child(head)
+
 	var title := Label.new()
 	title.text = ("✓  " if completed else "") + _level_name(index).to_upper()
 	title.add_theme_font_size_override("font_size", 20)
 	title.add_theme_color_override("font_color", TEXT if unlocked else LOCKED)
-	col.add_child(title)
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	title.clip_text = true
+	head.add_child(title)
+
+	if completed:
+		var best_stars := GameManager.best_stars_for_level(index)
+		var stars := Label.new()
+		stars.text = "%d / %d STARS" % [best_stars, GameManager.STARS]
+		stars.add_theme_font_size_override("font_size", 12)
+		stars.add_theme_color_override("font_color",
+			NEXT if best_stars >= GameManager.STARS else MUTED)
+		stars.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		stars.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		head.add_child(stars)
 
 	var status := Label.new()
 	status.add_theme_font_size_override("font_size", 13)
@@ -108,15 +129,6 @@ func _build_card(index: int, is_next: bool) -> Button:
 	meta.add_theme_color_override("font_color", MUTED if unlocked else LOCKED)
 	meta.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	col.add_child(meta)
-
-	if completed:
-		var best_stars := GameManager.best_stars_for_level(index)
-		var stars := Label.new()
-		stars.text = "%d / %d STARS" % [best_stars, GameManager.STARS]
-		stars.add_theme_font_size_override("font_size", 12)
-		stars.add_theme_color_override("font_color",
-			NEXT if best_stars >= GameManager.STARS else MUTED)
-		col.add_child(stars)
 
 	return btn
 
