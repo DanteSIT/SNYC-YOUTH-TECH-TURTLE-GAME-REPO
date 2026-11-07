@@ -7,6 +7,70 @@ const ROCK_2_SCENE := "res://assets/models/blender/ROCK_2.blend"
 const ROCK_3_SCENE := "res://assets/models/blender/ROCK_3.blend"
 const TURTLE_SCENE := "res://scenes/player/odysse.tscn"
 
+## Decorative backdrop for the menu. Each row places one model in the 3D scene.
+## Edit position (metres), rotation (degrees) and scale here to rearrange it.
+## Add or remove rows to change how busy the background looks.
+const BACKDROP: Array[Dictionary] = [
+	{
+		"scene": CORALS_SCENE, "name": "CoralsLeft",
+		"position": Vector3(3.69, 2.39, -2.65),
+		"rotation": Vector3(0, -118.57, 0),
+		"scale": Vector3.ONE,
+	},
+	{
+		"scene": CORALS_SCENE, "name": "CoralsRight",
+		"position": Vector3(-5.44, 1.66, -3.67),
+		"rotation": Vector3(0, -40.47, 0),
+		"scale": Vector3(1.24, 0.68, 0.74),
+	},
+	{
+		"scene": BUBBLES_SCENE, "name": "Bubbles",
+		"position": Vector3(2.69, 0, -1.58),
+		"rotation": Vector3.ZERO,
+		"scale": Vector3.ONE,
+	},
+	{
+		"scene": BUBBLES_SCENE, "name": "Bubbles2",
+		"position": Vector3(-6.34, 0, -1.31),
+		"rotation": Vector3.ZERO,
+		"scale": Vector3.ONE,
+	},
+	{
+		"scene": BUBBLES_SCENE, "name": "Bubbles3",
+		"position": Vector3(-3.12, 0, -3.92),
+		"rotation": Vector3.ZERO,
+		"scale": Vector3.ONE,
+	},
+	{
+		"scene": BUBBLES_SCENE, "name": "Bubbles4",
+		"position": Vector3(0.82, 0, -5.15),
+		"rotation": Vector3.ZERO,
+		"scale": Vector3.ONE,
+	},
+	{
+		"scene": ROCK_1_SCENE, "name": "Rock1",
+		"position": Vector3(-1.34, 0, -4.87),
+		"rotation": Vector3.ZERO,
+		"scale": Vector3.ONE,
+	},
+	{
+		"scene": ROCK_2_SCENE, "name": "Rock2",
+		"position": Vector3(-6.44, 0, -0.45),
+		"rotation": Vector3.ZERO,
+		"scale": Vector3.ONE,
+	},
+	{
+		"scene": ROCK_3_SCENE, "name": "Rock3",
+		"position": Vector3(3.67, 0, 0.05),
+		"rotation": Vector3.ZERO,
+		"scale": Vector3.ONE,
+	},
+]
+
+## The hero turtle. Kept separate because the menu animates it.
+const HERO_POSITION := Vector3(-1.815, -0.601, -4.076)
+const HERO_ROTATION := Vector3(5.55, 39.84, 4.61)
+
 var _cam: Camera3D
 var _cam_rest := Transform3D.IDENTITY
 var _hero: Node3D
@@ -47,19 +111,14 @@ func _process(delta: float) -> void:
 
 func _spawn_backdrop() -> void:
 	var scene: Node3D = $Scene
-	_add(scene, CORALS_SCENE, "Corals with rock", _tf(-0.47826278, -2.9802322e-08, -0.8782168, 7.450581e-09, 1, 2.9802322e-08, 0.87821686, -7.450581e-09, -0.47826278, 3.692937, 2.3853414, -2.6499658))
-	_add(scene, CORALS_SCENE, "Corals with rock2", _tf(0.94599766, -9.110099e-09, -0.4807648, 9.265032e-09, 0.67806995, 2.2074751e-08, 0.8071305, 1.8732178e-08, 0.56348056, -5.4397006, 1.6604564, -3.669231))
-	_add(scene, BUBBLES_SCENE, "Bubbles", Transform3D(Basis.IDENTITY, Vector3(2.694817, 2.3841858e-07, -1.582283)))
-	_add(scene, BUBBLES_SCENE, "Bubbles2", Transform3D(Basis.IDENTITY, Vector3(-6.3408275, 2.3841858e-07, -1.3145547)))
-	_add(scene, BUBBLES_SCENE, "Bubbles3", Transform3D(Basis.IDENTITY, Vector3(-3.1165552, 2.3841858e-07, -3.9216337)))
-	_add(scene, BUBBLES_SCENE, "Bubbles4", Transform3D(Basis.IDENTITY, Vector3(0.8210559, 2.3841858e-07, -5.152159)))
-	_add(scene, ROCK_1_SCENE, "ROCK_1", Transform3D(Basis.IDENTITY, Vector3(-1.3391193, 0, -4.8715563)))
-	_add(scene, ROCK_2_SCENE, "ROCK_2", Transform3D(Basis.IDENTITY, Vector3(-6.4432864, 0, -0.44777536)))
-	_add(scene, ROCK_3_SCENE, "ROCK_3", Transform3D(Basis.IDENTITY, Vector3(3.6657772, 0, 0.05233884)))
+	for item in BACKDROP:
+		_add(scene, item["scene"], item["name"], item["position"],
+			item["rotation"], item["scale"])
 
 	var odysse: Node3D = load(TURTLE_SCENE).instantiate()
 	odysse.name = "Odysse"
-	odysse.transform = _tf(0.77030194, -7.968338e-09, 0.63767946, 0.08004391, 0.9920905, -0.096691266, -0.6326357, 0.12552372, 0.76420945, -1.8149792, -0.60145223, -4.0761976)
+	odysse.position = HERO_POSITION
+	odysse.rotation_degrees = HERO_ROTATION
 	$Scene/CharacterBody3D.add_child(odysse)
 	_hero = odysse
 	_hero_rest = odysse.transform
@@ -70,18 +129,18 @@ func _spawn_backdrop() -> void:
 			clip.loop = true
 			anim_player.play("IDLE")
 
-func _add(parent: Node3D, path: String, node_name: String, transform: Transform3D) -> void:
+func _add(parent: Node3D, path: String, node_name: String,
+		pos: Vector3, rot_degrees: Vector3, scale: Vector3) -> void:
 	var packed: PackedScene = load(path)
 	if packed == null:
 		push_error("Menu: failed to load " + path)
 		return
 	var instance: Node3D = packed.instantiate()
 	instance.name = node_name
-	instance.transform = transform
+	instance.position = pos
+	instance.rotation_degrees = rot_degrees
+	instance.scale = scale
 	parent.add_child(instance)
-
-func _tf(xx, yx, zx, xy, yy, zy, xz, yz, zz, ox, oy, oz) -> Transform3D:
-	return Transform3D(Basis(Vector3(xx, xy, xz), Vector3(yx, yy, yz), Vector3(zx, zy, zz)), Vector3(ox, oy, oz))
 
 ## A returning player should not have to replay the tutorial to reach their
 ## progress, so the main button becomes Continue once there is a save.
