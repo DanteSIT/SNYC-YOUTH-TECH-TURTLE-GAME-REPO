@@ -32,6 +32,8 @@ godot --headless --path . --script res://tools/<name>.gd -- [args]
 - `probe_menu.gd` — the menu shows Play or Continue to match saved progress.
 - `probe_results.gd` — the results screen earns the right stars and best-time callout.
 - `probe_ui_sound.gd` — generated UI tones exist and buttons are wired to them.
+- `probe_accessibility.gd` — large text scales menus and cards but not the HUD.
+- `probe_hazard_cue.gd` — hazards carry the pulsing warning marker.
 - `probe_aabb.gd`, `inspect.gd` — print mesh bounds and node details.
 
 ## Screenshots

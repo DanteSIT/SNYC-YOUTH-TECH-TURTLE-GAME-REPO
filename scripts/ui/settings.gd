@@ -17,6 +17,7 @@ var _music_slider: HSlider
 var _ambience_check: CheckButton
 var _ambience_slider: HSlider
 var _sfx_slider: HSlider
+var _text_size_option: OptionButton
 
 
 func _ready() -> void:
@@ -50,7 +51,7 @@ func _build_ui() -> void:
 	vbox.add_child(title)
 
 	var hint := Label.new()
-	hint.text = "Frame rate, vertical sync and graphics settings."
+	hint.text = "Frame rate, graphics, audio and accessibility settings."
 	hint.add_theme_font_size_override("font_size", 16)
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	hint.add_theme_color_override("font_color", Color(0.7, 0.8, 0.9))
@@ -89,6 +90,7 @@ func _build_ui() -> void:
 	vbox.add_child(vsync_row)
 
 	_build_graphics_section(vbox)
+	_build_accessibility_section(vbox)
 	_build_audio_section(vbox)
 
 	var spacer := Control.new()
@@ -161,6 +163,23 @@ func _build_graphics_section(vbox: VBoxContainer) -> void:
 	_glow_check = glow
 
 	_sync_controls()
+
+
+func _build_accessibility_section(vbox: VBoxContainer) -> void:
+	var section := Label.new()
+	section.text = "ACCESSIBILITY"
+	section.add_theme_font_size_override("font_size", 24)
+	section.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	section.add_theme_color_override("font_color", Color(0.5, 0.8, 1.0))
+	vbox.add_child(section)
+
+	var text_size := _add_option_row(vbox, "Text Size")
+	for option_name in Accessibility.get_text_names():
+		text_size.add_item(option_name)
+	text_size.item_selected.connect(_on_text_size_selected)
+	_text_size_option = text_size
+
+	_sync_accessibility_controls()
 
 
 func _build_audio_section(vbox: VBoxContainer) -> void:
@@ -278,6 +297,11 @@ func _sync_audio_controls() -> void:
 		_sfx_slider.set_value_no_signal(Audio.get_sfx_volume() * 100.0)
 
 
+func _sync_accessibility_controls() -> void:
+	if _text_size_option != null:
+		_text_size_option.select(Accessibility.get_text_scale_index())
+
+
 func _on_preset_selected(index: int) -> void:
 	Graphics.set_preset(index)
 	_sync_controls()
@@ -330,6 +354,10 @@ func _on_glow_toggled(pressed: bool) -> void:
 
 func _on_fps_cap_selected(index: int) -> void:
 	DebugStats.set_fps_cap_index(index)
+
+
+func _on_text_size_selected(index: int) -> void:
+	Accessibility.set_text_scale(index)
 
 
 func _on_music_toggled(pressed: bool) -> void:
